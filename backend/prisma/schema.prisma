@@ -103,7 +103,9 @@ model Product {
   description String
   price       Float
   stock       Int
-  rating      Decimal
+  rating      Decimal @default(0)
+
+  type ItemType
 
   // For Food
   food_notes    String?
@@ -111,7 +113,7 @@ model Product {
   spicy_level   SpicyLevel?
 
   // For Non Food
-  condition ProductCondition
+  condition ProductCondition?
 
   sellerId String
   seller   User   @relation(fields: [sellerId], references: [id])
