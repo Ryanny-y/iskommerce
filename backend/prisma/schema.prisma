@@ -61,6 +61,11 @@ model User {
   refreshTokenHash      String?
   refreshTokenExpiresAt DateTime?
 
+  // Verification Code
+  isVerified              Boolean   @default(false)
+  verificationCodeHash    String?
+  verificationCodeExpires DateTime?
+
   products      Product[]
   orders        Order[]
   reviews       Review[]

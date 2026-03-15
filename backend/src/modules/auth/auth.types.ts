@@ -1,6 +1,13 @@
 import z from "zod";
-;
-import { authResponseSchema, createUserBodySchema, loginUserBodySchema, refreshTokenCookieSchema, userDtoSchema } from "./auth.schema";
+import {
+  authResponseSchema,
+  createUserBodySchema,
+  loginUserBodySchema,
+  refreshTokenCookieSchema,
+  sendVerificationCodeSchema,
+  userDtoSchema,
+  verifyEmailSchema,
+} from "./auth.schema";
 import { ApiResponse } from "../../types/api";
 
 export type UserDto = z.infer<typeof userDtoSchema>;
@@ -10,6 +17,11 @@ export type RefreshTokenCookies = z.infer<typeof refreshTokenCookieSchema>;
 
 export type CreateUserDto = z.infer<typeof createUserBodySchema>["body"];
 export type LoginUserDto = z.infer<typeof loginUserBodySchema>["body"];
+
+export type sendVerificationCodeDto = z.infer<
+  typeof sendVerificationCodeSchema
+>["body"];
+export type verifyEmailDto = z.infer<typeof verifyEmailSchema>["body"];
 
 // Responses
 export type CreateUserResponse = ApiResponse<UserDto>;

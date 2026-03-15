@@ -29,6 +29,19 @@ export const loginUserBodySchema = z.object({
   })
 })
 
+export const sendVerificationCodeSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+  })
+})
+
+export const verifyEmailSchema = z.object({
+  body: z.object({
+    email: z.email().min(1, "Email is required."),
+    code: z.string().length(6),
+  })
+})
+
 export const refreshTokenCookieSchema = z.object({
   cookies: z.object({
     refresh_token: z.string(),
