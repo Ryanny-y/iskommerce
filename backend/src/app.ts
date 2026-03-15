@@ -1,10 +1,9 @@
 import express from "express";
-// import moduleRoutes from "./modules";
-// import { errorHandler } from "./common/utils/Errors";
+import moduleRoutes from "./modules";
 import cookieParser from "cookie-parser";
-// import corsMiddleWare from "./config/corsConfig";
+import corsMiddleWare from "./config/corsConfig";
 import cors from 'cors';
-// import { errorHandler } from "./common/utils/Errors";
+import { errorHandler } from "./utils/Errors";
 
 const app = express();
 
@@ -16,6 +15,6 @@ app.use(express.urlencoded({ extended: false }));
 // ROUTES
 // app.use("/api/v1", moduleRoutes);
 
-// app.use(errorHandler);
+app.use(errorHandler);
 
 export default app;
