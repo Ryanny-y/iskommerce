@@ -12,7 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
-enum UserRole {
+enum Role {
   BUYER
   SELLER
   ADMIN
@@ -50,12 +50,12 @@ enum ProductCondition {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   fullName  String
-  email     String   @unique
+  email     String     @unique
   password  String
-  role      UserRole
-  createdAt DateTime @default(now())
+  roles     UserRole[]
+  createdAt DateTime   @default(now())
 
   // refresh token
   refreshTokenHash      String?
@@ -68,6 +68,15 @@ model User {
 
   cart         Cart?
   sentMessages ChatMessage[] @relation("sender")
+}
+
+model UserRole {
+  userId String
+  role   Role
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@id([userId, role])
 }
 
 model Admin {

@@ -1,8 +1,8 @@
 import cors, { CorsOptions } from "cors";
 
+// TODO: Add the web url of the deployed web app
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://myapp.com",
 ];
 
 const corsConfig: CorsOptions = {

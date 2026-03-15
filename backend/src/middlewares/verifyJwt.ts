@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { NextFunction, Request, Response } from "express";
 import jwt, {
   JsonWebTokenError,
@@ -8,7 +8,7 @@ import jwt, {
 
 interface AccessTokenPayload extends JwtPayload {
   sub: string;
-  role: UserRole;
+  roles: Role[];
 }
 
 const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +28,7 @@ const verifyJwt = (req: Request, res: Response, next: NextFunction) => {
     const payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET!) as AccessTokenPayload;
 
     req.userId = payload.sub;
-    req.userRole = payload.role;
+    req.userRoles = payload.role;
 
     next();
   } catch (error) {

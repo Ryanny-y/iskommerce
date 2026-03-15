@@ -6,20 +6,13 @@ import {
   LoginUserDto,
   UserDto,
 } from "./auth.types";
-import { UserRole } from "@prisma/client";
-import { CustomError } from '../../utils/Errors'
+import { CustomError } from "../../utils/Errors";
 import jwt from "jsonwebtoken";
 import { addDays } from "date-fns";
+import { Role, UserRole } from "@prisma/client";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
-  const {
-    id,
-    fullName,
-    email,
-    password,
-    confirmPassword,
-    role,
-  } = data;
+  const { fullName, email, password, confirmPassword, roles } = data;
 
   const normalizedEmail = email.toLowerCase();
 
@@ -42,19 +35,26 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   // Create user
   const createdUser = await prismaClient.user.create({
     data: {
-      ...(id && { id }),
       fullName,
       email: normalizedEmail,
       password: hashedPassword,
-      role: role as UserRole,
-    }
+
+      roles: {
+        create: roles.map((role: Role) => ({
+          role,
+        })),
+      },
+    },
+    include: {
+      roles: true,
+    },
   });
 
   return {
     id: createdUser.id,
     fullName: createdUser.fullName,
     email: createdUser.email,
-    role: createdUser.role,
+    roles: convertUserRoleToRoleEnum(createdUser.roles),
   };
 };
 
@@ -63,6 +63,9 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
 
   const foundUser = await prismaClient.user.findUnique({
     where: { email: email.toLowerCase() },
+    include: {
+      roles: true,
+    },
   });
 
   if (!foundUser) throw new CustomError(401, "Email or password is incorrect.");
@@ -70,11 +73,13 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
   const match = await bcrypt.compare(password, foundUser.password);
   if (!match) throw new CustomError(401, "Email or password is incorrect.");
 
+  const userRoles = convertUserRoleToRoleEnum(foundUser.roles);
+
   // CREATE JWTS
   const accessToken = jwt.sign(
     {
       sub: foundUser.id,
-      role: foundUser.role,
+      role: userRoles,
     },
     process.env.ACCESS_TOKEN_SECRET!,
     { expiresIn: "15m" },
@@ -83,7 +88,7 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
   const refreshToken = jwt.sign(
     {
       sub: foundUser.id,
-      role: foundUser.role,
+      role: userRoles,
     },
     process.env.REFRESH_TOKEN_SECRET!,
     { expiresIn: "7d" },
@@ -107,7 +112,7 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
       id: foundUser.id,
       fullName: foundUser.fullName,
       email: foundUser.email,
-      role: foundUser.role,
+      roles: userRoles
     },
     accessToken,
     refreshToken,
@@ -125,29 +130,34 @@ export const refreshToken = async (
     throw new CustomError(401, "Unauthorized");
   }
 
-  const user = await prismaClient.user.findUnique({
+  const foundUser = await prismaClient.user.findUnique({
     where: {
       id: payload.sub,
     },
+    include: {
+      roles: true
+    }
   });
 
-  if (!user || !user?.refreshTokenHash)
+  if (!foundUser || !foundUser?.refreshTokenHash)
     throw new CustomError(401, "Unauthorized");
 
-  const isSameToken = await bcrypt.compare(refreshToken, user.refreshTokenHash);
+  const isSameToken = await bcrypt.compare(refreshToken, foundUser.refreshTokenHash);
 
   if (
-    !user.refreshTokenExpiresAt ||
+    !foundUser.refreshTokenExpiresAt ||
     !isSameToken ||
-    user.refreshTokenExpiresAt.getTime() < Date.now()
+    foundUser.refreshTokenExpiresAt.getTime() < Date.now()
   ) {
     throw new CustomError(401, "Unauthorized");
   }
 
+  const userRoles = convertUserRoleToRoleEnum(foundUser.roles);
+
   const newAccessToken = jwt.sign(
     {
-      sub: user.id,
-      role: user.role,
+      sub: foundUser.id,
+      role: userRoles,
     },
     process.env.ACCESS_TOKEN_SECRET!,
     { expiresIn: "15m" },
@@ -155,10 +165,10 @@ export const refreshToken = async (
 
   return {
     userData: {
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
+      id: foundUser.id,
+      fullName: foundUser.fullName,
+      email: foundUser.email,
+      roles: userRoles,
     },
     accessToken: newAccessToken,
   };
@@ -201,4 +211,8 @@ export const logout = async (refreshToken: string): Promise<void> => {
       refreshTokenExpiresAt: null,
     },
   });
+};
+
+const convertUserRoleToRoleEnum = (roles: UserRole[]) => {
+  return roles.map((r) => r.role);
 };

@@ -1,9 +1,8 @@
 import { z } from "zod";
-import { UserRole } from "@prisma/client";
+import { Role, UserRole } from "@prisma/client";
 
 export const createUserBodySchema = z.object({
   body: z.object({
-    id: z.string().regex(/^\d{11}$/, "ID must be exactly 11 digits").optional(),
     fullName: z.string().min(1, "Full name is required"),
     email: z.email("Invalid email address").min(1, "Email is required"),
 
@@ -19,7 +18,7 @@ export const createUserBodySchema = z.object({
       .regex(/[A-Z]/, "Must contain an uppercase letter")
       .regex(/[0-9]/, "Must contain a number"),
 
-    role: z.enum(UserRole),
+    roles: z.array(z.enum(Role)).min(1, "Al leaste one role is required"),
   })
 });
 
@@ -27,7 +26,6 @@ export const loginUserBodySchema = z.object({
   body: z.object({
     email: z.email().min(1, "Email is required."),
     password: z.string().min(1, "Password is required."),
-    role: z.enum(UserRole)
   })
 })
 
@@ -41,7 +39,7 @@ export const userDtoSchema = z.object({
   id: z.string(),
   fullName: z.string().optional(),
   email: z.email(),
-  role: z.enum(UserRole),
+  roles: z.array(z.enum(Role)),
 });
 
 export const authResponseSchema = z.object({
