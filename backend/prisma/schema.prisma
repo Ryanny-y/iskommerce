@@ -4,10 +4,226 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   // output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  ORDER_UPDATE
+  NEW_MESSAGE
+  NEW_ORDER
+  REVIEW
+}
+
+enum ItemType {
+  FOOD
+  NON_FOOD
+}
+
+enum SpicyLevel {
+  NONE
+  MILD
+  MEDIUM
+  HOT
+}
+
+enum ProductCondition {
+  NEW
+  USED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String   @unique
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  products      Product[]
+  orders        Order[]
+  reviews       Review[]
+  notifications Notification[]
+
+  cart         Cart?
+  sentMessages ChatMessage[] @relation("sender")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  products Product[]
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  rating      Decimal
+
+  // For Food
+  food_notes    String?
+  allergen_info String?
+  spicy_level   SpicyLevel?
+
+  // For Non Food
+  condition ProductCondition
+
+  sellerId String
+  seller   User   @relation(fields: [sellerId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  images     ProductImage[]
+  reviews    Review[]
+  orderItems OrderItem[]
+
+  createdAt DateTime   @default(now())
+  cartItems CartItem[]
+}
+
+model ProductImage {
+  id String @id @default(uuid())
+
+  url      String
+  key      String  @unique
+  fileName String
+  mimeType String?
+  size     Int?
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Cart {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  items CartItem[]
+}
+
+model CartItem {
+  id       String @id @default(uuid())
+  quantity Int
+
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id     String      @id @default(uuid())
+  status OrderStatus @default(PENDING)
+
+  buyerId String
+  buyer   User   @relation(fields: [buyerId], references: [id])
+
+  total     Float
+  createdAt DateTime @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id String @id @default(uuid())
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity Int
+  price    Float
+}
+
+model Review {
+  id      String  @id @default(uuid())
+  rating  Int
+  comment String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model ChatConversation {
+  id String @id @default(uuid())
+
+  buyerId  String
+  sellerId String
+
+  createdAt DateTime @default(now())
+
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id       String  @id @default(uuid())
+  message  String
+  imageUrl String?
+
+  senderId String
+  sender   User   @relation("sender", fields: [senderId], references: [id])
+
+  conversationId String
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  type    NotificationType
+  message String
+  isRead  Boolean          @default(false)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model TimeTrackingLog {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  durationMs Int
+  createdAt  DateTime @default(now())
 }
