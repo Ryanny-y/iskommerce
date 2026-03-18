@@ -6,7 +6,6 @@ import { errorHandler } from "./utils/Errors";
 
 const app = express();
 
-app.options("*", corsMiddleWare);
 app.use(corsMiddleWare);
 app.use(cookieParser());
 app.use(express.json());
