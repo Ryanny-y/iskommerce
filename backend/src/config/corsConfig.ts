@@ -5,8 +5,8 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "https://iskommerce.vercel.app",
-  "iskommerce-git-main-ryannys-projects.vercel.app",
-  "iskommerce-h7odbyrhp-ryannys-projects.vercel.app"
+  "https://iskommerce-git-main-ryannys-projects.vercel.app",
+  "https://iskommerce-h7odbyrhp-ryannys-projects.vercel.app"
 ];
 
 const corsConfig: CorsOptions = {
