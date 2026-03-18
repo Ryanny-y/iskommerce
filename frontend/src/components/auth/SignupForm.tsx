@@ -44,7 +44,7 @@ export default function SignupForm() {
       await signup(data);
 
       toast.success("Account created! Please log in.");
-      navigate("/verify");
+      navigate("/verify", { state: { email: data.email }});
     } catch (error: any) {
       toast.error(error.message || "Failed to create account.");
     } finally {

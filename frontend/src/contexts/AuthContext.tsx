@@ -12,6 +12,7 @@ import type {
 import { toast } from "sonner";
 import { API_URL } from "@/config/secrets";
 import type { SignupFormValues } from "@/components/auth/types";
+import type { ApiResponse } from "@/types/common";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         credentials: "include",
       });
 
-      const data: AuthResponseType = await response.json();
+      const data: ApiResponse<AuthResponseType> = await response.json();
 
       if (!response.ok) {
         throw {
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         };
       }
 
-      setAuthResponse(data);
+      setAuthResponse(data.data ?? null);
       return true;
     } catch (error: any) {
       setAuthResponse(null);
@@ -97,29 +98,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const refreshToken = async (): Promise<AuthResponseType | null> => {
-    try {
-      const response = await fetch(`${API_URL}/auth/refresh-token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
+  const refreshToken =
+    async (): Promise<ApiResponse<AuthResponseType> | null> => {
+      try {
+        const response = await fetch(`${API_URL}/auth/refresh-token`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
 
-      const data: AuthResponseType = await response.json();
+        const data: ApiResponse<AuthResponseType> = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || response.statusText);
+        if (!response.ok) {
+          throw new Error(data.message || response.statusText);
+        }
+
+        setAuthResponse(data.data ?? null);
+        return data;
+      } catch (error: any) {
+        toast.error(error.message || "Session expired. Please log in again.");
+        return null;
       }
-
-      setAuthResponse(data);
-      return data;
-    } catch (error: any) {
-      toast.error(error.message || "Session expired. Please log in again.");
-      return null;
-    }
-  };
+    };
 
   const logout = async (): Promise<void> => {
     try {
@@ -135,6 +137,62 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const verifyEmail = async (
+    email: string,
+    code: string,
+  ): Promise<ApiResponse<void>> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/verify-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          code,
+        }),
+        credentials: "include",
+      });
+
+      const data: ApiResponse<void> = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      return data;
+    } catch (error: any) {
+      toast.error(error.message || "Session expired. Please log in again.");
+      throw error;
+    }
+  };
+
+  const sendVerificationCode = async (
+    email: string,
+  ): Promise<ApiResponse<void>> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/send-verification`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+        credentials: "include",
+      });
+
+      const data: ApiResponse<void> = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      return data;
+    } catch (error: any) {
+      toast.error(error.message || "Session expired. Please log in again.");
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -143,6 +201,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signup,
         refreshToken,
         logout,
+        verifyEmail,
+        sendVerificationCode,
         loading,
       }}
     >

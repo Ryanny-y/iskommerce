@@ -17,11 +17,14 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import useAuth from "@/contexts/AuthContext";
 
 export default function VerificationPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email as string | undefined;
+
+  const { verifyEmail, sendVerificationCode } = useAuth();
 
   const [otp, setOtp] = useState("");
   const [isResending, setIsResending] = useState(false);
@@ -35,23 +38,33 @@ export default function VerificationPage() {
   }, [countdown]);
 
   const handleResend = async () => {
+    if (!email) return;
     setIsResending(true);
-    // Mock resend delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsResending(false);
-    setCountdown(60);
-    toast.info("Verification email resent!");
+    try {
+      await sendVerificationCode(email);
+      toast.info("Verification email resent!");
+      setCountdown(60);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to resend verification code");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const handleVerify = async () => {
+    if (!email) return;
     if (otp.length < 6) {
       toast.error("Please enter the 6-digit code");
       return;
     }
 
-    // In a real app, send `otp` to backend for verification
-    toast.success("Email verified successfully!");
-    navigate("/login");
+    try {
+      await verifyEmail(email, otp);
+      toast.success("Email verified successfully!");
+      navigate("/login");
+    } catch (error: any) {
+      toast.error(error.message || "Verification failed");
+    }
   };
 
   return (
