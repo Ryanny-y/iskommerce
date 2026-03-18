@@ -1,13 +1,12 @@
 import type { SignupFormValues } from "@/components/auth/types";
 import type { ApiResponse } from "@/types/common";
-
-export type Role = "ADMIN" | "SUPER_ADMIN";
+import type { Role } from "@/types/User";
 
 export type AuthResponseType = {
   userData: {
     id: string;
     email: string;
-    role: Role;
+    roles: Role[];
     fullName: string;
   };
   accessToken: string;

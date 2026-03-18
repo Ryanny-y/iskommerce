@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -9,18 +9,8 @@ import { toast } from "sonner";
 import { Loader2, Mail, Lock, User, ShieldCheck } from "lucide-react";
 import { signupSchema, type SignupFormValues } from "./types";
 import useAuth from "@/contexts/AuthContext";
-import type { Role } from "@/types/User";
 
 export default function SignupForm() {
-  const location = useLocation();
-  const roles = location.state?.roles as Role[] | undefined;
-
-  useEffect(() => {
-    if(!roles) {
-      navigate("/role-selection")
-    }
-  }, [roles])
-  
 
   const navigate = useNavigate();
   const { signup } = useAuth();
@@ -33,7 +23,7 @@ export default function SignupForm() {
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      roles: roles || [],
+      roles: ["BUYER"],
     },
   });
 

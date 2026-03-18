@@ -21,8 +21,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/contexts/AuthContext";
-import fatimaLogo from '@/assets/FatimaLogo.png'
-
+import fatimaLogo from "@/assets/FatimaLogo.png";
+import { Link } from "react-router-dom";
 
 interface TopbarProps {
   cartItemCount: number;
@@ -36,6 +36,8 @@ export const Topbar = ({
   onSearch,
 }: TopbarProps) => {
   const { authResponse } = useAuth();
+
+  console.log(authResponse?.userData);
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -92,17 +94,18 @@ export const Topbar = ({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="gap-2"
-                onClick={() => (window.location.href = "/orders")}
+                // onClick={() => (window.location.href = "/orders")}
               >
-                <Package className="h-4 w-4" />
-                <span>My Orders</span>
+                <Link to="/my-orders" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  <span>My Orders</span>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="gap-2"
-                onClick={() => (window.location.href = "/my-listings")}
-              >
-                <List className="h-4 w-4" />
-                <span>My Listings</span>
+              <DropdownMenuItem className="gap-2">
+                <Link to="/my-listings" className="flex items-center gap-2">
+                  <List className="h-4 w-4" />
+                  <span>My Listings</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="gap-2">
                 <ShoppingBag className="h-4 w-4" />
