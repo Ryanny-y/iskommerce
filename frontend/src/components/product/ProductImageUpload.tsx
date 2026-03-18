@@ -42,7 +42,7 @@ export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <Label className={cn(error && "text-destructive")}>Product Images</Label>
+      <Label className={cn(error && "text-destructive")}>Product Images <span className="text-red-500">*</span></Label>
       
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {previews.map((preview, index) => (

@@ -42,7 +42,7 @@ export const Topbar = ({
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
         <div
           className="flex items-center gap-2 cursor-pointer h-10"
-          onClick={() => (window.location.href = "/")}
+          onClick={() => navigate('/dashboard')}
         >
           <img src={fatimaLogo} alt="Fatima Logo" className="h-full" />
           <span className="text-xl font-bold tracking-tight hidden sm:inline-block">

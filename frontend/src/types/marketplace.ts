@@ -7,6 +7,7 @@ export interface ProductImage {
   url: string;
   key: string;
   fileName: string;
+  bucket: string;
   mimeType: string;
   size: number;
 }
@@ -31,7 +32,7 @@ export interface Product {
   categoryId: string;
   category: string;
 
-  image: ProductImage[];
+  images: ProductImage[];
   createdAt: string;
 }
 

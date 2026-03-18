@@ -75,7 +75,7 @@ export const PostProductDialog = ({
       description: "",
       price: 1,
       stock: 1,
-      type: "NON_FOOD",
+      type: "FOOD",
       categoryId: "",
       newCategoryName: "",
       food_notes: "",
@@ -102,6 +102,8 @@ export const PostProductDialog = ({
   }, [productType, form]);
 
   const onSubmit: SubmitHandler<FormInput> = async (values) => {
+    console.log("submitting");
+    
     const parsed = formSchema.parse(values);
     setIsSubmitting(true);
 
@@ -203,7 +205,7 @@ export const PostProductDialog = ({
               </h3>
 
               <div>
-                <label className="text-sm font-medium">Product Name</label>
+                <label className="text-sm font-medium">Product Name <span className="text-red-500">*</span></label>
                 <Input required className="py-5" {...form.register("name")} />
                 <p className="text-sm text-red-500">
                   {form.formState.errors.name?.message}
@@ -211,7 +213,7 @@ export const PostProductDialog = ({
               </div>
 
               <div>
-                <label className="text-sm font-medium">Description</label>
+                <label className="text-sm font-medium">Description <span className="text-red-500">*</span></label>
                 <Textarea
                   required
                   className="resize-none h-24"
@@ -224,7 +226,7 @@ export const PostProductDialog = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium">Price (₱)</label>
+                  <label className="text-sm font-medium">Price (₱) <span className="text-red-500">*</span></label>
                   <Input
                     type="number"
                     step="0.01"
@@ -237,7 +239,7 @@ export const PostProductDialog = ({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium">Stock</label>
+                  <label className="text-sm font-medium">Stock <span className="text-red-500">*</span></label>
                   <Input min={1} type="number" {...form.register("stock")} />
                   <p className="text-sm text-red-500">
                     {form.formState.errors.stock?.message}
@@ -273,7 +275,7 @@ export const PostProductDialog = ({
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !form.formState.isValid}
             onClick={form.handleSubmit(onSubmit)}
             className="min-w-30"
           >
