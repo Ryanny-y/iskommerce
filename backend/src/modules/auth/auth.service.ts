@@ -44,7 +44,7 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
       email: normalizedEmail,
       password: hashedPassword,
       verificationCodeHash: hashedCode,
-      verificationCodeExpires: addMinutes(new Date(), 10),
+      verificationCodeExpires: addMinutes(new Date(), 5),
 
       roles: {
         create: roles.map((role: Role) => ({
@@ -255,7 +255,7 @@ export const sendVerificationCode = async (email: string) => {
     where: { id: user.id },
     data: {
       verificationCodeHash: hashedCode,
-      verificationCodeExpires: addMinutes(new Date(), 10),
+      verificationCodeExpires: addMinutes(new Date(), 5),
     },
   });
 
