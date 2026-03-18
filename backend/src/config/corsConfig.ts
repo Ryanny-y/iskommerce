@@ -4,7 +4,9 @@ import cors, { CorsOptions } from "cors";
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
-  "https://iskommerce.vercel.app"
+  "https://iskommerce.vercel.app",
+  "iskommerce-git-main-ryannys-projects.vercel.app",
+  "iskommerce-h7odbyrhp-ryannys-projects.vercel.app"
 ];
 
 const corsConfig: CorsOptions = {
