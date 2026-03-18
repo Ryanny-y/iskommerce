@@ -1,13 +1,13 @@
 import { ListingCard } from "./ListingCard";
-import { type SellerProduct } from "@/types/seller";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingBag, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { Product } from "@/types/marketplace";
 
 interface ListingsGridProps {
-  products: SellerProduct[];
+  products: Product[];
   isLoading: boolean;
-  onEdit: (product: SellerProduct) => void;
+  onEdit: (product: Product) => void;
   onDelete: (id: string) => void;
   onView: (id: string) => void;
   onPostFirst: () => void;
@@ -23,7 +23,7 @@ export const ListingsGrid = ({
 }: ListingsGridProps) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="space-y-4">
             <Skeleton className="aspect-square w-full rounded-xl" />
@@ -58,7 +58,7 @@ export const ListingsGrid = ({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {products.map((product) => (
         <ListingCard
           key={product.id}

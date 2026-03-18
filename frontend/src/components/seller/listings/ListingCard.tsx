@@ -2,12 +2,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Eye, Package } from "lucide-react";
-import { type SellerProduct } from "@/types/seller";
 import { cn } from "@/lib/utils";
+import type { Product } from "@/types/marketplace";
 
 interface ListingCardProps {
-  product: SellerProduct;
-  onEdit: (product: SellerProduct) => void;
+  product: Product;
+  onEdit: (product: Product) => void;
   onDelete: (id: string) => void;
   onView: (id: string) => void;
 }
@@ -32,21 +32,21 @@ export const ListingCard = ({
 
   return (
     <Card className="overflow-hidden group hover:shadow-md transition-shadow">
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-muted h-60">
         <img
-          src={product.image}
+          src={product.images[0].url}
           alt={product.name}
-          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+          className="w-full object-cover transition-transform group-hover:scale-10 h-full"
           referrerPolicy="no-referrer"
         />
         <Badge
           className={cn(
             "absolute top-2 right-2 border font-medium",
-            statusColors[product.status],
+            // statusColors[product.status],
           )}
           variant="secondary"
         >
-          {statusLabels[product.status]}
+          {/* {statusLabels[product.status]} */}
         </Badge>
       </div>
       <CardContent className="p-4 space-y-3">
