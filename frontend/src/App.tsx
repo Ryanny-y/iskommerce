@@ -6,7 +6,7 @@ const App = () => {
   return (
     <Router>
       <AppRoutes />
-      <Toaster position="top-center" richColors />
+      <Toaster position="bottom-right" richColors closeButton />
     </Router>
   );
 };
