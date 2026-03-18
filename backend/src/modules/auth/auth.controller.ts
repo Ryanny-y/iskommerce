@@ -155,3 +155,20 @@ export const verifyEmail = async (
     next(error);
   }
 };
+
+export const makeSeller = async (
+  req: Request,
+  res: Response<ApiResponse<void>>,
+  next: NextFunction,
+) => {
+  try {
+    await authService.makeUserSeller(req.userId!);
+
+    return res.status(200).json({
+      success: true,
+      message: "User is now a seller",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

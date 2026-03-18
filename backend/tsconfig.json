@@ -41,7 +41,7 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "typeRoots": ["./src/common/types", "./node_modules/@types"]
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "exclude": ["node_modules", "prisma.config.ts"]
 }

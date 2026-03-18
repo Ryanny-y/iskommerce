@@ -302,3 +302,35 @@ export const verifyEmailCode = async (email: string, code: string) => {
     message: "Email verified successfully",
   };
 };
+
+export const makeUserSeller = async (userId: string) => {
+  const user = await prismaClient.user.findUnique({
+    where: { id: userId },
+    include: { roles: true },
+  });
+
+  if (!user) {
+    throw new CustomError(404, "User not found");
+  }
+
+  const alreadySeller = user.roles.some((r) => r.role === Role.SELLER);
+
+  if (alreadySeller) {
+    throw new CustomError(409, "User is already a seller");
+  }
+
+  await prismaClient.user.update({
+    where: { id: userId },
+    data: {
+      roles: {
+        create: {
+          role: Role.SELLER,
+        },
+      },
+    },
+  });
+
+  return {
+    message: "User updated to seller successfully",
+  };
+};

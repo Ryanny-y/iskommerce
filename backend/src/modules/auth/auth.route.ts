@@ -1,5 +1,5 @@
   import { Router } from "express";
-import { createUser, login, logout, refreshToken, sendVerificationCode, verifyEmail } from "./auth.controller";
+import { createUser, login, logout, makeSeller, refreshToken, sendVerificationCode, verifyEmail } from "./auth.controller";
 import {
   createUserBodySchema,
   loginUserBodySchema,
@@ -8,6 +8,7 @@ import {
   verifyEmailSchema,
 } from "./auth.schema";
 import { validate } from "../../middlewares/validate";
+import verifyJwt from "../../middlewares/verifyJwt";
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.post("/refresh-token", validate(refreshTokenCookieSchema), refreshToken);
 router.post("/logout", logout)
 router.post("/send-verification", validate(sendVerificationCodeSchema), sendVerificationCode);
 router.post("/verify-email", validate(verifyEmailSchema), verifyEmail);
+router.post("/make-seller", verifyJwt, makeSeller);
 
 export default router;
