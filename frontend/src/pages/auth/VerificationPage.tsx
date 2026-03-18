@@ -43,7 +43,7 @@ export default function VerificationPage() {
     try {
       await sendVerificationCode(email);
       toast.info("Verification email resent!");
-      setCountdown(60);
+      setCountdown(300);
     } catch (error: any) {
       toast.error(error.message || "Failed to resend verification code");
     } finally {
@@ -65,6 +65,12 @@ export default function VerificationPage() {
     } catch (error: any) {
       toast.error(error.message || "Verification failed");
     }
+  };
+
+  const formatTime = (seconds: number) => {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}:${sec.toString().padStart(2, "0")}`;
   };
 
   return (
@@ -118,7 +124,9 @@ export default function VerificationPage() {
             {isResending ? (
               <RefreshCw className="w-3 h-3 animate-spin" />
             ) : null}
-            {countdown > 0 ? `Resend in ${countdown}s` : "Resend email"}
+            {countdown > 0
+              ? `Resend in ${formatTime(countdown)}`
+              : "Resend email"}
           </button>
         </p>
       </CardFooter>

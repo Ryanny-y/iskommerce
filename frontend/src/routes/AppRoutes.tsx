@@ -7,6 +7,7 @@ import ProtectedLayout from "@/layouts/ProtectedLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
 import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
 import VerificationPage from "@/pages/auth/VerificationPage";
+import MarketplacePage from "@/pages/MarketPlacePage";
 
 export default function AppRoutes() {
   return (
@@ -23,7 +24,7 @@ export default function AppRoutes() {
 
         {/* Marketplace Dashboard */}
         <Route element={<ProtectedLayout />}>
-          {/* <Route path="/dashboard" element={<MarketplacePage />} /> */}
+          <Route path="/dashboard" element={<MarketplacePage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

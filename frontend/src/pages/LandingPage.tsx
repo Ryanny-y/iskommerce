@@ -3,6 +3,7 @@ import Navbar from "@/components/landing/Navbar";
 import FeatureCard from "@/components/landing/FeatureCard";
 import Footer from "@/components/landing/Footer";
 import HeroSection from "@/components/landing/HeroSection";
+import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   return (
@@ -55,9 +56,9 @@ export default function LandingPage() {
               Join thousands of students already trading on Iskommerce.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="bg-white text-emerald-600 font-bold px-8 py-4 rounded-full hover:bg-emerald-50 transition-colors shadow-lg">
+              <Link to={'/signup'} className="bg-white text-emerald-600 font-bold px-8 py-4 rounded-full hover:bg-emerald-50 transition-colors shadow-lg">
                 Create Free Account
-              </button>
+              </Link>
               <button className="bg-emerald-700 text-white font-bold px-8 py-4 rounded-full hover:bg-emerald-800 transition-colors">
                 Learn More
               </button>
