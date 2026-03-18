@@ -1,5 +1,5 @@
   import { Router } from "express";
-import { createUser, login, logout, refreshToken, verifyEmail } from "./auth.controller";
+import { createUser, login, logout, refreshToken, sendVerificationCode, verifyEmail } from "./auth.controller";
 import {
   createUserBodySchema,
   loginUserBodySchema,
@@ -8,7 +8,6 @@ import {
   verifyEmailSchema,
 } from "./auth.schema";
 import { validate } from "../../middlewares/validate";
-import { sendVerificationCode } from "./auth.service";
 
 const router = Router();
 

@@ -13,6 +13,7 @@ import {
 import { refreshTokenCookieSchema } from "./auth.schema";
 import { ZodError } from "zod";
 import { CustomError } from "../../utils/Errors";
+import { ApiResponse } from "../../types/api";
 
 export const createUser = async (
   req: Request<{}, {}, CreateUserDto>,
@@ -119,7 +120,7 @@ export const logout = async (
 // VERIFY USER
 export const sendVerificationCode = async (
   req: Request<{}, {}, sendVerificationCodeDto>,
-  res: Response,
+  res: Response<ApiResponse<void>>,
   next: NextFunction,
 ) => {
   try {
@@ -138,7 +139,7 @@ export const sendVerificationCode = async (
 
 export const verifyEmail = async (
   req: Request<{}, {}, verifyEmailDto>,
-  res: Response,
+  res: Response<ApiResponse<void>>,
   next: NextFunction,
 ) => {
   try {
