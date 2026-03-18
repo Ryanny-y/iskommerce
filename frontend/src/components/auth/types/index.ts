@@ -10,6 +10,7 @@ export const signupSchema = z.object({
   email: z.email('Please enter a valid university email'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
+  roles: z.array(z.enum(['BUYER', 'SELLER'])),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -22,6 +23,6 @@ export interface User {
   id: string;
   email: string;
   fullName: string;
-  role?: 'buyer' | 'seller';
+  roles: ('BUYER' | 'SELLER')[];
   isVerified: boolean;
 }

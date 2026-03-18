@@ -37,6 +37,9 @@ export default function LoginForm() {
       navigate("/dashboard");
     } catch (error: any) {
       toast.error(getErrorMessage(error) || "Login failed");
+      if(error.status === 403) {
+        navigate("/verify", { state: { email: data.email }})
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,16 +1,29 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Loader2, Mail, Lock, User, ShieldCheck } from 'lucide-react';
-import { signupSchema, type SignupFormValues } from './types';
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
+import { Loader2, Mail, Lock, User, ShieldCheck } from "lucide-react";
+import { signupSchema, type SignupFormValues } from "./types";
+import useAuth from "@/contexts/AuthContext";
+import type { Role } from "@/types/User";
 
 export default function SignupForm() {
+  const location = useLocation();
+  const roles = location.state?.roles as Role[] | undefined;
+
+  useEffect(() => {
+    if(!roles) {
+      navigate("/role-selection")
+    }
+  }, [roles])
+  
+
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -19,15 +32,24 @@ export default function SignupForm() {
     formState: { errors },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
+    defaultValues: {
+      roles: roles || [],
+    },
   });
 
   const onSubmit = async (data: SignupFormValues) => {
-    setIsLoading(true);
-    console.log('Signup data:', data);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    toast.success('Account created! Please select your role.');
-    navigate('/role-selection');
+    try {
+      setIsLoading(true);
+
+      await signup(data);
+
+      toast.success("Account created! Please log in.");
+      navigate("/verify");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create account.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -40,7 +62,7 @@ export default function SignupForm() {
             id="fullName"
             placeholder="Juan Dela Cruz"
             className="pl-10 h-11 bg-neutral-50/50 border-neutral-200 focus:bg-white transition-all"
-            {...register('fullName')}
+            {...register("fullName")}
           />
         </div>
         {errors.fullName && (
@@ -57,14 +79,14 @@ export default function SignupForm() {
             type="email"
             placeholder="name@student.fatima.edu.ph"
             className="pl-10 h-11 bg-neutral-50/50 border-neutral-200 focus:bg-white transition-all"
-            {...register('email')}
+            {...register("email")}
           />
         </div>
         {errors.email && (
           <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
         )}
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
@@ -75,11 +97,13 @@ export default function SignupForm() {
               type="password"
               placeholder="••••••••"
               className="pl-10 h-11 bg-neutral-50/50 border-neutral-200 focus:bg-white transition-all"
-              {...register('password')}
+              {...register("password")}
             />
           </div>
           {errors.password && (
-            <p className="text-xs text-red-500 mt-1">{errors.password.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
         <div className="space-y-2">
@@ -91,21 +115,31 @@ export default function SignupForm() {
               type="password"
               placeholder="••••••••"
               className="pl-10 h-11 bg-neutral-50/50 border-neutral-200 focus:bg-white transition-all"
-              {...register('confirmPassword')}
+              {...register("confirmPassword")}
             />
           </div>
           {errors.confirmPassword && (
-            <p className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</p>
+            <p className="text-xs text-red-500 mt-1">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
       </div>
 
       <p className="text-[10px] text-neutral-400 leading-tight">
-        By signing up, you agree to our <Link to="#" className="underline">Terms of Service</Link> and <Link to="#" className="underline">Privacy Policy</Link>.
+        By signing up, you agree to our{" "}
+        <Link to="#" className="underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
+        <Link to="#" className="underline">
+          Privacy Policy
+        </Link>
+        .
       </p>
 
-      <Button 
-        type="submit" 
+      <Button
+        type="submit"
         className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all"
         disabled={isLoading}
       >
@@ -115,7 +149,7 @@ export default function SignupForm() {
             Creating account...
           </>
         ) : (
-          'Sign up'
+          "Sign up"
         )}
       </Button>
     </form>

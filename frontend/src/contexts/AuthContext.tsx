@@ -1,11 +1,17 @@
-
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import type {
   AuthContextType,
   AuthResponseType,
 } from "./types/AuthContextType";
 import { toast } from "sonner";
 import { API_URL } from "@/config/secrets";
+import type { SignupFormValues } from "@/components/auth/types";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -48,13 +54,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const data: AuthResponseType = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || response.statusText);
+        throw {
+          message: data.message || response.statusText,
+          status: response.status,
+        };
       }
-      
+
       setAuthResponse(data);
       return true;
     } catch (error: any) {
       setAuthResponse(null);
+      throw error;
+    }
+  };
+
+  const signup = async (signupForm: SignupFormValues): Promise<boolean> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: signupForm.fullName,
+          email: signupForm.email,
+          password: signupForm.password,
+          confirmPassword: signupForm.confirmPassword,
+          roles: signupForm.roles,
+        }),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || response.statusText);
+      }
+
+      return true;
+    } catch (error: any) {
       throw error;
     }
   };
@@ -89,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
         credentials: "include",
       });
-      toast.success("Logged out.")
+      toast.success("Logged out.");
     } catch (error: any) {
       toast.error(error.message || "Session expired. Please log in again.");
     } finally {
@@ -102,6 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         authResponse,
         login,
+        signup,
         refreshToken,
         logout,
         loading,

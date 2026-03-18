@@ -6,6 +6,7 @@ const ProtectedLayout = () => {
   const { authResponse, loading } = useAuth();
   const location = useLocation();
 
+  // TODO: Make a loading component
   if(loading) return null;
 
   if (!authResponse) {

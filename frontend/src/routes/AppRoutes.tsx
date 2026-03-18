@@ -5,6 +5,8 @@ import LoginPage from "@/pages/auth/LoginPage";
 import SignupPage from "@/pages/auth/SignupPage";
 import ProtectedLayout from "@/layouts/ProtectedLayout";
 import { AuthProvider } from "@/contexts/AuthContext";
+import RoleSelectionPage from "@/pages/auth/RoleSelectionPage";
+import VerificationPage from "@/pages/auth/VerificationPage";
 
 export default function AppRoutes() {
   return (
@@ -15,8 +17,8 @@ export default function AppRoutes() {
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          {/* <Route path="/role-selection" element={<RoleSelectionPage />} /> */}
-          {/* <Route path="/verify" element={<VerificationPage />} /> */}
+          <Route path="/role-selection" element={<RoleSelectionPage />} />
+          <Route path="/verify" element={<VerificationPage />} />
         </Route>
 
         {/* Marketplace Dashboard */}
