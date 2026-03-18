@@ -4,10 +4,10 @@ import { uploadedFileSchema } from "../../types/files";
 
 export const createProductBodySchema = z.object({
   body: z.object({
-    name: z.string(),
-    description: z.string(),
-    price: z.coerce.number(),
-    stock: z.coerce.number(),
+    name: z.string().min(1),
+    description: z.string().min(1),
+    price: z.coerce.number().min(0.01),
+    stock: z.coerce.number().min(1),
     categoryId: z.uuid(),
     type: z.enum(ItemType),
 
@@ -20,7 +20,7 @@ export const createProductBodySchema = z.object({
     condition: z.enum(ProductCondition),
   }),
 
-  files: z.array(uploadedFileSchema).optional().default([]),
+  files: z.array(uploadedFileSchema).min(1, "At least one image is required."),
 });
 
 export const updateProductSchema = z.object({
