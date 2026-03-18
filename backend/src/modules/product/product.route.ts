@@ -11,10 +11,6 @@ import {
 
 const router = Router();
 
-/**
- * Seller Product Routes
- */
-
 router.post(
   "/",
   verifyJwt,
@@ -23,9 +19,9 @@ router.post(
   productController.createProduct,
 );
 
-router.get("/", productController.getAllProducts);
+router.get("/", verifyJwt, productController.getAllProducts);
 
-router.get("/:sellerId", productController.getProductsBySeller);
+router.get("/:sellerId", verifyJwt, productController.getProductsBySeller);
 
 router.get("/seller/:sellerId", verifyJwt, productController.getSellerProducts);
 

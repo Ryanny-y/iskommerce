@@ -56,9 +56,10 @@ export const sellerProductsParamsSchema = z.object({
 });
 
 export const productImageSchema = z.object({
-  url: z.string(),
   key: z.string(),
   fileName: z.string(),
+  bucket: z.string(),
+  url: z.string(),
   mimeType: z.string().optional(),
   size: z.number().optional(),
 });

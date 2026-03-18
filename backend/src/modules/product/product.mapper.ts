@@ -43,9 +43,10 @@ export const mapProductToDto = (product: PrismaProductWithImages | null): Produc
 
     images: product.images.map((img) =>
       productImageSchema.parse({
-        url: img.url,
         key: img.key,
         fileName: img.fileName,
+        bucket: img.bucket,
+        url: img.url,
         mimeType: img.mimeType ?? undefined,
         size: img.size ?? undefined,
       })

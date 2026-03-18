@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../../config/client";
-import { uploadFile } from "../../services/s3.service";
+import { deleteFile, uploadFile } from "../../services/s3.service";
 import { mapProductToDto } from "./product.mapper";
 import {
   CreateProductDto,
@@ -41,9 +41,10 @@ export const createProduct = async (
 
       await tx.productImage.create({
         data: {
-          url: s3Result.url,
           fileName: s3Result.fileName,
           key: s3Result.key,
+          url: s3Result.url,
+          bucket: s3Result.bucket,
           mimeType: s3Result.mimeType,
           size: s3Result.size,
           productId: newProduct.id,
@@ -167,10 +168,24 @@ export const getAllProducts = async (): Promise<ProductDto[]> => {
   return products.map((product) => mapProductToDto(product));
 };
 
-export const deleteProduct = async (productId: string) => {
-  await prisma.product.delete({
-    where: {
-      id: productId,
-    },
+export const deleteProduct = async (userId: string, productId: string) => {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    include: { images: true },
   });
+
+  if (!product || product.sellerId !== userId) {
+    throw new Error("Product not found or unauthorized");
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await Promise.all(product.images.map(img => deleteFile(img.key)));
+
+      await tx.product.delete({ where: { id: productId } });
+    });
+  } catch (err) {
+    console.error("Failed to delete product:", err);
+    throw new Error("Failed to delete product");
+  }
 };

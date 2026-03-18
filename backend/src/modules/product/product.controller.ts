@@ -55,7 +55,6 @@ export const getSellerProducts = async (
   next: NextFunction,
 ) => {
   try {
-
     const products = await productService.getSellerProducts(req.userId!);
 
     res.json({
@@ -114,7 +113,7 @@ export const deleteProduct = async (
   try {
     const { productId } = req.params;
 
-    await productService.deleteProduct(productId);
+    await productService.deleteProduct(req.userId!, productId);
 
     res.json({
       success: true,

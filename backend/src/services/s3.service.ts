@@ -7,7 +7,6 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { CustomError } from "../utils/Errors";
 
 const s3Client = new S3Client({
@@ -23,9 +22,9 @@ const EXPIRES_IN = 3600;
 
 export interface UploadResult {
   fileName: string;
-  url: string;
   bucket: string;
   key: string;
+  url: string,
   mimeType: string;
   size: number;
 }
@@ -45,7 +44,7 @@ export const uploadFile = async (
         Key: key,
         Body: fileBuffer,
         ContentType: mimeType,
-        // Optional: Add metadata for tracking
+        ACL: 'public-read',
         Metadata: {
           "original-name": fileName,
           "uploaded-at": new Date().toISOString(),
@@ -53,37 +52,19 @@ export const uploadFile = async (
       }),
     );
 
-    // Generate presigned URL for immediate access
-    const accessUrl = await generatePresignedUrl(key);
+    const url = `https://${BUCKET_NAME}.s3.amazonaws.com/${key}`;
 
     return {
       fileName,
-      url: accessUrl,
       bucket: BUCKET_NAME,
       key,
+      url,
       mimeType,
       size: fileBuffer.length,
     };
   } catch (error) {
     console.error("S3 upload error:", error);
     throw new CustomError(500, "Failed to upload file to S3");
-  }
-};
-
-export const generatePresignedUrl = async (
-  key: string,
-  expiresIn: number = EXPIRES_IN,
-): Promise<string> => {
-  try {
-    const command = new GetObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-    });
-
-    return await getSignedUrl(s3Client, command, { expiresIn });
-  } catch (error) {
-    console.error("Presigned URL error:", error);
-    throw new CustomError(500, "Failed to generate file access URL");
   }
 };
 
