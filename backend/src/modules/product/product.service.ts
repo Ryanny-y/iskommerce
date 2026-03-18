@@ -18,15 +18,15 @@ export const createProduct = async (
       data: {
         name: data.name,
         description: data.description,
-        price: data.price,
-        stock: data.stock,
+        price: Number(data.price),
+        stock: Number(data.stock),
         sellerId,
         categoryId: data.categoryId,
         type: data.type,
         food_notes: data.food_notes ?? null,
         allergen_info: data.allergen_info ?? null,
         spicy_level: data.spicy_level ?? null,
-        condition: data.condition,
+        condition: data.condition ?? null,
       },
     });
 
@@ -55,6 +55,18 @@ export const createProduct = async (
       where: { id: newProduct.id },
       include: {
         images: true,
+        seller: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   });
@@ -71,6 +83,18 @@ export const getSellerProducts = async (
     },
     include: {
       images: true,
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 
@@ -85,18 +109,37 @@ export const updateProduct = async (
   const prismaData: Prisma.ProductUpdateInput = {};
 
   if (data.name !== undefined) prismaData.name = { set: data.name };
-  if (data.description !== undefined) prismaData.description = { set: data.description };
+  if (data.description !== undefined)
+    prismaData.description = { set: data.description };
   if (data.price !== undefined) prismaData.price = { set: data.price };
   if (data.stock !== undefined) prismaData.stock = { set: data.stock };
-  if (data.food_notes !== undefined) prismaData.food_notes = { set: data.food_notes };
-  if (data.allergen_info !== undefined) prismaData.allergen_info = { set: data.allergen_info };
-  if (data.spicy_level !== undefined) prismaData.spicy_level = { set: data.spicy_level };
-  if (data.condition !== undefined) prismaData.condition = { set: data.condition };
+  if (data.food_notes !== undefined)
+    prismaData.food_notes = { set: data.food_notes };
+  if (data.allergen_info !== undefined)
+    prismaData.allergen_info = { set: data.allergen_info };
+  if (data.spicy_level !== undefined)
+    prismaData.spicy_level = { set: data.spicy_level };
+  if (data.condition !== undefined)
+    prismaData.condition = { set: data.condition };
 
   const updatedProduct = await prisma.product.update({
     where: { id: productId },
     data: prismaData,
-    include: { images: true },
+    include: {
+      images: true,
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
 
   return mapProductToDto(updatedProduct);

@@ -73,6 +73,7 @@ export const refreshToken = async (
     const { cookies } = refreshTokenCookieSchema.parse({
       cookies: req.cookies,
     });
+    
     const { refresh_token } = cookies;
 
     const refreshResponse = await authService.refreshToken(refresh_token);

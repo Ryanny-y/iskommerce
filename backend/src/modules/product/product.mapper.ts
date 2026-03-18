@@ -2,12 +2,21 @@ import { Product, ProductImage } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/client";
 import { productDtoSchema, productImageSchema } from "./product.schema";
 import { CustomError } from "../../utils/Errors";
+import { ProductDto } from "./product.types";
 
 type PrismaProductWithImages = Product & {
   images: ProductImage[];
+  seller: {
+    id: string;
+    fullName: string;
+  };
+  category: {
+    id: string;
+    name: string;
+  }
 };
 
-export const mapProductToDto = (product: PrismaProductWithImages | null) => {
+export const mapProductToDto = (product: PrismaProductWithImages | null): ProductDto => {
   if (!product) throw new CustomError(404, "Product not found");
 
   return productDtoSchema.parse({
@@ -27,7 +36,10 @@ export const mapProductToDto = (product: PrismaProductWithImages | null) => {
     condition: product.condition ?? "",
 
     sellerId: product.sellerId,
-    categoryId: product.categoryId,
+    seller: product.seller.fullName,
+
+    categoryId: product.category.id,
+    category: product.category.name,
 
     images: product.images.map((img) =>
       productImageSchema.parse({

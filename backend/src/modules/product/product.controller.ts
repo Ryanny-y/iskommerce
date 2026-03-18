@@ -22,7 +22,7 @@ export const createProduct = async (
 
     res.status(201).json({
       success: true,
-      message: `Product: ${product?.name} created`,
+      message: `Product: ${product?.name} posted successfully!`,
       data: product,
     });
   } catch (error) {

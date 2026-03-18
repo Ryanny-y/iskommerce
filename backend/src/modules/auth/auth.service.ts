@@ -12,6 +12,7 @@ import { addDays, addMinutes } from "date-fns";
 import { Role, UserRole } from "@prisma/client";
 import { generateVerificationCode } from "../../utils/generateVerificationCode";
 import { sendVerificationEmail } from "../../services/email.service";
+import { log } from "console";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const { fullName, email, password, confirmPassword, roles } = data;
@@ -138,6 +139,8 @@ export const refreshToken = async (
   refreshToken: string,
 ): Promise<AuthResponseDto> => {
   let payload: any;
+  console.log(refreshToken);
+  
 
   try {
     payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);

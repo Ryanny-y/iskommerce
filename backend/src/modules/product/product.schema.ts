@@ -17,7 +17,7 @@ export const createProductBodySchema = z.object({
     spicy_level: z.enum(SpicyLevel).optional(),
 
     // FOR NON FOOD
-    condition: z.enum(ProductCondition),
+    condition: z.enum(ProductCondition).optional(),
   }),
 
   files: z.array(uploadedFileSchema).min(1, "At least one image is required."),
@@ -80,6 +80,7 @@ export const productDtoSchema = z.object({
   condition: z.string(),
 
   sellerId: z.string(),
+  seller: z.string(),
   categoryId: z.string(),
 
   images: z.array(productImageSchema),
