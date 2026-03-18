@@ -4,6 +4,7 @@ import {
   CreateProductDto,
   ProductDto,
   ProductParams,
+  SellerProductsParams,
 } from "./product.types";
 import { ApiResponse } from "../../types/api";
 
@@ -30,6 +31,24 @@ export const createProduct = async (
   }
 };
 
+export const getAllProducts = async (
+  req: Request,
+  res: Response<ApiResponse<ProductDto[]>>,
+  next: NextFunction,
+) => {
+  try {
+    const products = await productService.getAllProducts();
+
+    res.json({
+      success: true,
+      message: "Products Retrieved",
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getSellerProducts = async (
   req: Request,
   res: Response<ApiResponse<ProductDto[]>>,
@@ -38,6 +57,25 @@ export const getSellerProducts = async (
   try {
 
     const products = await productService.getSellerProducts(req.userId!);
+
+    res.json({
+      success: true,
+      message: "Products Retrieved",
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductsBySeller = async (
+  req: Request<SellerProductsParams>,
+  res: Response<ApiResponse<ProductDto[]>>,
+  next: NextFunction,
+) => {
+  try {
+    const { sellerId } = req.params;
+    const products = await productService.getSellerProducts(sellerId);
 
     res.json({
       success: true,

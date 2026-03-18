@@ -145,6 +145,28 @@ export const updateProduct = async (
   return mapProductToDto(updatedProduct);
 };
 
+export const getAllProducts = async (): Promise<ProductDto[]> => {
+  const products = await prisma.product.findMany({
+    include: {
+      images: true,
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  return products.map((product) => mapProductToDto(product));
+};
+
 export const deleteProduct = async (productId: string) => {
   await prisma.product.delete({
     where: {

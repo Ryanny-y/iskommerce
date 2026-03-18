@@ -23,6 +23,10 @@ router.post(
   productController.createProduct,
 );
 
+router.get("/", productController.getAllProducts);
+
+router.get("/:sellerId", productController.getProductsBySeller);
+
 router.get("/seller/:sellerId", verifyJwt, productController.getSellerProducts);
 
 router.patch(
