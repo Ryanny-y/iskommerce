@@ -1,4 +1,3 @@
-import React from "react";
 import {
   MessageSquare,
   User,
@@ -22,7 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/contexts/AuthContext";
 import fatimaLogo from "@/assets/FatimaLogo.png";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface TopbarProps {
   cartItemCount: number;
@@ -36,8 +35,7 @@ export const Topbar = ({
   onSearch,
 }: TopbarProps) => {
   const { authResponse } = useAuth();
-
-  console.log(authResponse?.userData);
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -94,18 +92,17 @@ export const Topbar = ({
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="gap-2"
-                // onClick={() => (window.location.href = "/orders")}
+                onClick={() => (navigate("/my-orders"))}
               >
-                <Link to="/my-orders" className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  <span>My Orders</span>
-                </Link>
+                <Package className="h-4 w-4" />
+                <span>My Orders</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2">
-                <Link to="/my-listings" className="flex items-center gap-2">
-                  <List className="h-4 w-4" />
-                  <span>My Listings</span>
-                </Link>
+              <DropdownMenuItem
+                className="gap-2"
+                onClick={() => (navigate("/my-listings"))}
+              >
+                <List className="h-4 w-4" />
+                <span>My Listings</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="gap-2">
                 <ShoppingBag className="h-4 w-4" />

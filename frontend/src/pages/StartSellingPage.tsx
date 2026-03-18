@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Topbar } from '@/components/marketplace/Topbar';
-import { StartSellingHero } from '@/components/seller/StartSellingHero';
-import { SellerBenefits } from '@/components/seller/SellerBenefits';
-import { toast } from 'sonner';
-import { motion } from 'motion/react';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Topbar } from "@/components/marketplace/Topbar";
+import { StartSellingHero } from "@/components/seller/StartSellingHero";
+import { SellerBenefits } from "@/components/seller/SellerBenefits";
+import { toast } from "sonner";
+import { motion } from "motion/react";
+import useMutation from "@/hooks/useMutation";
+import type { ApiResponse } from "@/types/common";
+import useAuth from "@/contexts/AuthContext";
 
 const StartSellingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { authResponse } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { execute } = useMutation();
 
   useEffect(() => {
-    // Check if already a seller (mocked with localStorage)
-    const isSeller = localStorage.getItem('isSeller') === 'true';
+    const isSeller = authResponse?.userData.roles.includes("SELLER");
     if (isSeller) {
-      navigate('/my-listings', { replace: true });
+      navigate("/my-listings", { replace: true });
     }
   }, [navigate]);
 
@@ -22,11 +26,13 @@ const StartSellingPage: React.FC = () => {
     setIsLoading(true);
     try {
       // Mock API call to activate seller status
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      toast.success('Seller account activated! Welcome to Iskommerce Seller Hub.');
-      navigate('/my-listings');
-    } catch (error) {
-      toast.error('Failed to activate seller account. Please try again.');
+      const response: ApiResponse<void> = await execute("auth/make-seller", {
+        method: "POST",
+      });
+      toast.success(response.message);
+      navigate("/my-listings");
+    } catch (error: any) {
+      toast.error("Failed to activate seller account. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -34,11 +40,7 @@ const StartSellingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Topbar 
-        cartItemCount={0} 
-        onCartClick={() => {}} 
-        onSearch={() => {}} 
-      />
+      <Topbar cartItemCount={0} onCartClick={() => {}} onSearch={() => {}} />
 
       <main className="flex-1">
         <motion.div
@@ -46,8 +48,11 @@ const StartSellingPage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <StartSellingHero onActivate={handleActivateSeller} isLoading={isLoading} />
-          
+          <StartSellingHero
+            onActivate={handleActivateSeller}
+            isLoading={isLoading}
+          />
+
           {/* <div className="max-w-6xl mx-auto px-4 pb-24">
             <div className="relative aspect-video md:aspect-[21/9] rounded-[40px] overflow-hidden border border-neutral-100 shadow-2xl shadow-neutral-200/50 bg-neutral-100 group">
               <img 
@@ -74,14 +79,22 @@ const StartSellingPage: React.FC = () => {
 
       <footer className="py-20 bg-neutral-900 text-white">
         <div className="max-w-6xl mx-auto px-4 text-center space-y-8">
-          <div className="text-2xl font-black tracking-tighter text-emerald-500">Iskommerce</div>
+          <div className="text-2xl font-black tracking-tighter text-emerald-500">
+            Iskommerce
+          </div>
           <p className="text-neutral-400 max-w-md mx-auto">
             The most trusted campus marketplace for students, by students.
           </p>
           <div className="flex items-center justify-center gap-8 text-sm font-bold text-neutral-500 uppercase tracking-widest">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Support</a>
+            <a href="#" className="hover:text-white transition-colors">
+              Privacy
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Terms
+            </a>
+            <a href="#" className="hover:text-white transition-colors">
+              Support
+            </a>
           </div>
           <div className="pt-8 border-t border-white/5 text-neutral-600 text-xs">
             © 2026 Iskommerce. All rights reserved.

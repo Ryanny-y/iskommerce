@@ -27,7 +27,7 @@ export const StartSellingHero = ({
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-medium border border-emerald-100 mb-4"
         >
           <Store className="w-4 h-4" />
-          <span>Join 500+ student sellers</span>
+          <span>Join Fatima Students</span>
         </motion.div>
 
         <motion.h1
