@@ -1,3 +1,4 @@
 Change email and password in env
 Change the neon db database
 Change the aws
+Change uptime robot account
