@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
-import { transporter } from "../config/mail";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export const sendVerificationEmail = async (email: string, code: string) => {
-  await transporter.sendMail({
-    from: `"IskoMarket" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM!,
     to: email,
     subject: "Email Verification Code",
     html: `
