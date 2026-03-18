@@ -3,7 +3,8 @@ import cors, { CorsOptions } from "cors";
 // TODO: Add the web url of the deployed web app
 const allowedOrigins = [
   "http://localhost:3000",
-  "http://localhost:5173"
+  "http://localhost:5173",
+  "https://iskommerce.vercel.app"
 ];
 
 const corsConfig: CorsOptions = {

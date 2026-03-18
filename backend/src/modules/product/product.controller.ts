@@ -67,25 +67,6 @@ export const getSellerProducts = async (
   }
 };
 
-export const getProductsBySeller = async (
-  req: Request<SellerProductsParams>,
-  res: Response<ApiResponse<ProductDto[]>>,
-  next: NextFunction,
-) => {
-  try {
-    const { sellerId } = req.params;
-    const products = await productService.getSellerProducts(sellerId);
-
-    res.json({
-      success: true,
-      message: "Products Retrieved",
-      data: products,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
 export const updateProduct = async (
   req: Request<ProductParams>,
   res: Response,
