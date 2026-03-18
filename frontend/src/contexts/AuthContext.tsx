@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const refreshToken =
     async (): Promise<ApiResponse<AuthResponseType> | null> => {
       try {
+        
         const response = await fetch(`${API_URL}/auth/refresh-token`, {
           method: "POST",
           headers: {

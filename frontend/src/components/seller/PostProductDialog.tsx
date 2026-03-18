@@ -22,6 +22,9 @@ import { ProductImageUpload } from "../product/ProductImageUpload";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import useMutation from "@/hooks/useMutation";
+import type { ApiResponse } from "@/types/common";
+import type { Product } from "@/types/marketplace";
 
 const formSchema = z
   .object({
@@ -30,7 +33,7 @@ const formSchema = z
     price: z.coerce.number().min(0.01),
     stock: z.coerce.number().min(1),
     type: z.enum(["FOOD", "NON_FOOD"]),
-    categoryId: z.string(),
+    categoryId: z.string().min(1),
     newCategoryName: z.string().optional(),
     food_notes: z.string().optional(),
     allergen_info: z.string().optional(),
@@ -49,7 +52,7 @@ const formSchema = z
     message: "Condition is required for non-food items",
   });
 
-type FormValues = z.input<typeof formSchema>;
+type FormInput = z.input<typeof formSchema>;
 
 interface PostProductDialogProps {
   isOpen: boolean;
@@ -61,9 +64,10 @@ export const PostProductDialog = ({
   isOpen,
   onClose,
 }: PostProductDialogProps) => {
+  const { execute } = useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<FormValues>({
+  const form = useForm<FormInput>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
@@ -97,16 +101,52 @@ export const PostProductDialog = ({
     }
   }, [productType, form]);
 
-  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+  const onSubmit: SubmitHandler<FormInput> = async (values) => {
+    const parsed = formSchema.parse(values);
     setIsSubmitting(true);
-    try {
-      console.log("Submitting product:", values);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast.success("Product posted successfully!");
+    try {
+      const formData = new FormData();
+
+      formData.append("name", parsed.name);
+      formData.append("description", parsed.description);
+      formData.append("price", parsed.price.toString());
+      formData.append("stock", parsed.stock.toString());
+      formData.append("type", parsed.type);
+      formData.append("categoryId", parsed.categoryId);
+
+      // Safe optional fields
+      if (parsed.newCategoryName) {
+        formData.append("newCategoryName", parsed.newCategoryName);
+      }
+
+      if (parsed.type === "FOOD") {
+        if (parsed.food_notes) formData.append("food_notes", parsed.food_notes);
+        if (parsed.allergen_info)
+          formData.append("allergen_info", parsed.allergen_info);
+
+        formData.append("spicy_level", parsed.spicy_level);
+      }
+
+      if (parsed.type === "NON_FOOD") {
+        formData.append("condition", parsed.condition);
+      }
+
+      // Images
+      parsed.images.forEach((file) => {
+        formData.append("image", file);
+      });
+
+      const response: ApiResponse<Product> = await execute("products", {
+        method: "POST",
+        body: formData,
+      });
+
+      toast.success(response.message);
       form.reset();
       onClose();
     } catch (error) {
+      console.error(error);
       toast.error("Failed to post product. Please try again.");
     } finally {
       setIsSubmitting(false);

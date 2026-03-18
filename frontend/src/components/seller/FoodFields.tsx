@@ -1,28 +1,33 @@
-import React from 'react';
-import { type UseFormReturn } from 'react-hook-form';
-import { Textarea } from '@/components/ui/textarea';
+import React from "react";
+import { type UseFormReturn } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { motion } from 'framer-motion';
+} from "@/components/ui/select";
+import { motion } from "framer-motion";
 
 interface FoodFieldsProps {
   form: UseFormReturn<any>;
 }
 
 export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
-  const { register, setValue, watch, formState: { errors } } = form;
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
 
   const spicyLevel = watch("spicy_level");
 
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: 'auto' }}
+      animate={{ opacity: 1, height: "auto" }}
       exit={{ opacity: 0, height: 0 }}
       className="space-y-4 overflow-hidden"
     >
@@ -32,7 +37,6 @@ export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
         </h3>
 
         <div className="space-y-4">
-
           {/* Food Notes */}
           <div>
             <label className="text-sm font-medium">Food Notes</label>
@@ -70,14 +74,22 @@ export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
               value={spicyLevel}
               onValueChange={(value) => setValue("spicy_level", value)}
             >
-              <SelectTrigger className='w-full py-5'>
+              <SelectTrigger className="w-full py-5">
                 <SelectValue placeholder="Select spicy level" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem className='py-2' value="NONE">NONE</SelectItem>
-                <SelectItem className='py-2' value="MILD">MILD</SelectItem>
-                <SelectItem className='py-2' value="MEDIUM">MEDIUM</SelectItem>
-                <SelectItem className='py-2' value="HOT">HOT</SelectItem>
+                <SelectItem className="py-2" value="NONE">
+                  NONE
+                </SelectItem>
+                <SelectItem className="py-2" value="MILD">
+                  MILD
+                </SelectItem>
+                <SelectItem className="py-2" value="MEDIUM">
+                  MEDIUM
+                </SelectItem>
+                <SelectItem className="py-2" value="HOT">
+                  HOT
+                </SelectItem>
               </SelectContent>
             </Select>
             {errors.spicy_level && (
@@ -86,7 +98,6 @@ export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
               </p>
             )}
           </div>
-
         </div>
       </div>
     </motion.div>
