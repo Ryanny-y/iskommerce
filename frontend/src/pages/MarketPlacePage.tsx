@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CategoryTabs } from "@/components/marketplace/CategoryTabs";
 import { CartDrawer } from "@/components/cart/CartDrawer";
-import type { CartItem, Product } from "@/types/marketplace";
+import type { CartItem, CartResponse, Product } from "@/types/marketplace";
 import { Topbar } from "@/components/marketplace/Topbar";
 import { ProductGrid } from "@/components/marketplace/ProductGrid";
 import { ShoppingBag } from "lucide-react";
@@ -11,9 +11,11 @@ import fatimaLogo from "@/assets/FatimaLogo.png";
 import useFetchData from "@/hooks/useFetchData";
 import type { ApiResponse } from "@/types/common";
 import useIsLoggedIn from "@/hooks/useIsLoggedIn";
+import useMutation from "@/hooks/useMutation";
 
 const MarketplacePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const { execute } = useMutation();
   const [activeCategory, setActiveCategory] = useState("All");
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -26,6 +28,20 @@ const MarketplacePage = () => {
     loading: productsLoading,
     error: productsError,
   } = useFetchData<ApiResponse<Product[]>>("products");
+
+  // TODO: Handle Products Error and Loading
+  const {
+    data: cartData,
+    loading: cartLoading,
+    error: cartError,
+    refetchData: refetchCart,
+  } = useFetchData<ApiResponse<CartResponse>>("cart");
+
+  useEffect(() => {
+    if (cartData && !cartLoading && !cartError) {
+      setCartItems(cartData.data?.items ?? []);
+    }
+  }, [cartData, cartLoading, cartError]);
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -46,50 +62,89 @@ const MarketplacePage = () => {
 
   const recommendedProducts = useMemo(() => {
     return (productsData?.data ?? []).slice(0, 4);
-  }, []);
+  }, [productsData]);
 
-  const handleAddToCart = (product: Product) => {
-    setCartItems((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      if (existingItem) {
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await execute<{ cartItems: CartItem[]; type?: string }>(
+        "cart/items",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId: product.id,
+            quantity: 1,
+          }),
+        },
+      );
+
+      const existing = cartItems.find((item) => item.product.id === product.id);
+
+      if (existing) {
         toast.success(`Increased ${product.name} quantity`);
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item,
-        );
+      } else {
+        toast.success(`Added ${product.name} to cart`);
       }
-      toast.success(`Added ${product.name} to cart`);
-      return [...prev, { ...product, quantity: 1 }];
-    });
+
+      refetchCart();
+    } catch {
+      toast.error("Failed to add to cart");
+    }
   };
 
-  const handleUpdateQuantity = (id: string, delta: number) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
-  };
-
-  const handleRemoveFromCart = (id: string) => {
+  const handleUpdateQuantity = async (id: string, delta: number) => {
     const item = cartItems.find((i) => i.id === id);
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-    if (item) toast.error(`Removed ${item.name} from cart`);
+    if (!item) return;
+
+    try {
+      const newQuantity = item.quantity + delta;
+
+      const response: ApiResponse<CartResponse> = await execute(
+        `cart/items/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            quantity: newQuantity,
+          }),
+        },
+      );
+
+      toast.success(response.message);
+      refetchCart();
+    } catch {
+      toast.error("Failed to update quantity");
+    }
+  };
+
+  const handleRemoveFromCart = async (id: string) => {
+    const item = cartItems.find((i) => i.id === id);
+    try {
+      const data: ApiResponse<void> = await execute(`cart/items/${id}`, {
+        method: "DELETE",
+      });
+
+      if (item) toast.success(data.message);
+      refetchCart();
+    } catch {
+      toast.error("Failed to remove item");
+    }
   };
 
   if (!productsData && productsLoading) return <div>Loading...</div>;
 
-  if(!productsData && productsError) return <div>Error...</div>
+  if (!productsData && productsError) return <div>Error...</div>;
 
   if (!productsData || !productsData.data) return null;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Topbar
-        cartItemCount={cartItems.reduce((acc, item) => acc + item.quantity, 0)}
+        cartItemCount={cartItems?.reduce((acc, item) => acc + item.quantity, 0)}
         onCartClick={() => setIsCartOpen(true)}
         onSearch={setSearchQuery}
       />
@@ -114,14 +169,6 @@ const MarketplacePage = () => {
             transition={{ duration: 0.3 }}
             className="space-y-12"
           >
-            {searchQuery === "" && activeCategory === "All" && (
-              <ProductGrid
-                title="Recommended for You"
-                products={recommendedProducts}
-                onAddToCart={handleAddToCart}
-              />
-            )}
-
             <ProductGrid
               title={
                 searchQuery || activeCategory !== "All"
@@ -131,6 +178,15 @@ const MarketplacePage = () => {
               products={filteredProducts}
               onAddToCart={handleAddToCart}
             />
+            
+            {searchQuery === "" && activeCategory === "All" && (
+              <ProductGrid
+                title="All Products"
+                products={recommendedProducts}
+                onAddToCart={handleAddToCart}
+              />
+            )}
+
 
             {filteredProducts.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">

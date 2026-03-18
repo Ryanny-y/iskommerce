@@ -36,6 +36,17 @@ export interface Product {
   createdAt: string;
 }
 
-export interface CartItem extends Product {
+type CartProduct = Pick<Product, "id" | "name" | "price" | "stock"> & {
+  images: { url: string }[];
+};
+
+export interface CartItem {
+  id: string;
   quantity: number;
+  product: CartProduct;
+}
+
+export interface CartResponse {
+  id: string;
+  items: CartItem[];
 }

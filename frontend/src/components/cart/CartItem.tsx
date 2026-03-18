@@ -17,18 +17,18 @@ export const CartItem = ({
     <div className="flex items-center gap-4 py-4 border-b last:border-0">
       <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border">
         <img
-          src={item.image}
-          alt={item.name}
+          src={item.product.images[0].url}
+          alt={item.product.name}
           className="h-full w-full object-cover"
         />
       </div>
 
       <div className="flex flex-1 flex-col">
         <div className="flex justify-between text-base font-medium text-foreground">
-          <h3 className="line-clamp-1">{item.name}</h3>
-          <p className="ml-4">₱{item.price * item.quantity}</p>
+          <h3 className="line-clamp-1">{item.product.name}</h3>
+          <p className="ml-4">₱{item.product.price * item.quantity}</p>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">₱{item.price} each</p>
+        <p className="mt-1 text-sm text-muted-foreground">₱{item.product.price} each</p>
 
         <div className="flex flex-1 items-end justify-between text-sm">
           <div className="flex items-center border rounded-md">

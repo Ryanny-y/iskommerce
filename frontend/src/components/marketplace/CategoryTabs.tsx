@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { CATEGORIES } from '@/data/mockData';
+import useCategory from '@/contexts/CategoryContext';
 import { cn } from '@/lib/utils';
 
 interface CategoryTabsProps {
@@ -8,19 +8,21 @@ interface CategoryTabsProps {
 }
 
 export const CategoryTabs = ({ activeCategory, onSelectCategory }: CategoryTabsProps) => {
+  const { categories } = useCategory();
+
   return (
     <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-      {CATEGORIES.map((category) => (
+      {categories.map((category) => (
         <Button
-          key={category}
-          variant={activeCategory === category ? 'default' : 'outline'}
+          key={category.id}
+          variant={activeCategory === category.name ? 'default' : 'outline'}
           className={cn(
             "rounded-full whitespace-nowrap px-6 h-9 text-sm font-medium transition-all",
-            activeCategory === category ? "shadow-md" : "hover:bg-secondary"
+            activeCategory === category.name ? "shadow-md" : "hover:bg-secondary"
           )}
-          onClick={() => onSelectCategory(category)}
+          onClick={() => onSelectCategory(category.name)}
         >
-          {category}
+          {category.name}
         </Button>
       ))}
     </div>

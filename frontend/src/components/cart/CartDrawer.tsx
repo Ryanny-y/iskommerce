@@ -6,6 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetFooter,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -26,10 +27,8 @@ export const CartDrawer = ({
   onUpdateQuantity,
   onRemove,
 }: CartDrawerProps) => {
-  const subtotal = items.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
+  if(!items) return;
+  const subtotal = items.reduce((acc, item) => acc + (item.product?.price ?? 0) * item.quantity, 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -39,6 +38,7 @@ export const CartDrawer = ({
             <ShoppingBag className="h-5 w-5" />
             Your Cart ({items.length})
           </SheetTitle>
+          <SheetDescription></SheetDescription>
         </SheetHeader>
 
         <div className="flex-1 overflow-hidden">
