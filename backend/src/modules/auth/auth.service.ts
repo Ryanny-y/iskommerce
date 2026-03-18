@@ -67,7 +67,7 @@ export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   };
 };
 
-export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
+export const login = async (data: LoginUserDto) => {
   const { email, password } = data;
 
   const foundUser = await prismaClient.user.findUnique({
@@ -130,7 +130,7 @@ export const login = async (data: LoginUserDto): Promise<AuthResponseDto> => {
       roles: userRoles,
     },
     accessToken,
-    refreshToken,
+    refreshToken
   };
 };
 

@@ -20,7 +20,9 @@ enum Role {
 
 enum OrderStatus {
   PENDING
-  CONFIRMED
+  ACCEPTED
+  PREPARING
+  READY_FOR_PICKUP
   COMPLETED
   CANCELLED
 }
@@ -174,6 +176,8 @@ model Order {
   createdAt DateTime @default(now())
 
   items OrderItem[]
+
+  @@index([status])
 }
 
 model OrderItem {

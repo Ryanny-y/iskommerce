@@ -58,5 +58,4 @@ export const userDtoSchema = z.object({
 export const authResponseSchema = z.object({
   userData: userDtoSchema,
   accessToken: z.string(),
-  refreshToken: z.string().optional()
 })

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import * as authService from "./auth.service";
 import {
-  AuthResponseDto,
   CreateUserDto,
   CreateUserResponse,
   LoginResponse,
@@ -39,7 +38,7 @@ export const login = async (
   next: NextFunction,
 ) => {
   try {
-    const loginData: AuthResponseDto = await authService.login(req.body);
+    const loginData = await authService.login(req.body);
 
     res.cookie("refresh_token", loginData.refreshToken as string, {
       httpOnly: true,
