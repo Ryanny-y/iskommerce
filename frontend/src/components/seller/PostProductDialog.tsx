@@ -60,7 +60,6 @@ interface PostProductDialogProps {
 export const PostProductDialog = ({
   isOpen,
   onClose,
-  categories,
 }: PostProductDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -141,7 +140,6 @@ export const PostProductDialog = ({
 
             {/* Category */}
             <CategorySelector
-              categories={categories}
               selectedId={categoryId}
               newCategoryName={form.watch("newCategoryName")}
               onSelect={(id) =>

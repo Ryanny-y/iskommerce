@@ -97,7 +97,7 @@ const MyListingsPage = () => {
       soldItems: listings.filter(l => l.status === 'sold').length,
       totalRevenue: listings
         .filter(l => l.status === 'sold')
-        .reduce((acc, curr) => acc + (curr.price * (curr.stock === 0 ? 1 : 1)), 0), // Mock logic for revenue
+        .reduce((acc, curr) => acc + (curr.price * (curr.stock === 0 ? 1 : 1)), 0),
     };
   }, [listings]);
 

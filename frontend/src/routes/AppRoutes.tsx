@@ -9,30 +9,33 @@ import VerificationPage from "@/pages/auth/VerificationPage";
 import MarketplacePage from "@/pages/MarketPlacePage";
 import StartSellingPage from "@/pages/StartSellingPage";
 import MyListingsPage from "@/pages/seller/MyListingPage";
+import { CategoryProvider } from "@/contexts/CategoryContext";
 
 export default function AppRoutes() {
   return (
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
+      <CategoryProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
 
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/verify" element={<VerificationPage />} />
-        </Route>
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/verify" element={<VerificationPage />} />
+          </Route>
 
-        {/* Marketplace Dashboard */}
-        <Route element={<ProtectedLayout />}>
-          <Route path="/dashboard" element={<MarketplacePage />} />
+          {/* Marketplace Dashboard */}
+          <Route element={<ProtectedLayout />}>
+            <Route path="/dashboard" element={<MarketplacePage />} />
 
-          {/* Seller Routes */}
-          <Route path="/start-selling" element={<StartSellingPage />} />
-          <Route path="/my-listings" element={<MyListingsPage />} />
-        </Route>
+            {/* Seller Routes */}
+            <Route path="/start-selling" element={<StartSellingPage />} />
+            <Route path="/my-listings" element={<MyListingsPage />} />
+          </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </CategoryProvider>
     </AuthProvider>
   );
 }

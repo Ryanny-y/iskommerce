@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import useCategory from '@/contexts/CategoryContext';
 
 export interface Category {
   id: string;
@@ -10,7 +11,6 @@ export interface Category {
 }
 
 interface CategorySelectorProps {
-  categories: Category[];
   selectedId?: string;
   newCategoryName?: string;
   onSelect: (id: string) => void;
@@ -19,13 +19,14 @@ interface CategorySelectorProps {
 }
 
 export const CategorySelector: React.FC<CategorySelectorProps> = ({
-  categories,
   selectedId,
   newCategoryName,
   onSelect,
   onNewCategoryChange,
   error
 }) => {
+  const { categories } = useCategory();
+
   return (
     <div className="space-y-4">
       <Label className={cn(error && "text-destructive")}>Category</Label>
@@ -43,7 +44,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
             />
             <Label
               htmlFor={`cat-${category.id}`}
-              className="px-4 py-2 rounded-full border border-muted bg-background hover:bg-accent peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:border-primary cursor-pointer transition-all text-sm font-medium inline-block"
+              className="px-4 py-2 rounded-full border border-muted bg-background hover:bg-accent hover:text-emerald-600 peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:border-primary cursor-pointer transition-all text-sm font-medium inline-block"
             >
               {category.name}
             </Label>
@@ -53,7 +54,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
           <RadioGroupItem value="other" id="cat-other" className="peer sr-only" />
           <Label
             htmlFor="cat-other"
-            className="px-4 py-2 rounded-full border border-muted bg-background hover:bg-accent peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:border-primary cursor-pointer transition-all text-sm font-medium inline-block"
+            className="px-4 py-2 rounded-full border border-muted bg-background hover:bg-accent hover:text-emerald-600 peer-data-[state=checked]:bg-primary peer-data-[state=checked]:text-primary-foreground peer-data-[state=checked]:border-primary cursor-pointer transition-all text-sm font-medium inline-block"
           >
             Other
           </Label>
