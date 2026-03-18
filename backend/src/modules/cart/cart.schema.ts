@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const addToCartSchema = z.object({
   body: z.object({
-    productId: z.string().uuid(),
+    productId: z.uuid(),
     quantity: z.number().int().min(1),
   }),
 });
@@ -12,13 +12,13 @@ export const updateCartItemSchema = z.object({
     quantity: z.number().int().min(1),
   }),
   params: z.object({
-    productId: z.string().uuid(),
+    cartItemId: z.uuid(),
   }),
 });
 
 export const cartItemParamsSchema = z.object({
   params: z.object({
-    productId: z.string().uuid(),
+    cartItemId: z.uuid(),
   }),
 });
 

@@ -94,22 +94,17 @@ export const addToCart = async (
 
 export const updateCartItem = async (
   userId: string,
-  productId: string,
+  cartItemId: string,
   data: UpdateCartItemDto,
 ): Promise<CartDto> => {
   const cart = await prisma.cart.findUnique({
     where: { userId },
   });
 
-  if (!cart) {
-    throw new Error("Cart not found");
-  }
+  if (!cart) throw new Error("Cart not found");
 
-  await prisma.cartItem.updateMany({
-    where: {
-      cartId: cart.id,
-      productId,
-    },
+  await prisma.cartItem.update({
+    where: { id: cartItemId },
     data: { quantity: data.quantity },
   });
 
@@ -118,11 +113,7 @@ export const updateCartItem = async (
     include: {
       items: {
         include: {
-          product: {
-            include: {
-              images: true,
-            },
-          },
+          product: { include: { images: true } },
         },
       },
     },
@@ -133,7 +124,7 @@ export const updateCartItem = async (
 
 export const removeFromCart = async (
   userId: string,
-  productId: string,
+  cartItemId: string,
 ): Promise<void> => {
   const cart = await prisma.cart.findUnique({
     where: { userId },
@@ -144,10 +135,7 @@ export const removeFromCart = async (
   }
 
   await prisma.cartItem.deleteMany({
-    where: {
-      cartId: cart.id,
-      productId,
-    },
+    where: { id: cartItemId },
   });
 };
 

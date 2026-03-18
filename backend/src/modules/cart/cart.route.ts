@@ -20,14 +20,14 @@ router.post(
 );
 
 router.patch(
-  "/items/:productId",
+  "/items/:cartItemId",
   verifyJwt,
   validate(updateCartItemSchema),
   cartController.updateCartItem,
 );
 
 router.delete(
-  "/items/:productId",
+  "/items/:cartItemId",
   verifyJwt,
   validate(cartItemParamsSchema),
   cartController.removeFromCart,

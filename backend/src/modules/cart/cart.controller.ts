@@ -50,10 +50,10 @@ export const updateCartItem = async (
   next: NextFunction,
 ) => {
   try {
-    const { productId } = req.params;
+    const { cartItemId } = req.params;
     const cart = await cartService.updateCartItem(
       req.userId!,
-      productId,
+      cartItemId,
       req.body,
     );
 
@@ -73,8 +73,8 @@ export const removeFromCart = async (
   next: NextFunction,
 ) => {
   try {
-    const { productId } = req.params;
-    await cartService.removeFromCart(req.userId!, productId);
+    const { cartItemId } = req.params;
+    await cartService.removeFromCart(req.userId!, cartItemId);
 
     res.json({
       success: true,

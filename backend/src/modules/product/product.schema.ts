@@ -83,6 +83,7 @@ export const productDtoSchema = z.object({
   sellerId: z.string(),
   seller: z.string(),
   categoryId: z.string(),
+  category: z.string(),
 
   images: z.array(productImageSchema),
 
