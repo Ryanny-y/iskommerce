@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, LayoutDashboard } from 'lucide-react';
 import { toast } from 'sonner';
 import useAuth from '@/contexts/AuthContext';
+import { PostProductDialog } from '@/components/seller/PostProductDialog';
 
 // Mock Categories
 const MOCK_CATEGORIES = [
@@ -200,11 +201,11 @@ const MyListingsPage = () => {
       </main>
 
       {/* Dialogs */}
-      {/* <PostProductDialog 
+      <PostProductDialog
         isOpen={isPostDialogOpen}
         onClose={() => setIsPostDialogOpen(false)}
         categories={MOCK_CATEGORIES}
-      /> */}
+      />
 
       {/* <EditProductDialog 
         product={selectedProduct}

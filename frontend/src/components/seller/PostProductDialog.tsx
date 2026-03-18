@@ -1,0 +1,255 @@
+import { useEffect, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ProductTypeSelector } from "./ProductTypeSelector";
+import { CategorySelector, type Category } from "./CategorySelector";
+import { FoodFields } from "./FoodFields";
+import { NonFoodFields } from "./NonFoodFields";
+import { ProductImageUpload } from "../product/ProductImageUpload";
+import { AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+const formSchema = z
+  .object({
+    name: z.string().min(1),
+    description: z.string().min(1),
+    price: z.coerce.number().min(0.01),
+    stock: z.coerce.number().min(1),
+    type: z.enum(["FOOD", "NON_FOOD"]),
+    categoryId: z.string(),
+    newCategoryName: z.string().optional(),
+    food_notes: z.string().optional(),
+    allergen_info: z.string().optional(),
+    spicy_level: z.enum(["NONE", "MILD", "MEDIUM", "HOT"]).default("NONE"),
+    condition: z.enum(["NEW", "USED"]).default("NEW"),
+    images: z.array(z.instanceof(File)).min(1),
+  })
+  .refine(
+    (data) =>
+      data.categoryId !== "other" ||
+      (data.newCategoryName && data.newCategoryName.trim() !== ""),
+    { path: ["newCategoryName"], message: "New category name is required" },
+  )
+  .refine((data) => data.type !== "NON_FOOD" || !!data.condition, {
+    path: ["condition"],
+    message: "Condition is required for non-food items",
+  });
+
+type FormValues = z.input<typeof formSchema>;
+
+interface PostProductDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  categories: Category[];
+}
+
+export const PostProductDialog = ({
+  isOpen,
+  onClose,
+  categories,
+}: PostProductDialogProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 1,
+      stock: 1,
+      type: "NON_FOOD",
+      categoryId: "",
+      newCategoryName: "",
+      food_notes: "",
+      allergen_info: "",
+      spicy_level: "NONE",
+      condition: "NEW",
+      images: [],
+    },
+  });
+
+  const productType = form.watch("type");
+  const categoryId = form.watch("categoryId");
+
+  useEffect(() => {
+    if (productType === "NON_FOOD") {
+      form.resetField("food_notes");
+      form.resetField("allergen_info");
+      form.setValue("spicy_level", "NONE");
+    }
+
+    if (productType === "FOOD") {
+      form.setValue("condition", "NEW");
+    }
+  }, [productType, form]);
+
+  const onSubmit: SubmitHandler<FormValues> = async (values) => {
+    setIsSubmitting(true);
+    try {
+      console.log("Submitting product:", values);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      toast.success("Product posted successfully!");
+      form.reset();
+      onClose();
+    } catch (error) {
+      toast.error("Failed to post product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="sm:max-w-150 max-h-[90vh] flex flex-col p-0 overflow-auto">
+        <DialogHeader className="p-6 pb-0">
+          <DialogTitle className="text-2xl font-bold">
+            Post New Item
+          </DialogTitle>
+          <DialogDescription>
+            Sell an item in the campus marketplace. Fill in the details below.
+          </DialogDescription>
+        </DialogHeader>
+
+        <ScrollArea className="flex-1 px-6 py-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-8 pb-4"
+          >
+            {/* Product Type */}
+            <ProductTypeSelector
+              value={productType}
+              onChange={(value) =>
+                form.setValue("type", value, { shouldValidate: true })
+              }
+            />
+
+            {/* Category */}
+            <CategorySelector
+              categories={categories}
+              selectedId={categoryId}
+              newCategoryName={form.watch("newCategoryName")}
+              onSelect={(id) =>
+                form.setValue("categoryId", id, { shouldValidate: true })
+              }
+              onNewCategoryChange={(name) =>
+                form.setValue("newCategoryName", name, {
+                  shouldValidate: true,
+                })
+              }
+              error={
+                form.formState.errors.categoryId?.message ||
+                form.formState.errors.newCategoryName?.message
+              }
+            />
+
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">
+                Basic Information
+              </h3>
+
+              <div>
+                <label className="text-sm font-medium">Product Name</label>
+                <Input required className="py-5" {...form.register("name")} />
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.name?.message}
+                </p>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium">Description</label>
+                <Textarea
+                  required
+                  className="resize-none h-24"
+                  {...form.register("description")}
+                />
+                <p className="text-sm text-red-500">
+                  {form.formState.errors.description?.message}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">Price (₱)</label>
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min={0.01}
+                    {...form.register("price")}
+                  />
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.price?.message}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium">Stock</label>
+                  <Input min={1} type="number" {...form.register("stock")} />
+                  <p className="text-sm text-red-500">
+                    {form.formState.errors.stock?.message}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Conditional Fields */}
+            <AnimatePresence mode="wait">
+              {productType === "FOOD" ? (
+                <FoodFields key="food" form={form} />
+              ) : (
+                <NonFoodFields key="non-food" form={form} />
+              )}
+            </AnimatePresence>
+
+            {/* Images */}
+            <ProductImageUpload
+              images={form.watch("images")}
+              onChange={(images) =>
+                form.setValue("images", images, { shouldValidate: true })
+              }
+              error={form.formState.errors.images?.message as string}
+            />
+          </form>
+        </ScrollArea>
+
+        <DialogFooter className="p-6 pt-2 border-t bg-muted/20">
+          <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
+            Cancel
+          </Button>
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            onClick={form.handleSubmit(onSubmit)}
+            className="min-w-30"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Posting...
+              </>
+            ) : (
+              "Post Product"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
