@@ -11,7 +11,7 @@ import useAuth from "@/contexts/AuthContext";
 
 const StartSellingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { authResponse } = useAuth();
+  const { authResponse, refreshToken } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { execute } = useMutation();
 
@@ -20,7 +20,7 @@ const StartSellingPage: React.FC = () => {
     if (isSeller) {
       navigate("/my-listings", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, authResponse]);
 
   const handleActivateSeller = async () => {
     setIsLoading(true);
@@ -29,6 +29,8 @@ const StartSellingPage: React.FC = () => {
       const response: ApiResponse<void> = await execute("auth/make-seller", {
         method: "POST",
       });
+      
+      await refreshToken();
       toast.success(response.message);
       navigate("/my-listings");
     } catch (error: any) {

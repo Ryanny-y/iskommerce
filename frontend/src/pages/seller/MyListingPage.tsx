@@ -72,7 +72,6 @@ const MOCK_CATEGORIES = [
 const MyListingsPage = () => {
   const { authResponse } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
 
@@ -100,9 +99,6 @@ const MyListingsPage = () => {
       return;
     }
 
-    // Simulate loading
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
   }, [navigate]);
 
   // const stats: SellerStats = useMemo(() => {
@@ -157,7 +153,7 @@ const MyListingsPage = () => {
           </div>
           <Button
             onClick={() => setIsPostDialogOpen(true)}
-            className="rounded-full bg-emerald-600 hover:bg-emerald-700 h-12 px-6 gap-2 shadow-lg shadow-emerald-200"
+            className="rounded-full bg-emerald-600 hover:bg-emerald-700 h-12 px-6 gap-2"
           >
             <Plus className="h-5 w-5" />
             Post Item
@@ -186,7 +182,7 @@ const MyListingsPage = () => {
             >
               <ListingsGrid
                 products={products.data}
-                isLoading={isLoading}
+                isLoading={productsLoading}
                 onEdit={(p) => {
                   setSelectedProduct(p);
                   setIsEditDialogOpen(true);

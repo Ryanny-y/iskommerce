@@ -10,6 +10,7 @@ import MarketplacePage from "@/pages/MarketPlacePage";
 import StartSellingPage from "@/pages/StartSellingPage";
 import MyListingsPage from "@/pages/seller/MyListingPage";
 import { CategoryProvider } from "@/contexts/CategoryContext";
+import ProductDetailsPage from "@/pages/ProductsDetailsPage";
 
 export default function AppRoutes() {
   return (
@@ -27,6 +28,7 @@ export default function AppRoutes() {
           {/* Marketplace Dashboard */}
           <Route element={<ProtectedLayout />}>
             <Route path="/dashboard" element={<MarketplacePage />} />
+            <Route path="/product/:id" element={<ProductDetailsPage />} />
 
             {/* Seller Routes */}
             <Route path="/start-selling" element={<StartSellingPage />} />

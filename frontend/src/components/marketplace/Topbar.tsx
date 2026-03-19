@@ -3,7 +3,6 @@ import {
   User,
   LogOut,
   Settings,
-  ShoppingBag,
   List,
   Package,
 } from "lucide-react";
@@ -46,7 +45,7 @@ export const Topbar = ({
           onClick={() => navigate("/dashboard")}
         >
           <img src={fatimaLogo} alt="Fatima Logo" className="h-full" />
-          <span className="text-lg sm:text-xl font-bold tracking-tight hidden xs:inline-block">
+          <span className="text-lg sm:text-xl font-bold tracking-tight xs:inline-block">
             Iskommerce
           </span>
         </div>
@@ -125,12 +124,6 @@ export const Topbar = ({
                 <List className="h-4 w-4" />
                 <span>My Listings</span>
               </DropdownMenuItem>
-
-              <DropdownMenuItem className="gap-2">
-                <ShoppingBag className="h-4 w-4" />
-                <span>Post Item</span>
-              </DropdownMenuItem>
-
               <DropdownMenuSeparator />
 
               <DropdownMenuItem className="gap-2">
