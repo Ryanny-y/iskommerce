@@ -12,10 +12,13 @@ import MyListingsPage from "@/pages/seller/MyListingPage";
 import { CategoryProvider } from "@/contexts/CategoryContext";
 import ProductDetailsPage from "@/pages/ProductsDetailsPage";
 
+import { CartProvider } from "@/contexts/CartContext";
+
 export default function AppRoutes() {
   return (
     <AuthProvider>
       <CategoryProvider>
+        <CartProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />
 
@@ -37,6 +40,7 @@ export default function AppRoutes() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </CartProvider>
       </CategoryProvider>
     </AuthProvider>
   );

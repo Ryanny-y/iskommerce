@@ -10,24 +10,17 @@ import {
   Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
+import { useCart } from "@/contexts/CartContext";
 
 interface ProductInfoProps {
   product: Product;
 }
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isAddingToCart] = useState(false);
   const [isChatting, setIsChatting] = useState(false);
-
-  const handleAddToCart = () => {
-    setIsAddingToCart(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsAddingToCart(false);
-      console.log("Added to cart:", product.name);
-    }, 1000);
-  };
+  const { addToCart } = useCart();
 
   const handleChatSeller = () => {
     setIsChatting(true);
@@ -88,7 +81,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button
           size="lg"
-          onClick={handleAddToCart}
+          onClick={() => addToCart(product)}
           disabled={isOutOfStock || isAddingToCart}
           className="h-14 flex-1 rounded-2xl bg-emerald-600 text-lg font-bold hover:bg-emerald-700 disabled:opacity-50 disabled:shadow-none"
         >
@@ -109,9 +102,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       <div className="flex items-center gap-2 text-sm text-neutral-500 pt-2">
         <Clock className="h-4 w-4" />
-        <span>
-          Posted on: {dayjs(product.createdAt).format("M/DD/YYYY")}
-        </span>
+        <span>Posted on: {dayjs(product.createdAt).format("M/DD/YYYY")}</span>
       </div>
     </div>
   );

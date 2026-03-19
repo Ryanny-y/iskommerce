@@ -4,7 +4,6 @@ import { Topbar } from '@/components/marketplace/Topbar';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfo } from '@/components/product/ProductInfo';
 import { ProductDetailsSection } from '@/components/product/ProductDetailsSection';
-import { SellerCard } from '@/components/product/SellerCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ChevronLeft, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +21,7 @@ const ProductDetailsPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Topbar cartItemCount={0} onCartClick={() => {}} onSearch={() => {}} />
+        <Topbar onSearch={() => {}} />
         <div className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             <div className="space-y-4">
@@ -64,7 +63,7 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Topbar cartItemCount={0} onCartClick={() => {}} onSearch={() => {}} />
+      <Topbar onSearch={() => {}} />
       
       <main className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
         {/* Back Button */}

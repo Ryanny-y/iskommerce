@@ -1,24 +1,20 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CategoryTabs } from "@/components/marketplace/CategoryTabs";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import type { CartItem, CartResponse, Product } from "@/types/marketplace";
+import type { Product } from "@/types/marketplace";
 import { Topbar } from "@/components/marketplace/Topbar";
 import { ProductGrid } from "@/components/marketplace/ProductGrid";
 import { ShoppingBag } from "lucide-react";
-import { toast } from "sonner";
 import fatimaLogo from "@/assets/FatimaLogo.png";
 import useFetchData from "@/hooks/useFetchData";
 import type { ApiResponse } from "@/types/common";
 import useIsLoggedIn from "@/hooks/useIsLoggedIn";
-import useMutation from "@/hooks/useMutation";
+import { useCart } from "@/contexts/CartContext";
 
 const MarketplacePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { execute } = useMutation();
   const [activeCategory, setActiveCategory] = useState("All");
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { addToCart } = useCart();
 
   useIsLoggedIn();
 
@@ -28,20 +24,6 @@ const MarketplacePage = () => {
     loading: productsLoading,
     error: productsError,
   } = useFetchData<ApiResponse<Product[]>>("products");
-
-  // TODO: Handle Products Error and Loading
-  const {
-    data: cartData,
-    loading: cartLoading,
-    error: cartError,
-    refetchData: refetchCart,
-  } = useFetchData<ApiResponse<CartResponse>>("cart");
-
-  useEffect(() => {
-    if (cartData && !cartLoading && !cartError) {
-      setCartItems(cartData.data?.items ?? []);
-    }
-  }, [cartData, cartLoading, cartError]);
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -64,76 +46,7 @@ const MarketplacePage = () => {
     return (productsData?.data ?? []).slice(0, 4);
   }, [productsData]);
 
-  const handleAddToCart = async (product: Product) => {
-    try {
-      await execute<{ cartItems: CartItem[]; type?: string }>(
-        "cart/items",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            productId: product.id,
-            quantity: 1,
-          }),
-        },
-      );
-
-      const existing = cartItems.find((item) => item.product.id === product.id);
-
-      if (existing) {
-        toast.success(`Increased ${product.name} quantity`);
-      } else {
-        toast.success(`Added ${product.name} to cart`);
-      }
-
-      refetchCart();
-    } catch {
-      toast.error("Failed to add to cart");
-    }
-  };
-
-  const handleUpdateQuantity = async (id: string, delta: number) => {
-    const item = cartItems.find((i) => i.id === id);
-    if (!item) return;
-
-    try {
-      const newQuantity = item.quantity + delta;
-
-      const response: ApiResponse<CartResponse> = await execute(
-        `cart/items/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            quantity: newQuantity,
-          }),
-        },
-      );
-
-      toast.success(response.message);
-      refetchCart();
-    } catch {
-      toast.error("Failed to update quantity");
-    }
-  };
-
-  const handleRemoveFromCart = async (id: string) => {
-    const item = cartItems.find((i) => i.id === id);
-    try {
-      const data: ApiResponse<void> = await execute(`cart/items/${id}`, {
-        method: "DELETE",
-      });
-
-      if (item) toast.success(data.message);
-      refetchCart();
-    } catch {
-      toast.error("Failed to remove item");
-    }
-  };
+  const handleAddToCart = async (product: Product) => addToCart(product);
 
   if (!productsData && productsLoading) return <div>Loading...</div>;
 
@@ -143,11 +56,7 @@ const MarketplacePage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Topbar
-        cartItemCount={cartItems?.reduce((acc, item) => acc + item.quantity, 0)}
-        onCartClick={() => setIsCartOpen(true)}
-        onSearch={setSearchQuery}
-      />
+      <Topbar onSearch={setSearchQuery} />
 
       <main className="flex-1 container mx-auto px-4 md:px-8 py-8 space-y-10">
         <section className="space-y-4">
@@ -204,14 +113,6 @@ const MarketplacePage = () => {
           </motion.div>
         </AnimatePresence>
       </main>
-
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemove={handleRemoveFromCart}
-      />
 
       <footer className="border-t py-8 bg-secondary/10">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4">

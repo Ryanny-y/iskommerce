@@ -20,21 +20,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import useAuth from "@/contexts/AuthContext";
 import fatimaLogo from "@/assets/FatimaLogo.png";
+import { useCart } from "@/contexts/CartContext";
+
 import { useNavigate } from "react-router-dom";
 
 interface TopbarProps {
-  cartItemCount: number;
-  onCartClick: () => void;
   onSearch: (query: string) => void;
 }
 
-export const Topbar = ({
-  cartItemCount,
-  onCartClick,
-  onSearch,
-}: TopbarProps) => {
+export const Topbar = ({ onSearch }: TopbarProps) => {
   const { authResponse } = useAuth();
   const navigate = useNavigate();
+  const { totalItems, openCart } = useCart();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 py-2">
@@ -66,7 +63,7 @@ export const Topbar = ({
             <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
           </Button>
 
-          <CartButton itemCount={cartItemCount} onClick={onCartClick} />
+          <CartButton itemCount={totalItems} onClick={openCart} />
 
           {/* Avatar Dropdown */}
           <DropdownMenu>
