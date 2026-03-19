@@ -23,6 +23,7 @@ interface CartContextType {
   updateQuantity: (id: string, delta: number) => Promise<void>;
   removeFromCart: (id: string) => Promise<void>;
   totalItems: number;
+  subtotal: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -105,7 +106,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       toast.error("Failed to remove item");
     }
   };
-
+  
+  const subtotal = useMemo(() => {
+    return cartItems.reduce(
+      (acc, item) => acc + (item.product?.price ?? 0) * item.quantity,
+      0,
+    );
+  }, [cartItems]);
   return (
     <CartContext.Provider
       value={{
@@ -118,6 +125,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updateQuantity,
         removeFromCart,
         totalItems: cartItems.reduce((acc, item) => acc + item.quantity, 0),
+        subtotal
       }}
     >
       {children}

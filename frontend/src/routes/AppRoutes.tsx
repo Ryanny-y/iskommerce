@@ -13,33 +13,35 @@ import { CategoryProvider } from "@/contexts/CategoryContext";
 import ProductDetailsPage from "@/pages/ProductsDetailsPage";
 
 import { CartProvider } from "@/contexts/CartContext";
+import CheckoutPage from "@/pages/CheckoutPage";
 
 export default function AppRoutes() {
   return (
     <AuthProvider>
       <CategoryProvider>
         <CartProvider>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
 
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/verify" element={<VerificationPage />} />
-          </Route>
+            <Route element={<AuthLayout />}>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/verify" element={<VerificationPage />} />
+            </Route>
 
-          {/* Marketplace Dashboard */}
-          <Route element={<ProtectedLayout />}>
-            <Route path="/dashboard" element={<MarketplacePage />} />
-            <Route path="/product/:id" element={<ProductDetailsPage />} />
+            {/* Marketplace Dashboard */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/dashboard" element={<MarketplacePage />} />
+              <Route path="/product/:id" element={<ProductDetailsPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
 
-            {/* Seller Routes */}
-            <Route path="/start-selling" element={<StartSellingPage />} />
-            <Route path="/my-listings" element={<MyListingsPage />} />
-          </Route>
+              {/* Seller Routes */}
+              <Route path="/start-selling" element={<StartSellingPage />} />
+              <Route path="/my-listings" element={<MyListingsPage />} />
+            </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
         </CartProvider>
       </CategoryProvider>
     </AuthProvider>

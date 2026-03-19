@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CartItem } from "./CartItem";
+import { useNavigate } from "react-router-dom";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -27,8 +28,12 @@ export const CartDrawer = ({
   onUpdateQuantity,
   onRemove,
 }: CartDrawerProps) => {
-  if(!items) return;
-  const subtotal = items.reduce((acc, item) => acc + (item.product?.price ?? 0) * item.quantity, 0);
+  if (!items) return;
+  const subtotal = items.reduce(
+    (acc, item) => acc + (item.product?.price ?? 0) * item.quantity,
+    0,
+  );
+  const navigate = useNavigate();
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
@@ -87,7 +92,13 @@ export const CartDrawer = ({
               <p className="text-xs text-muted-foreground">
                 Shipping and taxes calculated at checkout.
               </p>
-              <Button className="w-full rounded-full h-12 text-base font-bold gap-2">
+              <Button
+                onClick={() => {
+                  navigate("/checkout");
+                  onClose();
+                }}
+                className="w-full rounded-full h-12 text-base font-bold gap-2"
+              >
                 Checkout
                 <ArrowRight className="h-5 w-5" />
               </Button>

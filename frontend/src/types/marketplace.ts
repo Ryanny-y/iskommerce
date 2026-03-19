@@ -38,7 +38,7 @@ export interface Product {
   createdAt: string;
 }
 
-type CartProduct = Pick<Product, "id" | "name" | "price" | "stock"> & {
+type CartProduct = Pick<Product, "id" | "name" | "price" | "stock" | "sellerId" | "seller"> & {
   images: { url: string }[];
 };
 

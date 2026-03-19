@@ -11,6 +11,12 @@ export const getCart = async (userId: string): Promise<CartDto> => {
           product: {
             include: {
               images: true,
+              seller: {
+                select: {
+                  id: true,
+                  fullName: true,
+                },
+              },
             },
           },
         },
@@ -27,6 +33,12 @@ export const getCart = async (userId: string): Promise<CartDto> => {
             product: {
               include: {
                 images: true,
+                seller: {
+                  select: {
+                    id: true,
+                    fullName: true,
+                  },
+                },
               },
             },
           },
@@ -89,6 +101,10 @@ export const addToCart = async (
     },
   });
 
+  if (!updatedCart) {
+    throw new Error("Cart not found after update");
+  }
+
   return mapCartToDto(updatedCart);
 };
 
@@ -118,6 +134,10 @@ export const updateCartItem = async (
       },
     },
   });
+
+  if (!updatedCart) {
+    throw new Error("Cart not found after update");
+  }
 
   return mapCartToDto(updatedCart);
 };
