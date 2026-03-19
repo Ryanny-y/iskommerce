@@ -81,6 +81,7 @@ const MyListingsPage = () => {
     data: products,
     loading: productsLoading,
     error: productsError,
+    refetchData: refetchProducts
   } = useFetchData<ApiResponse<Product[]>>(`products/my-listings`);
 
   // Dialog States
@@ -205,6 +206,7 @@ const MyListingsPage = () => {
 
       {/* Dialogs */}
       <PostProductDialog
+        refetchProducts={refetchProducts}
         isOpen={isPostDialogOpen}
         onClose={() => setIsPostDialogOpen(false)}
         categories={MOCK_CATEGORIES}

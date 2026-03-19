@@ -25,6 +25,7 @@ import { Loader2 } from "lucide-react";
 import useMutation from "@/hooks/useMutation";
 import type { ApiResponse } from "@/types/common";
 import type { Product } from "@/types/marketplace";
+import useCategory from "@/contexts/CategoryContext";
 
 const formSchema = z
   .object({
@@ -37,13 +38,13 @@ const formSchema = z
     newCategoryName: z.string().optional(),
     food_notes: z.string().optional(),
     allergen_info: z.string().optional(),
-    spicy_level: z.enum(["NONE", "MILD", "MEDIUM", "HOT"]).default("NONE"),
-    condition: z.enum(["NEW", "USED"]).default("NEW"),
+    spicy_level: z.enum(["NONE", "MILD", "MEDIUM", "HOT"]).optional(),
+    condition: z.enum(["NEW", "USED"]).optional(),
     images: z.array(z.instanceof(File)).min(1),
   })
   .refine(
     (data) =>
-      data.categoryId !== "other" ||
+      data.categoryId !== "OTHER" ||
       (data.newCategoryName && data.newCategoryName.trim() !== ""),
     { path: ["newCategoryName"], message: "New category name is required" },
   )
@@ -55,17 +56,21 @@ const formSchema = z
 type FormInput = z.input<typeof formSchema>;
 
 interface PostProductDialogProps {
+  refetchProducts: () => void;
   isOpen: boolean;
   onClose: () => void;
   categories: Category[];
 }
 
 export const PostProductDialog = ({
+  refetchProducts,
   isOpen,
   onClose,
 }: PostProductDialogProps) => {
   const { execute } = useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { categories, refetchData: refetchCategories } = useCategory();
 
   const form = useForm<FormInput>({
     resolver: zodResolver(formSchema),
@@ -80,8 +85,8 @@ export const PostProductDialog = ({
       newCategoryName: "",
       food_notes: "",
       allergen_info: "",
-      spicy_level: "NONE",
-      condition: "NEW",
+      spicy_level: undefined,
+      condition: undefined,
       images: [],
     },
   });
@@ -93,17 +98,21 @@ export const PostProductDialog = ({
     if (productType === "NON_FOOD") {
       form.resetField("food_notes");
       form.resetField("allergen_info");
-      form.setValue("spicy_level", "NONE");
+      form.resetField("spicy_level");
+
+      form.setValue("condition", "NEW");
     }
 
     if (productType === "FOOD") {
       form.setValue("condition", "NEW");
+
+      form.setValue("food_notes", "");
+      form.setValue("allergen_info", "");
+      form.setValue("spicy_level", "NONE");
     }
   }, [productType, form]);
 
   const onSubmit: SubmitHandler<FormInput> = async (values) => {
-    console.log("submitting");
-    
     const parsed = formSchema.parse(values);
     setIsSubmitting(true);
 
@@ -127,11 +136,12 @@ export const PostProductDialog = ({
         if (parsed.allergen_info)
           formData.append("allergen_info", parsed.allergen_info);
 
-        formData.append("spicy_level", parsed.spicy_level);
+        if (parsed.spicy_level)
+          formData.append("spicy_level", parsed.spicy_level);
       }
 
       if (parsed.type === "NON_FOOD") {
-        formData.append("condition", parsed.condition);
+        if (parsed.condition) formData.append("condition", parsed.condition);
       }
 
       // Images
@@ -147,6 +157,8 @@ export const PostProductDialog = ({
       toast.success(response.message);
       form.reset();
       onClose();
+      await refetchProducts();
+      refetchCategories();
     } catch (error) {
       console.error(error);
       toast.error("Failed to post product. Please try again.");
@@ -182,6 +194,7 @@ export const PostProductDialog = ({
 
             {/* Category */}
             <CategorySelector
+              categories={categories}
               selectedId={categoryId}
               newCategoryName={form.watch("newCategoryName")}
               onSelect={(id) =>
@@ -205,7 +218,9 @@ export const PostProductDialog = ({
               </h3>
 
               <div>
-                <label className="text-sm font-medium">Product Name <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium">
+                  Product Name <span className="text-red-500">*</span>
+                </label>
                 <Input required className="py-5" {...form.register("name")} />
                 <p className="text-sm text-red-500">
                   {form.formState.errors.name?.message}
@@ -213,7 +228,9 @@ export const PostProductDialog = ({
               </div>
 
               <div>
-                <label className="text-sm font-medium">Description <span className="text-red-500">*</span></label>
+                <label className="text-sm font-medium">
+                  Description <span className="text-red-500">*</span>
+                </label>
                 <Textarea
                   required
                   className="resize-none h-24"
@@ -226,7 +243,9 @@ export const PostProductDialog = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium">Price (₱) <span className="text-red-500">*</span></label>
+                  <label className="text-sm font-medium">
+                    Price (₱) <span className="text-red-500">*</span>
+                  </label>
                   <Input
                     type="number"
                     step="0.01"
@@ -239,7 +258,9 @@ export const PostProductDialog = ({
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium">Stock <span className="text-red-500">*</span></label>
+                  <label className="text-sm font-medium">
+                    Stock <span className="text-red-500">*</span>
+                  </label>
                   <Input min={1} type="number" {...form.register("stock")} />
                   <p className="text-sm text-red-500">
                     {form.formState.errors.stock?.message}

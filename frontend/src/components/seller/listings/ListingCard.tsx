@@ -36,7 +36,7 @@ export const ListingCard = ({
         <img
           src={product.images[0].url}
           alt={product.name}
-          className="w-full object-cover transition-transform group-hover:scale-10 h-full"
+          className="w-full object-cover transition-transform group-hover:scale-105 h-full"
           referrerPolicy="no-referrer"
         />
         <Badge
@@ -46,7 +46,7 @@ export const ListingCard = ({
           )}
           variant="secondary"
         >
-          {/* {statusLabels[product.status]} */}
+          {product.category}
         </Badge>
       </div>
       <CardContent className="p-4 space-y-3">
