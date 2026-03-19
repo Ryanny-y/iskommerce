@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import fatimaLogo from "@/assets/FatimaLogo.png";
+import { Menu } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet";
 
 export default function Navbar() {
   return (
@@ -17,7 +26,8 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-3">
+        {/* Large Screen */}
+        <div className="hidden sm:flex items-center gap-3">
           <Link to="/dashboard">
             <Button
               variant="ghost"
@@ -39,6 +49,49 @@ export default function Navbar() {
               Sign Up
             </Button>
           </Link>
+        </div>
+
+        <div className="flex sm:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="p-2">
+                <Menu className="w-6 h-6 text-neutral-800" />
+              </button>
+            </SheetTrigger>
+
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>Navigate through the app</SheetDescription>
+              </SheetHeader>
+
+              <div className="grid gap-4 px-4 mt-4">
+                <Link to="/dashboard">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-neutral-600 hover:text-emerald-600 py-6"
+                  >
+                    Marketplace
+                  </Button>
+                </Link>
+
+                <Link to="/login">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-neutral-600 hover:text-emerald-600 py-6"
+                  >
+                    Log in
+                  </Button>
+                </Link>
+
+                <Link to="/signup">
+                  <Button className="w-full bg-emerald-600 py-6 hover:bg-emerald-700 text-white rounded-full">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>

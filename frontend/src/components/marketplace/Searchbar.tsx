@@ -8,7 +8,7 @@ interface SearchBarProps {
 
 export const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   return (
-    <div className="relative w-full max-w-md lg:max-w-xl mx-4">
+    <div className="relative w-full mx-4">
       <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
         <Search className="h-4 w-4 text-muted-foreground" />
       </div>
