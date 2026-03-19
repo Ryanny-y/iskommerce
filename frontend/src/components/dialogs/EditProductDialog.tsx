@@ -14,11 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ProductTypeSelector } from "./ProductTypeSelector";
-import {  CategorySelector} from "./CategorySelector";
-import { FoodFields } from "./FoodFields";
-import { NonFoodFields } from "./NonFoodFields";
-import { ProductImageUpload } from "../product/ProductImageUpload";
 import { AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -26,6 +21,10 @@ import useMutation from "@/hooks/useMutation";
 import type { ApiResponse } from "@/types/common";
 import type { Product } from "@/types/marketplace";
 import useCategory from "@/contexts/CategoryContext";
+import { CategorySelector } from "../seller/CategorySelector";
+import { ProductTypeSelector } from "../seller/ProductTypeSelector";
+import { FoodFields } from "../seller/FoodFields";
+import { NonFoodFields } from "../seller/NonFoodFields";
 
 const formSchema = z
   .object({
@@ -40,7 +39,7 @@ const formSchema = z
     allergen_info: z.string().optional(),
     spicy_level: z.enum(["NONE", "MILD", "MEDIUM", "HOT"]).optional(),
     condition: z.enum(["NEW", "USED"]).optional(),
-    images: z.array(z.instanceof(File)).min(1),
+    images: z.array(z.instanceof(File)).optional(), // 👈 optional for edit
   })
   .refine(
     (data) =>
@@ -55,20 +54,21 @@ const formSchema = z
 
 type FormInput = z.input<typeof formSchema>;
 
-interface PostProductDialogProps {
+interface EditProductProps {
+  product: Product | null;
   refetchProducts: () => void;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const PostProductDialog = ({
+export const EditProduct = ({
+  product,
   refetchProducts,
   isOpen,
   onClose,
-}: PostProductDialogProps) => {
+}: EditProductProps) => {
   const { execute } = useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const { categories, refetchData: refetchCategories } = useCategory();
 
   const form = useForm<FormInput>({
@@ -94,17 +94,35 @@ export const PostProductDialog = ({
   const categoryId = form.watch("categoryId");
 
   useEffect(() => {
+    if (!product) return;
+
+    form.reset({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      type: product.type,
+      categoryId: product.categoryId,
+      newCategoryName: "",
+      food_notes: product.food_notes || "",
+      allergen_info: product.allergen_info || "",
+      spicy_level: product.spicy_level || undefined,
+      condition: product.condition || undefined,
+      images: [],
+    });
+  }, [product, form]);
+
+  // SAME LOGIC AS CREATE
+  useEffect(() => {
     if (productType === "NON_FOOD") {
       form.resetField("food_notes");
       form.resetField("allergen_info");
       form.resetField("spicy_level");
-
       form.setValue("condition", "NEW");
     }
 
     if (productType === "FOOD") {
       form.setValue("condition", "NEW");
-
       form.setValue("food_notes", "");
       form.setValue("allergen_info", "");
       form.setValue("spicy_level", "NONE");
@@ -112,6 +130,8 @@ export const PostProductDialog = ({
   }, [productType, form]);
 
   const onSubmit: SubmitHandler<FormInput> = async (values) => {
+    if (!product) return;
+
     const parsed = formSchema.parse(values);
     setIsSubmitting(true);
 
@@ -125,7 +145,6 @@ export const PostProductDialog = ({
       formData.append("type", parsed.type);
       formData.append("categoryId", parsed.categoryId);
 
-      // Safe optional fields
       if (parsed.newCategoryName) {
         formData.append("newCategoryName", parsed.newCategoryName);
       }
@@ -134,7 +153,6 @@ export const PostProductDialog = ({
         if (parsed.food_notes) formData.append("food_notes", parsed.food_notes);
         if (parsed.allergen_info)
           formData.append("allergen_info", parsed.allergen_info);
-
         if (parsed.spicy_level)
           formData.append("spicy_level", parsed.spicy_level);
       }
@@ -143,15 +161,20 @@ export const PostProductDialog = ({
         if (parsed.condition) formData.append("condition", parsed.condition);
       }
 
-      // Images
-      parsed.images.forEach((file) => {
-        formData.append("image", file);
-      });
+      // OPTIONAL IMAGES (only if user adds new ones)
+      if (parsed.images && parsed.images.length > 0) {
+        parsed.images.forEach((file) => {
+          formData.append("image", file);
+        });
+      }
 
-      const response: ApiResponse<Product> = await execute("products", {
-        method: "POST",
-        body: formData,
-      });
+      const response: ApiResponse<Product> = await execute(
+        `products/${product.id}`,
+        {
+          method: "PATCH",
+          body: formData,
+        },
+      );
 
       toast.success(response.message);
       form.reset();
@@ -160,7 +183,7 @@ export const PostProductDialog = ({
       refetchCategories();
     } catch (error) {
       console.error(error);
-      toast.error("Failed to post product. Please try again.");
+      toast.error("Failed to update product.");
     } finally {
       setIsSubmitting(false);
     }
@@ -170,11 +193,9 @@ export const PostProductDialog = ({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-150 max-h-[90vh] flex flex-col p-0 overflow-auto">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl font-bold">
-            Post New Item
-          </DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Edit Product</DialogTitle>
           <DialogDescription>
-            Sell an item in the campus marketplace. Fill in the details below.
+            Update your product details below.
           </DialogDescription>
         </DialogHeader>
 
@@ -183,7 +204,6 @@ export const PostProductDialog = ({
             onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-8 pb-4"
           >
-            {/* Product Type */}
             <ProductTypeSelector
               value={productType}
               onChange={(value) =>
@@ -191,7 +211,6 @@ export const PostProductDialog = ({
               }
             />
 
-            {/* Category */}
             <CategorySelector
               categories={categories}
               selectedId={categoryId}
@@ -210,7 +229,7 @@ export const PostProductDialog = ({
               }
             />
 
-            {/* Basic Info */}
+            {/* SAME UI BELOW (UNCHANGED) */}
             <div className="space-y-4">
               <h3 className="text-sm font-semibold text-primary uppercase tracking-wider">
                 Basic Information
@@ -220,10 +239,7 @@ export const PostProductDialog = ({
                 <label className="text-sm font-medium">
                   Product Name <span className="text-red-500">*</span>
                 </label>
-                <Input required className="py-5" {...form.register("name")} />
-                <p className="text-sm text-red-500">
-                  {form.formState.errors.name?.message}
-                </p>
+                <Input className="py-5" {...form.register("name")} />
               </div>
 
               <div>
@@ -231,13 +247,9 @@ export const PostProductDialog = ({
                   Description <span className="text-red-500">*</span>
                 </label>
                 <Textarea
-                  required
                   className="resize-none h-24"
                   {...form.register("description")}
                 />
-                <p className="text-sm text-red-500">
-                  {form.formState.errors.description?.message}
-                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -268,7 +280,6 @@ export const PostProductDialog = ({
               </div>
             </div>
 
-            {/* Conditional Fields */}
             <AnimatePresence mode="wait">
               {productType === "FOOD" ? (
                 <FoodFields key="food" form={form} />
@@ -276,15 +287,6 @@ export const PostProductDialog = ({
                 <NonFoodFields key="non-food" form={form} />
               )}
             </AnimatePresence>
-
-            {/* Images */}
-            <ProductImageUpload
-              images={form.watch("images")}
-              onChange={(images) =>
-                form.setValue("images", images, { shouldValidate: true })
-              }
-              error={form.formState.errors.images?.message as string}
-            />
           </form>
         </ScrollArea>
 
@@ -293,19 +295,14 @@ export const PostProductDialog = ({
             Cancel
           </Button>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting || !form.formState.isValid}
-            onClick={form.handleSubmit(onSubmit)}
-            className="min-w-30"
-          >
+          <Button onClick={form.handleSubmit(onSubmit)} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Posting...
+                Updating...
               </>
             ) : (
-              "Post Product"
+              "Update Product"
             )}
           </Button>
         </DialogFooter>
@@ -313,3 +310,5 @@ export const PostProductDialog = ({
     </Dialog>
   );
 };
+
+export default EditProduct;

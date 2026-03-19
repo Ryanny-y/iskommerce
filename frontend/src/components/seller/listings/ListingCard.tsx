@@ -8,7 +8,7 @@ import type { Product } from "@/types/marketplace";
 interface ListingCardProps {
   product: Product;
   onEdit: (product: Product) => void;
-  onDelete: (id: string) => void;
+  onDelete: (product: Product) => void;
   onView: (id: string) => void;
 }
 
@@ -18,20 +18,20 @@ export const ListingCard = ({
   onDelete,
   onView,
 }: ListingCardProps) => {
-  const statusColors = {
-    active: "bg-emerald-100 text-emerald-700 border-emerald-200",
-    sold: "bg-blue-100 text-blue-700 border-blue-200",
-    out_of_stock: "bg-red-100 text-red-700 border-red-200",
-  };
+  // const statusColors = {
+  //   active: "bg-emerald-100 text-emerald-700 border-emerald-200",
+  //   sold: "bg-blue-100 text-blue-700 border-blue-200",
+  //   out_of_stock: "bg-red-100 text-red-700 border-red-200",
+  // };
 
-  const statusLabels = {
-    active: "Active",
-    sold: "Sold",
-    out_of_stock: "Out of Stock",
-  };
+  // const statusLabels = {
+  //   active: "Active",
+  //   sold: "Sold",
+  //   out_of_stock: "Out of Stock",
+  // };
 
   return (
-    <Card className="overflow-hidden group hover:shadow-md transition-shadow">
+    <Card className="overflow-hidden group hover:shadow-md transition-shadow pt-0">
       <div className="relative aspect-square overflow-hidden bg-muted h-60">
         <img
           src={product.images[0].url}
@@ -79,7 +79,7 @@ export const ListingCard = ({
             variant="outline"
             size="sm"
             className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
-            onClick={() => onDelete(product.id)}
+            onClick={() => onDelete(product)}
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Delete</span>

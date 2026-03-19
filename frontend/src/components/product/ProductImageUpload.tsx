@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { X, Upload } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { X, Upload } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ProductImageUploadProps {
   images: File[];
@@ -10,11 +10,11 @@ interface ProductImageUploadProps {
   error?: string;
 }
 
-export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
+export const ProductImageUpload = ({
   images,
   onChange,
-  error
-}) => {
+  error,
+}: ProductImageUploadProps) => {
   const [previews, setPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,8 +26,8 @@ export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
     onChange(newImages);
 
     // Create previews
-    const newPreviews = files.map(file => URL.createObjectURL(file as Blob));
-    setPreviews(prev => [...prev, ...newPreviews]);
+    const newPreviews = files.map((file) => URL.createObjectURL(file as Blob));
+    setPreviews((prev) => [...prev, ...newPreviews]);
   };
 
   const removeImage = (index: number) => {
@@ -42,14 +42,19 @@ export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      <Label className={cn(error && "text-destructive")}>Product Images <span className="text-red-500">*</span></Label>
-      
+      <Label className={cn(error && "text-destructive")}>
+        Product Images <span className="text-red-500">*</span>
+      </Label>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {previews.map((preview, index) => (
-          <div key={index} className="relative aspect-square rounded-lg overflow-hidden border bg-muted group">
-            <img 
-              src={preview} 
-              alt={`Preview ${index}`} 
+          <div
+            key={index}
+            className="relative aspect-square rounded-lg overflow-hidden border bg-muted group"
+          >
+            <img
+              src={preview}
+              alt={`Preview ${index}`}
               className="h-full w-full object-cover"
             />
             <button
@@ -61,13 +66,15 @@ export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
             </button>
           </div>
         ))}
-        
+
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           className={cn(
             "aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 hover:bg-muted/50 transition-colors",
-            error ? "border-destructive text-destructive" : "border-muted-foreground/25 text-muted-foreground"
+            error
+              ? "border-destructive text-destructive"
+              : "border-muted-foreground/25 text-muted-foreground",
           )}
         >
           <Upload className="h-6 w-6" />
@@ -83,7 +90,7 @@ export const ProductImageUpload: React.FC<ProductImageUploadProps> = ({
         className="hidden"
         onChange={handleFileChange}
       />
-      
+
       {error && <p className="text-xs font-medium text-destructive">{error}</p>}
     </div>
   );

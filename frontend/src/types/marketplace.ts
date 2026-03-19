@@ -20,11 +20,13 @@ export interface Product {
   stock: number;
   rating: number;
 
+  type: "FOOD" | "NON_FOOD";
+
   food_notes?: string;
   allergen_info?: string;
-  spicy_level?: string;
+  spicy_level?: "NONE" | "MILD" | "MEDIUM" | "HOT";
 
-  condition?: string;
+  condition?: "NEW" | "USED";
 
   sellerId: string;
   seller: string;

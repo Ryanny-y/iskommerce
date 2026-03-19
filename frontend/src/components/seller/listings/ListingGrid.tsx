@@ -8,7 +8,7 @@ interface ListingsGridProps {
   products: Product[];
   isLoading: boolean;
   onEdit: (product: Product) => void;
-  onDelete: (id: string) => void;
+  onDelete: (product: Product) => void;
   onView: (id: string) => void;
   onPostFirst: () => void;
 }
