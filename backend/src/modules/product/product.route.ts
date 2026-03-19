@@ -21,6 +21,8 @@ router.post(
 
 router.get("/", verifyJwt, productController.getAllProducts);
 
+router.get("/:productId", verifyJwt, productController.getProductById);
+
 router.get("/my-listings", verifyJwt, productController.getSellerProducts);
 
 router.patch(

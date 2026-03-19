@@ -193,6 +193,29 @@ export const getAllProducts = async (): Promise<ProductDto[]> => {
   return products.map((product) => mapProductToDto(product));
 };
 
+export const getProductById = async (id: string): Promise<ProductDto> => {
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: {
+      images: true,
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  return mapProductToDto(product);
+};
+
 export const deleteProduct = async (userId: string, productId: string) => {
   const product = await prisma.product.findUnique({
     where: { id: productId },
