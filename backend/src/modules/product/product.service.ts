@@ -14,6 +14,31 @@ export const createProduct = async (
   files: Express.Multer.File[],
 ): Promise<ProductDto> => {
   const createdProduct = await prisma.$transaction(async (tx) => {
+    let categoryId = data.categoryId;
+    
+    const foundCategory = await prisma.category.findUnique({
+      where: {
+        id: data.categoryId,
+      },
+    });
+
+    if (!foundCategory) {
+      if (data.categoryId === "OTHER" && data.newCategoryName) {
+        const newCategory = await tx.category.create({
+          data: {
+            name: data.newCategoryName,
+          },
+          select: {
+            id: true,
+          },
+        });
+
+        categoryId = newCategory.id;
+      } else {
+        throw new Error("Invalid categoryId");
+      }
+    }
+
     const newProduct = await tx.product.create({
       data: {
         name: data.name,
@@ -21,7 +46,7 @@ export const createProduct = async (
         price: Number(data.price),
         stock: Number(data.stock),
         sellerId,
-        categoryId: data.categoryId,
+        categoryId,
         type: data.type,
         food_notes: data.food_notes ?? null,
         allergen_info: data.allergen_info ?? null,
@@ -180,7 +205,7 @@ export const deleteProduct = async (userId: string, productId: string) => {
 
   try {
     await prisma.$transaction(async (tx) => {
-      await Promise.all(product.images.map(img => deleteFile(img.key)));
+      await Promise.all(product.images.map((img) => deleteFile(img.key)));
 
       await tx.product.delete({ where: { id: productId } });
     });

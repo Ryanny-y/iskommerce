@@ -8,8 +8,11 @@ export const createProductBodySchema = z.object({
     description: z.string().min(1),
     price: z.coerce.number().min(0.01),
     stock: z.coerce.number().min(1),
-    categoryId: z.uuid(),
+    categoryId: z.string(),
     type: z.enum(ItemType),
+
+    // New Category
+    newCategoryName: z.string().optional(),
 
     // FOR FOOD
     food_notes: z.string().optional(),
