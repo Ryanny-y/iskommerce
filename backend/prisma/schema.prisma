@@ -51,6 +51,21 @@ enum ProductCondition {
   USED
 }
 
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  CASH
+  GCASH
+  CARD
+}
+
+// SCHEMA
+
 model User {
   id        String     @id @default(uuid())
   fullName  String
@@ -68,8 +83,10 @@ model User {
   verificationCodeHash    String?
   verificationCodeExpires DateTime?
 
+  buyerOrders  Order[] @relation("BuyerOrders")
+  sellerOrders Order[] @relation("SellerOrders")
+
   products      Product[]
-  orders        Order[]
   reviews       Review[]
   notifications Notification[]
 
@@ -164,21 +181,47 @@ model CartItem {
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 }
 
 model Order {
   id     String      @id @default(uuid())
   status OrderStatus @default(PENDING)
 
+  // Relations
   buyerId String
-  buyer   User   @relation(fields: [buyerId], references: [id])
+  buyer   User   @relation("BuyerOrders", fields: [buyerId], references: [id])
 
-  total     Float
-  createdAt DateTime @default(now())
+  sellerId String
+  seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
+
+  // Payment
+  paymentStatus PaymentStatus  @default(PENDING)
+  paymentMethod PaymentMethod?
+
+  // Money 
+  total Float
+
+  // Pickup (SNAPSHOT of seller info)
+  pickupLocation String
+  pickupNotes    String?
+  pickupTime     DateTime?
 
   items OrderItem[]
 
+  // Tracking
+  createdAt    DateTime  @default(now())
+  acceptedAt   DateTime?
+  preparedAt   DateTime?
+  completedAt  DateTime?
+  cancelledAt  DateTime?
+  cancelReason String?
+
   @@index([status])
+  @@index([buyerId])
+  @@index([sellerId])
+  @@index([createdAt])
 }
 
 model OrderItem {
@@ -187,8 +230,12 @@ model OrderItem {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
 
-  productId String
-  product   Product @relation(fields: [productId], references: [id])
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+
+  // SNAPSHOT (important!)
+  productName     String
+  productImageUrl String?
 
   quantity Int
   price    Float
@@ -206,6 +253,8 @@ model Review {
   product   Product @relation(fields: [productId], references: [id])
 
   createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }
 
 model ChatConversation {

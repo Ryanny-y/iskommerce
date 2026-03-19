@@ -139,9 +139,6 @@ export const refreshToken = async (
   refreshToken: string,
 ): Promise<AuthResponseDto> => {
   let payload: any;
-  console.log(refreshToken);
-  
-
   try {
     payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!);
   } catch {

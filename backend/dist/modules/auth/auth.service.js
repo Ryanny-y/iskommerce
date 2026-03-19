@@ -106,7 +106,6 @@ const login = async (data) => {
 exports.login = login;
 const refreshToken = async (refreshToken) => {
     let payload;
-    console.log(refreshToken);
     try {
         payload = jsonwebtoken_1.default.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     }
