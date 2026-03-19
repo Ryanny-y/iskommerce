@@ -28,6 +28,7 @@ router.get("/:productId", verifyJwt, productController.getProductById);
 router.patch(
   "/:productId",
   verifyJwt,
+  upload.array('image'),
   validate(updateProductSchema),
   productController.updateProduct,
 );

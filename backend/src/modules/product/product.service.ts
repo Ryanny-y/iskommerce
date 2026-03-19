@@ -15,7 +15,7 @@ export const createProduct = async (
 ): Promise<ProductDto> => {
   const createdProduct = await prisma.$transaction(async (tx) => {
     let categoryId = data.categoryId;
-    
+
     const foundCategory = await prisma.category.findUnique({
       where: {
         id: data.categoryId,
@@ -124,8 +124,6 @@ export const getSellerProducts = async (
     },
   });
 
-  console.log(products);
-  
   return products.map((product) => mapProductToDto(product));
 };
 
@@ -133,41 +131,70 @@ export const updateProduct = async (
   productId: string,
   data: UpdateProductDto,
 ): Promise<ProductDto> => {
-  // Build Prisma-compatible update object
-  const prismaData: Prisma.ProductUpdateInput = {};
+  const updatedProduct = await prisma.$transaction(async (tx) => {
+    let prismaData: Prisma.ProductUpdateInput = {};
 
-  if (data.name !== undefined) prismaData.name = { set: data.name };
-  if (data.description !== undefined)
-    prismaData.description = { set: data.description };
-  if (data.price !== undefined) prismaData.price = { set: data.price };
-  if (data.stock !== undefined) prismaData.stock = { set: data.stock };
-  if (data.food_notes !== undefined)
-    prismaData.food_notes = { set: data.food_notes };
-  if (data.allergen_info !== undefined)
-    prismaData.allergen_info = { set: data.allergen_info };
-  if (data.spicy_level !== undefined)
-    prismaData.spicy_level = { set: data.spicy_level };
-  if (data.condition !== undefined)
-    prismaData.condition = { set: data.condition };
+    if (data.name !== undefined) prismaData.name = { set: data.name };
+    if (data.description !== undefined)
+      prismaData.description = { set: data.description };
+    if (data.type !== undefined) prismaData.type = { set: data.type };
+    if (data.price !== undefined)
+      prismaData.price = { set: Number(data.price) };
+    if (data.stock !== undefined)
+      prismaData.stock = { set: Number(data.stock) };
 
-  const updatedProduct = await prisma.product.update({
-    where: { id: productId },
-    data: prismaData,
-    include: {
-      images: true,
-      seller: {
-        select: {
-          id: true,
-          fullName: true,
-        },
+    if (data.food_notes !== undefined)
+      prismaData.food_notes = { set: data.food_notes };
+    if (data.allergen_info !== undefined)
+      prismaData.allergen_info = { set: data.allergen_info };
+    if (data.spicy_level !== undefined)
+      prismaData.spicy_level = { set: data.spicy_level };
+
+    if (data.condition !== undefined)
+      prismaData.condition = { set: data.condition };
+
+    if (data.type === "FOOD") {
+      prismaData.condition = { set: null };
+    } else if (data.type === "NON_FOOD") {
+      prismaData.food_notes = { set: null };
+      prismaData.allergen_info = { set: null };
+      prismaData.spicy_level = { set: null };
+
+      if (!data.condition) prismaData.condition = { set: "NEW" };
+    }
+
+    if (data.categoryId !== undefined) {
+      let categoryId = data.categoryId;
+
+      const foundCategory = await tx.category.findUnique({
+        where: { id: data.categoryId },
+      });
+
+      if (!foundCategory) {
+        if (data.categoryId === "OTHER" && data.newCategoryName) {
+          const newCategory = await tx.category.create({
+            data: { name: data.newCategoryName },
+          });
+          categoryId = newCategory.id;
+        } else {
+          throw new Error("Invalid categoryId");
+        }
+      }
+
+      prismaData.category = { connect: { id: categoryId } };
+    }
+
+    const product = await tx.product.update({
+      where: { id: productId },
+      data: prismaData,
+      include: {
+        images: true,
+        seller: { select: { id: true, fullName: true } },
+        category: { select: { id: true, name: true } },
       },
-      category: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
+    });
+
+    return product;
   });
 
   return mapProductToDto(updatedProduct);

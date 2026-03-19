@@ -32,11 +32,15 @@ export const updateProductSchema = z.object({
     description: z.string().optional(),
     price: z.coerce.number().positive().optional(),
     stock: z.coerce.number().int().min(0).optional(),
+    categoryId: z.string(),
+    type: z.enum(ItemType),
+
+    newCategoryName: z.string().optional(),
 
     // FOR FOOD
     food_notes: z.string().optional(),
     allergen_info: z.string().optional(),
-    spicy_level: z.enum(SpicyLevel).optional(),
+    spicy_level: z.enum(SpicyLevel).nullable().optional(),
 
     // FOR NON_FOOD
     condition: z.enum(ProductCondition).optional(),
@@ -74,6 +78,7 @@ export const productDtoSchema = z.object({
   price: z.number(),
   stock: z.number(),
   rating: z.number(),
+  type: z.string(),
 
   // FOR FOOD
   food_notes: z.string().optional(),

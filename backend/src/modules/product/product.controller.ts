@@ -92,6 +92,7 @@ export const updateProduct = async (
 
     res.json({
       success: true,
+      message: "Product updated successfully",
       data: updated,
     });
   } catch (error) {

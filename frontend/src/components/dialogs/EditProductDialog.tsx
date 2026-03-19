@@ -37,9 +37,12 @@ const formSchema = z
     newCategoryName: z.string().optional(),
     food_notes: z.string().optional(),
     allergen_info: z.string().optional(),
-    spicy_level: z.enum(["NONE", "MILD", "MEDIUM", "HOT"]).optional(),
-    condition: z.enum(["NEW", "USED"]).optional(),
-    images: z.array(z.instanceof(File)).optional(), // 👈 optional for edit
+    spicy_level: z
+      .enum(["NONE", "MILD", "MEDIUM", "HOT"])
+      .nullable()
+      .optional(),
+    condition: z.enum(["NEW", "USED"]).nullable().optional(),
+    images: z.array(z.instanceof(File)).optional(),
   })
   .refine(
     (data) =>
@@ -122,7 +125,7 @@ export const EditProduct = ({
     }
 
     if (productType === "FOOD") {
-      form.setValue("condition", "NEW");
+      form.resetField("condition");
       form.setValue("food_notes", "");
       form.setValue("allergen_info", "");
       form.setValue("spicy_level", "NONE");

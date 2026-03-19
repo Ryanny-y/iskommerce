@@ -12,7 +12,6 @@ import { addDays, addMinutes } from "date-fns";
 import { Role, UserRole } from "@prisma/client";
 import { generateVerificationCode } from "../../utils/generateVerificationCode";
 import { sendVerificationEmail } from "../../services/email.service";
-import { log } from "console";
 
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const { fullName, email, password, confirmPassword, roles } = data;
