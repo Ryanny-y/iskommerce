@@ -27,6 +27,8 @@ export const mapProductToDto = (product: PrismaProductWithImages | null): Produc
     stock: product.stock,
     rating: product.rating instanceof Decimal ? product.rating.toNumber() : product.rating,
 
+    type: product.type,
+
     // FOOD fields
     food_notes: product.food_notes ?? undefined,
     allergen_info: product.allergen_info ?? undefined,

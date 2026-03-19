@@ -22,7 +22,7 @@ enum OrderStatus {
   PENDING
   ACCEPTED
   PREPARING
-  READY_FOR_PICKUP
+  READY
   COMPLETED
   CANCELLED
 }
@@ -64,6 +64,11 @@ enum PaymentMethod {
   CARD
 }
 
+enum FulfillmentType {
+  PICKUP
+  MEETUP
+}
+
 // SCHEMA
 
 model User {
@@ -82,6 +87,10 @@ model User {
   isVerified              Boolean   @default(false)
   verificationCodeHash    String?
   verificationCodeExpires DateTime?
+
+  // for seller
+  pickupLocation String?
+  pickupNotes    String?
 
   buyerOrders  Order[] @relation("BuyerOrders")
   sellerOrders Order[] @relation("SellerOrders")
@@ -196,19 +205,22 @@ model Order {
   sellerId String
   seller   User   @relation("SellerOrders", fields: [sellerId], references: [id])
 
+  fulfillmentType FulfillmentType @default(PICKUP)
+
+  // Pickup (SNAPSHOT of seller info)
+  pickupLocation String? // seller location
+  pickupTime     DateTime?
+  
+  meetupTime     DateTime?
+  meetupLocation String? // meet up location
+  meetupNotes    String?
+
   // Payment
   paymentStatus PaymentStatus  @default(PENDING)
   paymentMethod PaymentMethod?
 
   // Money 
   total Float
-
-  // Pickup (SNAPSHOT of seller info)
-  pickupLocation String
-  pickupNotes    String?
-  pickupTime     DateTime?
-
-  items OrderItem[]
 
   // Tracking
   createdAt    DateTime  @default(now())
@@ -217,6 +229,8 @@ model Order {
   completedAt  DateTime?
   cancelledAt  DateTime?
   cancelReason String?
+
+  items OrderItem[]
 
   @@index([status])
   @@index([buyerId])
@@ -230,8 +244,8 @@ model OrderItem {
   orderId String
   order   Order  @relation(fields: [orderId], references: [id])
 
-  productId   String
-  product     Product @relation(fields: [productId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
 
   // SNAPSHOT (important!)
   productName     String

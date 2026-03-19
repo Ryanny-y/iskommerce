@@ -124,6 +124,8 @@ export const getSellerProducts = async (
     },
   });
 
+  console.log(products);
+  
   return products.map((product) => mapProductToDto(product));
 };
 

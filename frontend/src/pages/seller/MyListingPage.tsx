@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Topbar } from "@/components/marketplace/Topbar";
@@ -17,57 +17,7 @@ import { PostProductDialog } from "@/components/seller/PostProductDialog";
 import useFetchData from "@/hooks/useFetchData";
 import type { ApiResponse } from "@/types/common";
 import type { Product } from "@/types/marketplace";
-
-// Mock Categories
-const MOCK_CATEGORIES = [
-  { id: "1", name: "Food" },
-  { id: "2", name: "School Supplies" },
-  { id: "3", name: "Books" },
-  { id: "4", name: "Electronics" },
-];
-
-// Mock Initial Data
-// const INITIAL_LISTINGS: SellerProduct[] = [
-//   {
-//     id: "1",
-//     name: "Blue University Hoodie",
-//     description: "Comfortable cotton hoodie with university logo.",
-//     price: 450,
-//     category: "Clothing",
-//     stock: 10,
-//     status: "active",
-//     condition: "new",
-//     image:
-//       "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=400&h=400",
-//     createdAt: new Date().toISOString(),
-//   },
-//   {
-//     id: "2",
-//     name: "Scientific Calculator",
-//     description: "Casio FX-991EX, perfect for engineering students.",
-//     price: 1200,
-//     category: "Electronics",
-//     stock: 0,
-//     status: "out_of_stock",
-//     condition: "used",
-//     image:
-//       "https://images.unsplash.com/photo-1574607383476-f517f260d30b?auto=format&fit=crop&q=80&w=400&h=400",
-//     createdAt: new Date().toISOString(),
-//   },
-//   {
-//     id: "3",
-//     name: "Calculus Made Easy",
-//     description: "Textbook for Math 17 and Math 21.",
-//     price: 350,
-//     category: "Books",
-//     stock: 5,
-//     status: "sold",
-//     condition: "used",
-//     image:
-//       "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400&h=400",
-//     createdAt: new Date().toISOString(),
-//   },
-// ];
+import { EditProductDialog } from "@/components/dialogs/EditProductDialog";
 
 const MyListingsPage = () => {
   const { authResponse } = useAuth();
@@ -115,12 +65,12 @@ const MyListingsPage = () => {
   //   };
   // }, [listings]);
 
-  // const handleUpdateProduct = (updatedProduct: Product) => {
-  //   setListings(
-  //     listings.map((l) => (l.id === updatedProduct.id ? updatedProduct : l)),
-  //   );
-  //   toast.success("Listing updated successfully!");
-  // };
+  const handleUpdateProduct = (updatedProduct: Product) => {
+    // setListings(
+    //   listings.map((l) => (l.id === updatedProduct.id ? updatedProduct : l)),
+    // );
+    toast.success("Listing updated successfully!");
+  };
 
   // const handleDeleteProduct = () => {
   //   if (selectedProduct) {
@@ -205,10 +155,9 @@ const MyListingsPage = () => {
         refetchProducts={refetchProducts}
         isOpen={isPostDialogOpen}
         onClose={() => setIsPostDialogOpen(false)}
-        categories={MOCK_CATEGORIES}
       />
 
-      {/* <EditProductDialog 
+      <EditProductDialog
         product={selectedProduct}
         isOpen={isEditDialogOpen}
         onClose={() => {
@@ -216,7 +165,7 @@ const MyListingsPage = () => {
           setSelectedProduct(null);
         }}
         onUpdate={handleUpdateProduct}
-      /> */}
+      />
 
       {/* <DeleteProductDialog 
         isOpen={isDeleteDialogOpen}
