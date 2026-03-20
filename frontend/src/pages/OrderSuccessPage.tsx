@@ -40,7 +40,7 @@ const OrderSuccessPage: React.FC = () => {
         className="flex flex-col sm:flex-row gap-6 w-full max-w-sm"
       >
         <Button
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/my-orders")}
           variant="outline"
           className="flex-1 h-14 rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 transition-all"
         >

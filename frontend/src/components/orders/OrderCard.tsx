@@ -84,11 +84,11 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           </div>
         </CardContent>
 
-        <CardFooter className="p-8 pt-4 border-t border-neutral-50 bg-neutral-50/30 flex flex-wrap gap-4">
+        <CardFooter className="p-8 pt-4 border-t border-neutral-50 bg-neutral-50/30 flex flex-wrap gap-4 items-stretch">
           <Button
             asChild
             variant="outline"
-            className="flex-1 min-w-35 rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 gap-2"
+            className="flex-1 min-w-35 rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 gap-2 py-5"
           >
             <Link to={`/messages?sellerId=${order.sellerId}`}>
               <MessageSquare className="h-4 w-4" />
@@ -98,7 +98,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
 
           <Button
             onClick={() => setIsDetailsOpen(true)}
-            className="flex-1 min-w-35 rounded-2xl bg-neutral-900 hover:bg-neutral-800 font-bold gap-2"
+            className="flex-1 min-w-35 rounded-2xl bg-neutral-900 hover:bg-neutral-800 font-bold gap-2 py-5"
           >
             <Eye className="h-4 w-4" />
             View Details
@@ -107,7 +107,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           {order.status === "PENDING" && (
             <Button
               variant="ghost"
-              className="flex-1 min-w-35 rounded-2xl font-bold text-rose-600 hover:bg-rose-50 gap-2"
+              className="flex-1 min-w-35 rounded-2xl font-bold text-rose-600 hover:bg-rose-50 gap-2 py-5"
             >
               <XCircle className="h-4 w-4" />
               Cancel Order
@@ -117,7 +117,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           {order.status === "READY" && (
             <Button
               variant="outline"
-              className="flex-1 min-w-35 rounded-2xl border-2 border-purple-100 font-bold text-purple-600 hover:bg-purple-50 gap-2"
+              className="flex-1 min-w-35 rounded-2xl border-2 border-purple-100 font-bold text-purple-600 hover:bg-purple-50 gap-2 py-5"
             >
               <MapPin className="h-4 w-4" />
               View Pickup Details

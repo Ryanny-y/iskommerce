@@ -126,7 +126,7 @@ export const Topbar = () => {
                 onClick={() => navigate("/sales")}
               >
                 <ShoppingCart className="h-4 w-4" />
-                <span>Sales</span>
+                <span>My Sales</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
 

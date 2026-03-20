@@ -1,26 +1,11 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { OrderCard } from "@/components/orders/OrderCard";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ShoppingBag, Search, ArrowRight, ShoppingCart } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import type { ApiResponse } from "@/types/common";
 import useFetchData from "@/hooks/useFetchData";
 import type { Order, OrderStatus } from "@/types/orders";
-import { OrdersStats } from "@/components/orders/OrdersStats";
 import { OrdersList } from "@/components/orders/OrdersList";
-import { OrderDetailsDialog } from "@/components/dialogs/OrderDetailsDialog";
-
-const STATUS_TABS: { label: string; value: OrderStatus | "ALL" }[] = [
-  { label: "All", value: "ALL" },
-  { label: "Pending", value: "PENDING" },
-  { label: "Accepted", value: "ACCEPTED" },
-  { label: "Preparing", value: "PREPARING" },
-  { label: "Ready", value: "READY" },
-  { label: "Completed", value: "COMPLETED" },
-  { label: "Cancelled", value: "CANCELLED" },
-];
+import { OrdersStats } from "@/components/orders/OrdersStats";
 
 const MyOrdersPage: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -67,7 +52,7 @@ const MyOrdersPage: React.FC = () => {
         </div>
 
         {/* Stats Section */}
-        {/* <OrdersStats stats={stats} /> */}
+        <OrdersStats />
 
         {/* Orders List Section */}
         <div className="space-y-6">

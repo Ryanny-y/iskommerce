@@ -35,7 +35,7 @@ export default function AppRoutes() {
             </Route>
 
             {/* Marketplace Dashboard */}
-            <Route element={<ProtectedLayout />}>
+            <Route element={<ProtectedLayout />}> 
               <Route path="/dashboard" element={<MarketplacePage />} />
               <Route path="/product/:id" element={<ProductDetailsPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
@@ -46,6 +46,9 @@ export default function AppRoutes() {
               {/* Seller Routes */}
               <Route path="/start-selling" element={<StartSellingPage />} />
               <Route path="/my-listings" element={<MyListingsPage />} />
+
+
+              {/* Buyer Routes */}
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

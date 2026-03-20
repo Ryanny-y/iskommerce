@@ -28,8 +28,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ formData, setFormData }) => {
     setFormData({ ...formData, [field]: value });
   };
 
-  console.log(formData.type);
-
   const { categories } = useCategory();
 
   return (

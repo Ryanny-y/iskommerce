@@ -131,8 +131,6 @@ const MyListingsPage = () => {
                   setIsEditDialogOpen(true);
                 }}
                 onDelete={(product) => {
-                  console.log("Hi");
-
                   setSelectedProduct(product);
                   setIsDeleteDialogOpen(true);
                 }}

@@ -32,8 +32,6 @@ const useAuthFetch = () => {
         if (response.status === 401) {
           try {
             const newTokens = await refreshToken();
-            console.log(newTokens);
-            
 
             token = newTokens?.data?.accessToken;
 

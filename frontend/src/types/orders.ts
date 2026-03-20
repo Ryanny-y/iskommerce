@@ -47,7 +47,7 @@ export type PaymentMethod = "CASH" | "GCASH" | "CARD";
 
 export interface OrdersStatsData {
   totalOrders: number;
-  pending: number;
-  readyForPickup: number;
-  completed: number;
+  pendingOrders: number;
+  readyOrders: number;
+  completedOrders: number;
 }
