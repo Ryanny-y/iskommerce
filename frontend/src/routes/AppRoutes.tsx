@@ -13,6 +13,7 @@ import { CategoryProvider } from "@/contexts/CategoryContext";
 import ProductDetailsPage from "@/pages/ProductsDetailsPage";
 
 import { CartProvider } from "@/contexts/CartContext";
+import { ProductProvider } from "@/contexts/ProductContext";
 import CheckoutPage from "@/pages/CheckoutPage";
 import PaymentPage from "@/pages/PaymentPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
@@ -22,6 +23,7 @@ export default function AppRoutes() {
     <AuthProvider>
       <CategoryProvider>
         <CartProvider>
+          <ProductProvider>
           <Routes>
             <Route path="/" element={<LandingPage />} />
 
@@ -46,6 +48,7 @@ export default function AppRoutes() {
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </ProductProvider>
         </CartProvider>
       </CategoryProvider>
     </AuthProvider>

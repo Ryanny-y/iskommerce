@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Topbar } from "@/components/marketplace/Topbar";
 // import { ListingsStats } from "@/components/seller/listings/ListingStats";
 // import { ListingsFilters } from "@/components/seller/listings/ListingFilters";
 import { ListingsGrid } from "@/components/seller/listings/ListingGrid";
@@ -83,8 +82,6 @@ const MyListingsPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Topbar onSearch={() => {}} />
-
       <main className="flex-1 container mx-auto px-4 md:px-8 py-8 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

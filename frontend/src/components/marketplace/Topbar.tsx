@@ -21,17 +21,15 @@ import { Button } from "@/components/ui/button";
 import useAuth from "@/contexts/AuthContext";
 import fatimaLogo from "@/assets/FatimaLogo.png";
 import { useCart } from "@/contexts/CartContext";
+import { useProducts } from "@/contexts/ProductContext";
 
 import { useNavigate } from "react-router-dom";
 
-interface TopbarProps {
-  onSearch: (query: string) => void;
-}
-
-export const Topbar = ({ onSearch }: TopbarProps) => {
+export const Topbar = () => {
   const { authResponse, logout } = useAuth();
   const navigate = useNavigate();
   const { totalItems, openCart } = useCart();
+  const { setSearchQuery } = useProducts();
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 py-2">
@@ -49,7 +47,7 @@ export const Topbar = ({ onSearch }: TopbarProps) => {
 
         {/* Search (flexible width) */}
         <div className="hidden sm:flex flex-1 lg:max-w-lg">
-          <SearchBar onSearch={onSearch} />
+          <SearchBar onSearch={setSearchQuery} />
         </div>
 
         {/* Actions */}
@@ -144,7 +142,7 @@ export const Topbar = ({ onSearch }: TopbarProps) => {
 
       <div className="container">
         <div className="flex sm:hidden flex-1 lg:max-w-lg">
-          <SearchBar onSearch={onSearch} />
+          <SearchBar onSearch={setSearchQuery} />
         </div>
       </div>
     </header>

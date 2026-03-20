@@ -1,6 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { type Product } from '@/types/marketplace';
-import { Topbar } from '@/components/marketplace/Topbar';
 import { ProductGallery } from '@/components/product/ProductGallery';
 import { ProductInfo } from '@/components/product/ProductInfo';
 import { ProductDetailsSection } from '@/components/product/ProductDetailsSection';
@@ -21,7 +20,6 @@ const ProductDetailsPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Topbar onSearch={() => {}} />
         <div className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
             <div className="space-y-4">
@@ -63,8 +61,6 @@ const ProductDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Topbar onSearch={() => {}} />
-      
       <main className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
         {/* Back Button */}
         <button

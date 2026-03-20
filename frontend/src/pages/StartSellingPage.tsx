@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Topbar } from "@/components/marketplace/Topbar";
 import { StartSellingHero } from "@/components/seller/StartSellingHero";
 import { SellerBenefits } from "@/components/seller/SellerBenefits";
 import { toast } from "sonner";
@@ -42,8 +41,6 @@ const StartSellingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Topbar cartItemCount={0} onCartClick={() => {}} onSearch={() => {}} />
-
       <main className="flex-1">
         <motion.div
           initial={{ opacity: 0 }}

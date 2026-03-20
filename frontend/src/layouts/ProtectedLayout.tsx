@@ -1,17 +1,13 @@
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import { Topbar } from "@/components/marketplace/Topbar";
 import useAuth from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 const ProtectedLayout = () => {
   const { authResponse, loading } = useAuth();
-  const {
-    cartItems,
-    isCartOpen,
-    closeCart,
-    updateQuantity,
-    removeFromCart,
-  } = useCart();
+  const { cartItems, isCartOpen, closeCart, updateQuantity, removeFromCart } =
+    useCart();
 
   const location = useLocation();
 
@@ -24,6 +20,7 @@ const ProtectedLayout = () => {
 
   return (
     <>
+      <Topbar onSearch={() => {}} />
       <Outlet />
       <CartDrawer
         isOpen={isCartOpen}

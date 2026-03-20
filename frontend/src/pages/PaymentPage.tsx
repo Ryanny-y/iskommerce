@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Topbar } from "@/components/marketplace/Topbar";
 import { PaymentSummary } from "@/components/payment/PaymentSummary";
 import { PaymentMethodSelector } from "@/components/payment/PaymentMethodSelector";
 import { Button } from "@/components/ui/button";
@@ -73,8 +72,6 @@ const PaymentPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Topbar onSearch={() => {}} />
-
       <main className="flex-1 container mx-auto px-4 md:px-8 py-10 space-y-16">
         <div className="space-y-2">
           <button

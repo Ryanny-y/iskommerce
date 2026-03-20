@@ -4,7 +4,6 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useCart } from "@/contexts/CartContext";
-import { Topbar } from "@/components/marketplace/Topbar";
 import { CheckoutSellerGroup } from "@/components/checkout/CheckoutSellerGroup";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, ArrowRight, ChevronLeft } from "lucide-react";
@@ -86,7 +85,6 @@ const CheckoutPage: React.FC = () => {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Topbar onSearch={() => {}} />
         <main className="flex-1 flex flex-col items-center justify-center p-6 text-center space-y-6">
           <div className="bg-secondary p-8 rounded-full shadow-xl shadow-neutral-200/50">
             <ShoppingBag className="h-16 w-16 text-muted-foreground" />
@@ -112,7 +110,6 @@ const CheckoutPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Topbar onSearch={() => {}} />
 
       <main className="flex-1 container mx-auto px-4 md:px-8 py-10 space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">

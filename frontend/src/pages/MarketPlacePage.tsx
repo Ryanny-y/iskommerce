@@ -1,63 +1,35 @@
-import { useState, useMemo } from "react";
+
 import { motion, AnimatePresence } from "framer-motion";
 import { CategoryTabs } from "@/components/marketplace/CategoryTabs";
 import type { Product } from "@/types/marketplace";
-import { Topbar } from "@/components/marketplace/Topbar";
 import { ProductGrid } from "@/components/marketplace/ProductGrid";
 import { ShoppingBag } from "lucide-react";
 import fatimaLogo from "@/assets/FatimaLogo.png";
-import useFetchData from "@/hooks/useFetchData";
-import type { ApiResponse } from "@/types/common";
 import useIsLoggedIn from "@/hooks/useIsLoggedIn";
 import { useCart } from "@/contexts/CartContext";
+import { useProducts } from "@/contexts/ProductContext";
 
 const MarketplacePage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
   const { addToCart } = useCart();
+  const {
+    filteredProducts,
+    productsLoading,
+    productsError,
+    products,
+    searchQuery,
+    activeCategory,
+    setActiveCategory,
+  } = useProducts();
 
   useIsLoggedIn();
 
-  // TODO: Handle Products Error and Loading
-  const {
-    data: productsData,
-    loading: productsLoading,
-    error: productsError,
-  } = useFetchData<ApiResponse<Product[]>>("products");
-
-  const filteredProducts = useMemo(() => {
-    const query = searchQuery.toLowerCase();
-    const data = productsData?.data ?? [];
-
-    return data.filter((product) => {
-      const name = product.name?.toLowerCase() ?? "";
-      const seller = product.seller?.toLowerCase() ?? "";
-
-      const matchesSearch = name.includes(query) || seller.includes(query);
-
-      const matchesCategory =
-        activeCategory === "All" || product.category === activeCategory;
-
-      return matchesSearch && matchesCategory;
-    });
-  }, [productsData, searchQuery, activeCategory]);
-
-  const recommendedProducts = useMemo(() => {
-    return (productsData?.data ?? []).slice(0, 4);
-  }, [productsData]);
-
   const handleAddToCart = async (product: Product) => addToCart(product);
 
-  if (!productsData && productsLoading) return <div>Loading...</div>;
-
-  if (!productsData && productsError) return <div>Error...</div>;
-
-  if (!productsData || !productsData.data) return null;
+  if (!products.length && productsLoading) return <div>Loading...</div>;
+  if (!products.length && productsError) return <div>Error...</div>;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Topbar onSearch={setSearchQuery} />
-
       <main className="flex-1 container mx-auto px-4 md:px-8 py-8 space-y-10">
         <section className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -78,7 +50,7 @@ const MarketplacePage = () => {
             transition={{ duration: 0.3 }}
             className="space-y-12"
           >
-            <ProductGrid
+            {/* <ProductGrid
               title={
                 searchQuery || activeCategory !== "All"
                   ? `Results for "${searchQuery || activeCategory}"`
@@ -86,16 +58,19 @@ const MarketplacePage = () => {
               }
               products={filteredProducts}
               onAddToCart={handleAddToCart}
-            />
-            
-            {searchQuery === "" && activeCategory === "All" && (
-              <ProductGrid
-                title="All Products"
-                products={recommendedProducts}
-                onAddToCart={handleAddToCart}
-              />
-            )}
+            /> */}
 
+            {/* {searchQuery === "" && activeCategory === "All" && ( */}
+            <ProductGrid
+              title={
+                searchQuery || activeCategory !== "All"
+                  ? `Results for "${searchQuery || activeCategory}"`
+                  : "All Products"
+              }
+              products={filteredProducts}
+              onAddToCart={handleAddToCart}
+            />
+            {/* )} */}
 
             {filteredProducts.length === 0 && (
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
