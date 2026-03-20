@@ -5,6 +5,7 @@ import {
   Settings,
   List,
   Package,
+  ShoppingCart,
 } from "lucide-react";
 import { SearchBar } from "./Searchbar";
 import { CartButton } from "./CartButton";
@@ -118,6 +119,14 @@ export const Topbar = () => {
               >
                 <List className="h-4 w-4" />
                 <span>My Listings</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                className="gap-2"
+                onClick={() => navigate("/sales")}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                <span>Sales</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
 

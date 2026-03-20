@@ -17,6 +17,7 @@ import { ProductProvider } from "@/contexts/ProductContext";
 import CheckoutPage from "@/pages/CheckoutPage";
 import PaymentPage from "@/pages/PaymentPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
+import MyOrdersPage from "@/pages/MyOrdersPage";
 
 export default function AppRoutes() {
   return (
@@ -40,6 +41,7 @@ export default function AppRoutes() {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/order-success" element={<OrderSuccessPage />} />
+              <Route path="/my-orders" element={<MyOrdersPage />} />
 
               {/* Seller Routes */}
               <Route path="/start-selling" element={<StartSellingPage />} />
