@@ -88,10 +88,6 @@ model User {
   verificationCodeHash    String?
   verificationCodeExpires DateTime?
 
-  // for seller
-  pickupLocation String?
-  pickupNotes    String?
-
   buyerOrders  Order[] @relation("BuyerOrders")
   sellerOrders Order[] @relation("SellerOrders")
 
@@ -210,7 +206,7 @@ model Order {
   // Pickup (SNAPSHOT of seller info)
   pickupLocation String? // seller location
   pickupTime     DateTime?
-  
+
   meetupTime     DateTime?
   meetupLocation String? // meet up location
   meetupNotes    String?

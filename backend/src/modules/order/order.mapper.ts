@@ -5,6 +5,7 @@ export const mapOrderToDto = (order: any): OrderDto => {
     id: order.id,
     status: order.status,
     buyerId: order.buyerId,
+    buyerName: order.buyer.fullName || null,
     sellerId: order.sellerId,
     sellerName: order.seller.fullName || null,
     fulfillmentType: order.fulfillmentType,

@@ -12,6 +12,11 @@ export const getBuyerOrders = async (buyerId: string): Promise<OrderDto[]> => {
           fullName: true,
         },
       },
+      buyer: {
+        select: {
+          fullName: true,
+        },
+      },
     },
     orderBy: {
       createdAt: "desc",
@@ -29,6 +34,11 @@ export const getSellerOrders = async (
     include: {
       items: true,
       seller: {
+        select: {
+          fullName: true,
+        },
+      },
+      buyer: {
         select: {
           fullName: true,
         },

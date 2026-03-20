@@ -33,6 +33,7 @@ export const orderDtoSchema = z.object({
   id: z.string(),
   status: z.string(),
   buyerId: z.string(),
+  buyerName: z.string(),
   sellerId: z.string(),
   sellerName: z.string(),
   fulfillmentType: z.string(),
