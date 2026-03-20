@@ -6,6 +6,7 @@ export interface SellerOrderFulfillment {
   sellerId: string;
   sellerName: string;
   items: CartItem[];
+  total: number;
   fulfillmentType: FulfillmentType;
   meetupLocation?: string;
   meetupTime?: string;

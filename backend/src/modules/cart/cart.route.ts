@@ -5,6 +5,7 @@ import { validate } from "../../middlewares/validate";
 import {
   addToCartSchema,
   cartItemParamsSchema,
+  checkoutSchema,
   updateCartItemSchema,
 } from "./cart.schema";
 
@@ -34,5 +35,12 @@ router.delete(
 );
 
 router.delete("/items", verifyJwt, cartController.clearCart);
+
+router.post(
+  "/checkout",
+  verifyJwt,
+  validate(checkoutSchema),
+  cartController.checkout,
+);
 
 export default router;

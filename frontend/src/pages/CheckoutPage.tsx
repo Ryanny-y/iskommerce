@@ -18,6 +18,7 @@ const checkoutSchema = z.object({
         sellerName: z.string(),
         items: z.array(z.any()),
         fulfillmentType: z.enum(["PICKUP", "MEETUP"]),
+        total: z.number(),
         meetupLocation: z.string().optional(),
         meetupTime: z.string().optional(),
         meetupNotes: z.string().optional(),
@@ -40,8 +41,6 @@ const checkoutSchema = z.object({
 const CheckoutPage: React.FC = () => {
   const { cartItems, totalItems, subtotal } = useCart();
   const navigate = useNavigate();
-  console.log(cartItems);
-  
 
   const groupedItems = useMemo(() => {
     const groups: Record<string, SellerOrderFulfillment> = {};
@@ -56,10 +55,12 @@ const CheckoutPage: React.FC = () => {
           sellerName,
           items: [],
           fulfillmentType: "PICKUP",
+          total: 0,
         };
       }
 
       groups[sellerId].items.push(item);
+      groups[sellerId].total += item.product.price * item.quantity;
     });
 
     return Object.values(groups);
@@ -72,8 +73,13 @@ const CheckoutPage: React.FC = () => {
   });
 
   const onSubmit = (data: z.infer<typeof checkoutSchema>) => {
+    const totalAmount = data.sellerOrders.reduce(
+      (sum, order) => sum + order.total,
+      0,
+    );
+
     navigate("/payment", {
-      state: { checkoutData: data, totalAmount: totalItems },
+      state: { checkoutData: data, totalAmount: totalAmount },
     });
   };
 

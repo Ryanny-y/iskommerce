@@ -202,6 +202,10 @@ export const updateProduct = async (
 
 export const getAllProducts = async (): Promise<ProductDto[]> => {
   const products = await prisma.product.findMany({
+    where: {
+      stock:
+        { gt: 0 },
+    },
     include: {
       images: true,
       seller: {

@@ -29,7 +29,7 @@ interface TopbarProps {
 }
 
 export const Topbar = ({ onSearch }: TopbarProps) => {
-  const { authResponse } = useAuth();
+  const { authResponse, logout } = useAuth();
   const navigate = useNavigate();
   const { totalItems, openCart } = useCart();
 
@@ -130,7 +130,10 @@ export const Topbar = ({ onSearch }: TopbarProps) => {
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+              <DropdownMenuItem
+                className="gap-2 text-destructive focus:text-destructive"
+                onClick={logout}
+              >
                 <LogOut className="h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

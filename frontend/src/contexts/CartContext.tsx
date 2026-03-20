@@ -22,6 +22,7 @@ interface CartContextType {
   addToCart: (product: Product) => Promise<void>;
   updateQuantity: (id: string, delta: number) => Promise<void>;
   removeFromCart: (id: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   totalItems: number;
   subtotal: number;
 }
@@ -33,6 +34,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { authResponse } = useAuth();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const options = useMemo(
     () => ({
@@ -55,6 +57,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   }, [cartData, cartLoading, cartError]);
 
   const addToCart = async (product: Product) => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+
     try {
       await execute("cart/items", {
         method: "POST",
@@ -71,10 +76,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       refetchCart();
     } catch {
       toast.error("Failed to add to cart");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   const updateQuantity = async (id: string, delta: number) => {
+    if (isUpdating) return;
+    setIsUpdating(true);
     const item = cartItems.find((i) => i.id === id);
     if (!item) return;
 
@@ -91,10 +100,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       refetchCart();
     } catch {
       toast.error("Failed to update quantity");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   const removeFromCart = async (id: string) => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+
     const item = cartItems.find((i) => i.id === id);
     try {
       const data: ApiResponse<void> = await execute(`cart/items/${id}`, {
@@ -104,9 +118,28 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       refetchCart();
     } catch {
       toast.error("Failed to remove item");
+    } finally {
+      setIsUpdating(false);
     }
   };
-  
+
+  const clearCart = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+
+    try {
+      const data: ApiResponse<void> = await execute(`cart/items`, {
+        method: "DELETE",
+      });
+      toast.success(data.message);
+      refetchCart();
+    } catch {
+      toast.error("Failed to remove item");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const subtotal = useMemo(() => {
     return cartItems.reduce(
       (acc, item) => acc + (item.product?.price ?? 0) * item.quantity,
@@ -124,8 +157,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         addToCart,
         updateQuantity,
         removeFromCart,
+        clearCart,
         totalItems: cartItems.reduce((acc, item) => acc + item.quantity, 0),
-        subtotal
+        subtotal,
       }}
     >
       {children}

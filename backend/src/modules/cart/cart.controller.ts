@@ -4,6 +4,8 @@ import {
   AddToCartDto,
   CartDto,
   CartItemParams,
+  CheckoutDto,
+  CheckoutResultDto,
   UpdateCartItemDto,
 } from "./cart.types";
 import { ApiResponse } from "../../types/api";
@@ -33,7 +35,7 @@ export const addToCart = async (
 ) => {
   try {
     const cart = await cartService.addToCart(req.userId!, req.body);
-
+    
     res.json({
       success: true,
       message: "Item added to cart",
@@ -96,6 +98,24 @@ export const clearCart = async (
     res.json({
       success: true,
       message: "Cart cleared",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const checkout = async (
+  req: Request<{}, {}, CheckoutDto>,
+  res: Response<ApiResponse<CheckoutResultDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const result = await cartService.checkout(req.userId!, req.body);
+
+    res.json({
+      success: true,
+      message: "Orders created successfully",
+      data: result,
     });
   } catch (error) {
     next(error);
