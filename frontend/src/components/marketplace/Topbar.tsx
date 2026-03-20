@@ -123,7 +123,7 @@ export const Topbar = () => {
 
               <DropdownMenuItem
                 className="gap-2"
-                onClick={() => navigate("/sales")}
+                onClick={() => navigate("/my-sales")}
               >
                 <ShoppingCart className="h-4 w-4" />
                 <span>My Sales</span>

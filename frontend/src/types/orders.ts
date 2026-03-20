@@ -2,9 +2,10 @@ export interface Order {
   id: string;
   status: OrderStatus;
   buyerId: string;
+  buyerName: string;
   sellerId: string;
   sellerName: string;
-  fulfillmentType: string;
+  fulfillmentType: FulfillmentType;
   pickupLocation: string | null;
   pickupTime: string | null;
   meetupTime: string | null;
