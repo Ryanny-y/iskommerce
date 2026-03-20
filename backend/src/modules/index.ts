@@ -3,6 +3,7 @@ import authRoute from "./auth/auth.route";
 import productRoute from './product/product.route'
 import categoryRoute from './category/category.route'
 import cartRoute from './cart/cart.route'
+import orderRoute from './order/order.route'
 
 const router = Router();
 
@@ -18,6 +19,7 @@ router.get('/health', (req: Request, res: Response) => {
 router.use("/products", productRoute);
 router.use("/categories", categoryRoute);
 router.use("/cart", cartRoute);
+router.use("/orders", orderRoute);
 
 
 export default router;
