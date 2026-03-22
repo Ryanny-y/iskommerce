@@ -15,13 +15,45 @@ import { MessageSquare, Eye, XCircle, Star, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { OrderDetailsDialog } from "@/components/dialogs/OrderDetailsDialog";
 import dayjs from "dayjs";
+import { CancelOrderDialog } from "../dialogs/CancelOrderDialog";
+import { toast } from "sonner";
+import type { ApiResponse } from "@/types/common";
+import useMutation from "@/hooks/useMutation";
 
 interface OrderCardProps {
   order: Order;
+  refetchOrder: () => void;
 }
 
-export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
+export const OrderCard: React.FC<OrderCardProps> = ({
+  order,
+  refetchOrder,
+}) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const { execute } = useMutation();
+
+  const handleCancelOrder = async (cancelReason: string) => {
+    if (isCancelling) return;
+    setIsCancelling(true);
+    try {
+      const response: ApiResponse<Order> = await execute(
+        `orders/${order.id}/cancel`,
+        {
+          method: "POST",
+          body: JSON.stringify({ cancelReason }),
+        },
+      );
+
+      toast.success(response.message);
+      setIsCancelOpen(false);
+      refetchOrder();
+    } catch (error) {
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <>
@@ -108,6 +140,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             <Button
               variant="ghost"
               className="flex-1 min-w-35 rounded-2xl font-bold text-rose-600 hover:bg-rose-50 gap-2 py-5"
+              onClick={() => setIsCancelOpen(true)}
             >
               <XCircle className="h-4 w-4" />
               Cancel Order
@@ -140,6 +173,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         order={order}
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
+      />
+
+      <CancelOrderDialog
+        orderId={order.id}
+        isOpen={isCancelOpen}
+        onClose={() => setIsCancelOpen(false)}
+        onConfirm={(reason) => handleCancelOrder(reason)}
       />
     </>
   );

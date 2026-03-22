@@ -53,6 +53,7 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
   const [showValidation, setShowValidation] = useState(false);
   const [isAccepting, setIsAccepting] = useState(false);
   const { execute } = useMutation();
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const isPickup = order.fulfillmentType === "PICKUP";
   //   const isPending = order.status === "PENDING";
@@ -104,6 +105,30 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
         return <Banknote className="h-4 w-4" />;
       default:
         return <CreditCard className="h-4 w-4" />;
+    }
+  };
+
+  const handleCompleteOrder = async (orderId: string) => {
+    if (isCompleting) return;
+    setIsCompleting(true);
+    if (isPickup && !canAccept) {
+      setShowValidation(true);
+      return;
+    }
+
+    try {
+      const response: ApiResponse<Order> = await execute(
+        `orders/${orderId}/complete`,
+        {
+          method: "POST",
+        },
+      );
+
+      toast.success(response.message);
+      refetchOrders();
+    } catch (error) {
+    } finally {
+      setIsCompleting(false);
     }
   };
 
@@ -258,7 +283,7 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
         return (
           <Button
             className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl h-12"
-            onClick={() => onStatusChange(order.id, "COMPLETED")}
+            onClick={() => handleCompleteOrder(order.id)}
           >
             Mark as Completed
           </Button>

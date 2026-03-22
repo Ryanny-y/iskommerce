@@ -89,11 +89,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || response.statusText);
+        throw data;
       }
 
       return true;
     } catch (error: any) {
+      console.log(error);
+      
       throw error;
     }
   };

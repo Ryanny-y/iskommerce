@@ -1,21 +1,17 @@
-import React from 'react';
-import type { Order } from '@/types/orders';
-import { OrderCard } from './OrderCard';
-import { ShoppingBag, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React from "react";
+import type { Order } from "@/types/orders";
+import { OrderCard } from "./OrderCard";
+import { ShoppingBag, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface OrdersListProps {
   orders: Order[];
-  onViewDetails: (order: Order) => void;
-  onCancel: (id: string) => void;
-  onComplete: (id: string) => void;
+  refetchOrder: () => void;
 }
 
 export const OrdersList: React.FC<OrdersListProps> = ({
   orders,
-  onViewDetails,
-  onCancel,
-  onComplete
+  refetchOrder,
 }) => {
   if (orders.length === 0) {
     return (
@@ -24,11 +20,15 @@ export const OrdersList: React.FC<OrdersListProps> = ({
           <ShoppingBag className="h-12 w-12 text-muted-foreground" />
         </div>
         <div className="space-y-2 max-w-xs">
-          <h3 className="text-xl font-bold">You have not purchased any items yet</h3>
-          <p className="text-muted-foreground">Explore the campus marketplace and find something you love!</p>
+          <h3 className="text-xl font-bold">
+            You have not purchased any items yet
+          </h3>
+          <p className="text-muted-foreground">
+            Explore the campus marketplace and find something you love!
+          </p>
         </div>
-        <Button 
-          onClick={() => window.location.href = '/dashboard'} 
+        <Button
+          onClick={() => (window.location.href = "/dashboard")}
           className="rounded-full gap-2 px-8 bg-emerald-600 hover:bg-emerald-700"
         >
           Browse Marketplace
@@ -41,10 +41,7 @@ export const OrdersList: React.FC<OrdersListProps> = ({
   return (
     <div className="space-y-6">
       {orders.map((order) => (
-        <OrderCard
-          key={order.id}
-          order={order}
-        />
+        <OrderCard key={order.id} order={order} refetchOrder={refetchOrder} />
       ))}
     </div>
   );

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as orderService from "./order.service";
-import { AcceptOrderDto, OrderDto, OrderParams, OrderStats, UpdateOrderStatusDto } from "./order.types";
+import { AcceptOrderDto, CancelOrderDto, OrderDto, OrderParams, OrderStats, UpdateOrderStatusDto } from "./order.types";
 import { ApiResponse } from "../../types/api";
 
 export const getBuyerOrders = async (
@@ -78,6 +78,48 @@ export const acceptOrder = async (
     res.json({
       success: true,
       message: "Order accepted",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const completeOrder = async (
+  req: Request<OrderParams>,
+  res: Response<ApiResponse<OrderDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const order = await orderService.completeOrder(req.userId!, orderId);
+
+    res.json({
+      success: true,
+      message: "Order completed",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const cancelOrder = async (
+  req: Request<OrderParams, {}, CancelOrderDto>,
+  res: Response<ApiResponse<OrderDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const order = await orderService.cancelOrder(
+      req.userId!,
+      orderId,
+      req.body,
+    );
+
+    res.json({
+      success: true,
+      message: "Order cancelled",
       data: order,
     });
   } catch (error) {

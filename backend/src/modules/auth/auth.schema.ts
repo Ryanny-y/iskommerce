@@ -8,15 +8,15 @@ export const createUserBodySchema = z.object({
 
     password: z
       .string()
-      .min(6, "Password must be at least 6 characters long")
-      .regex(/[A-Z]/, "Must contain an uppercase letter")
-      .regex(/[0-9]/, "Must contain a number"),
+      .min(6, "Password must be at least 6 characters long"),
+      // .regex(/[A-Z]/, "Password Must contain an uppercase letter")
+      // .regex(/[0-9]/, "Password Must contain a number"),
 
     confirmPassword: z
       .string()
-      .min(6, "Password must be at least 6 characters long")
-      .regex(/[A-Z]/, "Must contain an uppercase letter")
-      .regex(/[0-9]/, "Must contain a number"),
+      .min(6, "Password must be at least 6 characters long"),
+      // .regex(/[A-Z]/, "Password Must contain an uppercase letter")
+      // .regex(/[0-9]/, "Password Must contain a number"),
 
     roles: z.array(z.enum(Role)).min(1, "At least one role is required"),
   })

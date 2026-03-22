@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Loader2, Mail, Lock, User, ShieldCheck } from "lucide-react";
 import { signupSchema, type SignupFormValues } from "./types";
 import useAuth from "@/contexts/AuthContext";
+import { getErrorMessage } from "@/utils/errorHandlers";
 
 export default function SignupForm() {
 
@@ -36,7 +37,7 @@ export default function SignupForm() {
       toast.success("Account created! Please log in.");
       navigate("/verify", { state: { email: data.email }});
     } catch (error: any) {
-      toast.error(error.message || "Failed to create account.");
+      toast.error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

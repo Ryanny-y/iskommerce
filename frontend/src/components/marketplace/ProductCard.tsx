@@ -24,7 +24,10 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             {product.category}
           </Badge>
 
-          <Button variant={"secondary"} className="absolute top-1/2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 duration-500">
+          <Button
+            variant={"secondary"}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 duration-500"
+          >
             <Eye />
             View Details
           </Button>
@@ -55,7 +58,11 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           <Button
             variant="default"
             className="w-full rounded-lg gap-2 py-4"
-            onClick={() => onAddToCart(product)}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault(); 
+              onAddToCart(product);
+            }}
           >
             <ShoppingCart className="h-4 w-4" />
             Add

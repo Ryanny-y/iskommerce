@@ -20,6 +20,21 @@ export const acceptOrderSchema = z.object({
   }),
 });
 
+export const completeOrderSchema = z.object({
+  params: z.object({
+    orderId: z.uuid(),
+  }),
+});
+
+export const cancelOrderSchema = z.object({
+  body: z.object({
+    cancelReason: z.string().min(1),
+  }),
+  params: z.object({
+    orderId: z.uuid(),
+  }),
+});
+
 export const orderStatsSchema = z.object({  
   totalOrders: z.number(),
   pendingOrders: z.number(),

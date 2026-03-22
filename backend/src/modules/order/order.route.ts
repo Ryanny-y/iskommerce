@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as orderController from "./order.controller";
 import verifyJwt from "../../middlewares/verifyJwt";
 import { validate } from "../../middlewares/validate";
-import { acceptOrderSchema, updateOrderStatusSchema } from "./order.schema";
+import { acceptOrderSchema, cancelOrderSchema, completeOrderSchema, updateOrderStatusSchema } from "./order.schema";
 
 const router = Router();
 
@@ -19,6 +19,20 @@ router.post(
   verifyJwt,
   validate(acceptOrderSchema),
   orderController.acceptOrder,
+);
+
+router.post(
+  "/:orderId/complete",
+  verifyJwt,
+  validate(completeOrderSchema),
+  orderController.completeOrder,
+);
+
+router.post(
+  "/:orderId/cancel",
+  verifyJwt,
+  validate(cancelOrderSchema),
+  orderController.cancelOrder,
 );
 
 router.patch(

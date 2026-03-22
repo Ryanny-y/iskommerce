@@ -1,37 +1,15 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Search, ArrowRight, ShoppingCart } from "lucide-react";
+import { motion } from "framer-motion";
+import { ShoppingCart } from "lucide-react";
 import type { ApiResponse } from "@/types/common";
 import useFetchData from "@/hooks/useFetchData";
-import type { Order, OrderStatus } from "@/types/orders";
+import type { Order } from "@/types/orders";
 import { OrdersList } from "@/components/orders/OrdersList";
 import { OrdersStats } from "@/components/orders/OrdersStats";
 
-const MyOrdersPage: React.FC = () => {
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-
+const MyOrdersPage = () => {
+  // TODO: HANDLE LOADING
   const { data, loading, error, refetchData } =
     useFetchData<ApiResponse<Order[]>>("orders/buyer");
-
-  const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order);
-    setIsDetailsOpen(true);
-  };
-
-  const handleCancelOrder = (id: string) => {
-    // setOrders((prev) =>
-    //   prev.map((o) => (o.id === id ? { ...o, status: "CANCELLED" } : o)),
-    // );
-    // toast.error(`Order ${id} has been cancelled`);
-  };
-
-  const handleCompleteOrder = (id: string) => {
-    // setOrders((prev) =>
-    //   prev.map((o) => (o.id === id ? { ...o, status: "COMPLETED" } : o)),
-    // );
-    // toast.success(`Order ${id} marked as completed!`);
-  };
 
   if (!data || !data.data) return null;
 
@@ -68,12 +46,7 @@ const MyOrdersPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <OrdersList
-              orders={data?.data || []}
-              onViewDetails={handleViewDetails}
-              onCancel={handleCancelOrder}
-              onComplete={handleCompleteOrder}
-            />
+            <OrdersList orders={data?.data || []} refetchOrder={refetchData} />
           </motion.div>
         </div>
       </main>

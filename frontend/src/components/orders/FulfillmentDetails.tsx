@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Order } from '@/types/orders';
 import { MapPin, Clock, Info } from 'lucide-react';
+import dayjs from 'dayjs';
 
 interface FulfillmentDetailsProps {
   order: Order;
@@ -36,7 +37,7 @@ export const FulfillmentDetails: React.FC<FulfillmentDetailsProps> = ({ order })
           <div className="space-y-0.5">
             <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Time</p>
             <p className="text-sm font-black text-neutral-900">
-              {isPickup ? order.pickupTime : order.meetupTime}
+              {isPickup ? `${dayjs(order.pickupTime).format("MMM DD YYYY - h:ss A")}` : `${dayjs(order.meetupTime).format("MMM DD YYYY - h:ss A")}`}
             </p>
           </div>
         </div>

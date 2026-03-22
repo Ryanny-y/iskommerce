@@ -1,6 +1,6 @@
 import prisma from "../../config/client";
 import { mapOrderToDto } from "./order.mapper";
-import { AcceptOrderDto, OrderDto, OrderStats, UpdateOrderStatusDto } from "./order.types";
+import { AcceptOrderDto, CancelOrderDto, OrderDto, OrderStats, UpdateOrderStatusDto } from "./order.types";
 
 export const getBuyerOrders = async (buyerId: string): Promise<OrderDto[]> => {
   const orders = await prisma.order.findMany({
@@ -120,6 +120,77 @@ export const acceptOrder = async (
       acceptedAt: new Date(),
       pickupLocation: data.pickupLocation ?? order.pickupLocation,
       pickupTime: data.pickupTime ? new Date(data.pickupTime) : order.pickupTime,
+    },
+    include: {
+      items: true,
+    },
+  });
+
+  return mapOrderToDto(updatedOrder);
+};
+
+export const completeOrder = async (
+  sellerId: string,
+  orderId: string,
+): Promise<OrderDto> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  if (order.sellerId !== sellerId) {
+    throw new Error("Unauthorized to complete this order");
+  }
+
+  const updatedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status: "COMPLETED",
+      completedAt: new Date(),
+      paymentStatus: "PAID",
+    },
+    include: {
+      items: true,
+    },
+  });
+
+  return mapOrderToDto(updatedOrder);
+};
+
+export const cancelOrder = async (
+  userId: string,
+  orderId: string,
+  data: CancelOrderDto,
+): Promise<OrderDto> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  if (order.buyerId !== userId && order.sellerId !== userId) {
+    throw new Error("Unauthorized to cancel this order");
+  }
+
+  if (order.status === "ACCEPTED" || order.status === "PREPARING" || order.status === "READY") {
+    throw new Error("Cannot cancel order that has been accepted or is in progress");
+  }
+
+  if (order.status === "COMPLETED" || order.status === "CANCELLED") {
+    throw new Error("Cannot cancel order that is already completed or cancelled");
+  }
+
+  const updatedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status: "CANCELLED",
+      cancelledAt: new Date(),
+      cancelReason: data.cancelReason,
     },
     include: {
       items: true,
