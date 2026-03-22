@@ -9,7 +9,6 @@ interface ListingsGridProps {
   isLoading: boolean;
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
-  onView: (id: string) => void;
   onPostFirst: () => void;
 }
 
@@ -18,7 +17,6 @@ export const ListingsGrid = ({
   isLoading,
   onEdit,
   onDelete,
-  onView,
   onPostFirst,
 }: ListingsGridProps) => {
   if (isLoading) {
@@ -65,7 +63,6 @@ export const ListingsGrid = ({
           product={product}
           onEdit={onEdit}
           onDelete={onDelete}
-          onView={onView}
         />
       ))}
     </div>

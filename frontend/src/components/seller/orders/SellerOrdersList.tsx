@@ -8,15 +8,14 @@ interface SellerOrdersListProps {
   onStatusChange: (
     orderId: string,
     newStatus: OrderStatus,
-    details?: { pickupLocation?: string; pickupTime?: string },
   ) => void;
-  onViewDetails: (order: Order) => void;
+  refetchOrders: () => void;
 }
 
 export const SellerOrdersList = ({
   orders,
   onStatusChange,
-  onViewDetails,
+  refetchOrders,
 }: SellerOrdersListProps) => {
   if (orders.length === 0) {
     return (
@@ -51,7 +50,7 @@ export const SellerOrdersList = ({
             <SellerOrderCard
               order={order}
               onStatusChange={onStatusChange}
-              onViewDetails={onViewDetails}
+              refetchOrders={refetchOrders}
             />
           </motion.div>
         ))}

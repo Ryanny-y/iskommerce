@@ -1,16 +1,20 @@
 import { useState } from "react";
 import { SellerOrdersTabs } from "@/components/seller/orders/SellerOrdersTab";
 import { SellerOrdersList } from "@/components/seller/orders/SellerOrdersList";
-import type { Order } from "@/types/orders";
+import type { Order, OrderStatus } from "@/types/orders";
 import { ShoppingBag, Filter, Search } from "lucide-react";
 import type { ApiResponse } from "@/types/common";
 import useFetchData from "@/hooks/useFetchData";
+import useMutation from "@/hooks/useMutation";
+import { getErrorMessage } from "@/utils/errorHandlers";
+import { toast } from "sonner";
 
 const MySalesPage = () => {
   const [activeTab, setActiveTab] = useState("ALL");
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { execute } = useMutation();
 
+  // TODO: Handle Loading and Error
   const {
     data: orders,
     loading: ordersLoading,
@@ -18,38 +22,32 @@ const MySalesPage = () => {
     refetchData: refetchOrders,
   } = useFetchData<ApiResponse<Order[]>>(`orders/seller`);
 
-  const handleStatusChange = () =>
-    // orderId: string,
-    // newStatus: OrderStatus,
-    // details?: { pickupLocation?: string; pickupTime?: string },
-    {
-      // setOrders((prev) =>
-      //   prev.map((order) =>
-      //     order.id === orderId
-      //       ? {
-      //           ...order,
-      //           status: newStatus,
-      //           ...(details || {}),
-      //         }
-      //       : order,
-      //   ),
-      // );
-      // if (newStatus === "ACCEPTED") {
-      //   toast.success(`Order #${orderId} accepted!`, {
-      //     description: `Pickup details have been sent to the buyer.`,
-      //     className: "rounded-2xl font-bold",
-      //   });
-      // } else if (newStatus === "CANCELLED") {
-      //   toast.error(`Order #${orderId} rejected.`, {
-      //     description: `The buyer has been notified.`,
-      //     className: "rounded-2xl font-bold",
-      //   });
-      // }
-    };
+  const handleStatusChange = async (
+    orderId: string,
+    newStatus: OrderStatus,
+  ) => {
+    try {
+      if (isUpdating) return;
+      setIsUpdating(true);
 
-  const handleViewDetails = (order: Order) => {
-    setSelectedOrder(order);
-    setIsDetailsOpen(true);
+      const response: ApiResponse<Order> = await execute(
+        `orders/${orderId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        },
+      );
+
+      toast.success(response.message);
+      await refetchOrders();
+    } catch (error: any) {
+      toast.error(getErrorMessage(error));
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   return (
@@ -96,7 +94,7 @@ const MySalesPage = () => {
           <SellerOrdersList
             orders={orders?.data ?? []}
             onStatusChange={handleStatusChange}
-            onViewDetails={handleViewDetails}
+            refetchOrders={refetchOrders}
           />
         </section>
       </main>

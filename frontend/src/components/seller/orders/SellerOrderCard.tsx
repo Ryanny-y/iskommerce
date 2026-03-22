@@ -26,6 +26,10 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import useMutation from "@/hooks/useMutation";
+import { toast } from "sonner";
+import type { ApiResponse } from "@/types/common";
+import { Link } from "react-router-dom";
 
 interface SellerOrderCardProps {
   order: Order;
@@ -34,31 +38,57 @@ interface SellerOrderCardProps {
     newStatus: OrderStatus,
     details?: { pickupLocation?: string; pickupTime?: string },
   ) => void;
-  onViewDetails: (order: Order) => void;
+  refetchOrders: () => void;
 }
 
 export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
   order,
   onStatusChange,
-  onViewDetails,
+  refetchOrders,
 }) => {
   const [pickupLocation, setPickupLocation] = useState(
     order.pickupLocation || "",
   );
   const [pickupTime, setPickupTime] = useState(order.pickupTime || "");
   const [showValidation, setShowValidation] = useState(false);
+  const [isAccepting, setIsAccepting] = useState(false);
+  const { execute } = useMutation();
 
   const isPickup = order.fulfillmentType === "PICKUP";
   //   const isPending = order.status === "PENDING";
   const canAccept =
     !isPickup || (pickupLocation.trim() !== "" && pickupTime.trim() !== "");
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
+    if (isAccepting) return;
+    setIsAccepting(true);
     if (isPickup && !canAccept) {
       setShowValidation(true);
       return;
     }
-    onStatusChange(order.id, "ACCEPTED", { pickupLocation, pickupTime });
+
+    try {
+      const formattedPickupTime = pickupTime
+        ? new Date(pickupTime).toISOString()
+        : null;
+
+      const response: ApiResponse<Order> = await execute(
+        `orders/${order.id}/accept`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            pickupLocation,
+            pickupTime: formattedPickupTime,
+          }),
+        },
+      );
+
+      toast.success(response.message);
+      refetchOrders();
+    } catch (error) {
+    } finally {
+      setIsAccepting(false);
+    }
   };
 
   const handleReject = () => {
@@ -334,10 +364,12 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
                 variant="ghost"
                 size="sm"
                 className="h-8 text-emerald-600 font-bold hover:bg-emerald-50"
-                onClick={() => onViewDetails(order)}
+                asChild
               >
-                <Eye className="h-4 w-4 mr-1" />
-                View Details
+                <Link to={`/my-sales/${order.id}`}>
+                  <Eye className="h-4 w-4 mr-1" />
+                  View Details
+                </Link>
               </Button>
             </div>
             <div className="max-h-40 overflow-y-auto pr-2 space-y-1">

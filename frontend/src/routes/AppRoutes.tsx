@@ -48,6 +48,7 @@ export default function AppRoutes() {
               <Route path="/start-selling" element={<StartSellingPage />} />
               <Route path="/my-listings" element={<MyListingsPage />} />
               <Route path="/my-sales" element={<MySalesPage />} />
+              <Route path="/my-sales/:orderId" element={<MySalesPage />} />
 
 
               {/* Buyer Routes */}

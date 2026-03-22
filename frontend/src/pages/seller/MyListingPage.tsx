@@ -134,7 +134,6 @@ const MyListingsPage = () => {
                   setSelectedProduct(product);
                   setIsDeleteDialogOpen(true);
                 }}
-                onView={(id) => toast.info(`Viewing product ${id}`)}
                 onPostFirst={() => setIsPostDialogOpen(true)}
               />
             </motion.div>

@@ -4,19 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2, Eye, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Product } from "@/types/marketplace";
+import { Link } from "react-router-dom";
 
 interface ListingCardProps {
   product: Product;
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
-  onView: (id: string) => void;
 }
 
 export const ListingCard = ({
   product,
   onEdit,
   onDelete,
-  onView,
 }: ListingCardProps) => {
   // const statusColors = {
   //   active: "bg-emerald-100 text-emerald-700 border-emerald-200",
@@ -84,14 +83,11 @@ export const ListingCard = ({
             <Trash2 className="h-3.5 w-3.5" />
             <span>Delete</span>
           </Button>
-          <Button
-            variant="secondary"
-            size="sm"
-            className="gap-1"
-            onClick={() => onView(product.id)}
-          >
-            <Eye className="h-3.5 w-3.5" />
-            <span>View</span>
+          <Button variant="secondary" size="sm" className="gap-1" asChild>
+            <Link to={`/product/${product.id}`}>
+              <Eye className="h-3.5 w-3.5" />
+              <span>View</span>
+            </Link>
           </Button>
         </div>
       </CardContent>
