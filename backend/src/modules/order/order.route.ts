@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as orderController from "./order.controller";
 import verifyJwt from "../../middlewares/verifyJwt";
 import { validate } from "../../middlewares/validate";
-import { updateOrderStatusSchema } from "./order.schema";
+import { acceptOrderSchema, updateOrderStatusSchema } from "./order.schema";
 
 const router = Router();
 
@@ -13,6 +13,13 @@ router.get("/buyer/stats", verifyJwt, orderController.getBuyerOrderStats);
 router.get("/seller", verifyJwt, orderController.getSellerOrders);
 
 router.get("/seller/stats", verifyJwt, orderController.getSellerOrderStats);
+
+router.post(
+  "/:orderId/accept",
+  verifyJwt,
+  validate(acceptOrderSchema),
+  orderController.acceptOrder,
+);
 
 router.patch(
   "/:orderId/status",

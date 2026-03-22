@@ -1,6 +1,6 @@
 import prisma from "../../config/client";
 import { mapOrderToDto } from "./order.mapper";
-import { OrderDto, OrderStats, UpdateOrderStatusDto } from "./order.types";
+import { AcceptOrderDto, OrderDto, OrderStats, UpdateOrderStatusDto } from "./order.types";
 
 export const getBuyerOrders = async (buyerId: string): Promise<OrderDto[]> => {
   const orders = await prisma.order.findMany({
@@ -84,6 +84,43 @@ export const updateOrderStatus = async (
   const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: updateData,
+    include: {
+      items: true,
+    },
+  });
+
+  return mapOrderToDto(updatedOrder);
+};
+
+export const acceptOrder = async (
+  sellerId: string,
+  orderId: string,
+  data: AcceptOrderDto,
+): Promise<OrderDto> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  if (order.sellerId !== sellerId) {
+    throw new Error("Unauthorized to accept this order");
+  }
+
+  if (order.status !== "PENDING") {
+    throw new Error("Only pending orders can be accepted");
+  }
+
+  const updatedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status: "ACCEPTED",
+      acceptedAt: new Date(),
+      pickupLocation: data.pickupLocation ?? order.pickupLocation,
+      pickupTime: data.pickupTime ? new Date(data.pickupTime) : order.pickupTime,
+    },
     include: {
       items: true,
     },

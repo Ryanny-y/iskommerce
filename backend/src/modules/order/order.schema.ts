@@ -10,7 +10,17 @@ export const updateOrderStatusSchema = z.object({
   }),
 });
 
-export const orderStatsSchema = z.object({
+export const acceptOrderSchema = z.object({
+  body: z.object({
+    pickupLocation: z.string().optional(),
+    pickupTime: z.string().datetime().optional(),
+  }),
+  params: z.object({
+    orderId: z.uuid(),
+  }),
+});
+
+export const orderStatsSchema = z.object({  
   totalOrders: z.number(),
   pendingOrders: z.number(),
   acceptedOrders: z.number(),
@@ -33,9 +43,9 @@ export const orderDtoSchema = z.object({
   id: z.string(),
   status: z.string(),
   buyerId: z.string(),
-  buyerName: z.string(),
+  buyerName: z.string().nullable(),
   sellerId: z.string(),
-  sellerName: z.string(),
+  sellerName: z.string().nullable(),
   fulfillmentType: z.string(),
   pickupLocation: z.string().nullable(),
   pickupTime: z.string().nullable(),

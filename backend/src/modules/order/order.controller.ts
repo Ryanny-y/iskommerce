@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as orderService from "./order.service";
-import { OrderDto, OrderParams, OrderStats, UpdateOrderStatusDto } from "./order.types";
+import { AcceptOrderDto, OrderDto, OrderParams, OrderStats, UpdateOrderStatusDto } from "./order.types";
 import { ApiResponse } from "../../types/api";
 
 export const getBuyerOrders = async (
@@ -55,6 +55,29 @@ export const updateOrderStatus = async (
     res.json({
       success: true,
       message: "Order status updated",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const acceptOrder = async (
+  req: Request<OrderParams, {}, AcceptOrderDto>,
+  res: Response<ApiResponse<OrderDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const order = await orderService.acceptOrder(
+      req.userId!,
+      orderId,
+      req.body,
+    );
+
+    res.json({
+      success: true,
+      message: "Order accepted",
       data: order,
     });
   } catch (error) {
