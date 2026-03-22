@@ -6,7 +6,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://iskommerce.vercel.app",
   "https://iskommerce-git-main-ryannys-projects.vercel.app",
-  "https://iskommerce-h7odbyrhp-ryannys-projects.vercel.app"
+  "https://iskommerce-h7odbyrhp-ryannys-projects.vercel.app",
+  "https://www.iskommerce.shop"
 ];
 
 const corsConfig: CorsOptions = {

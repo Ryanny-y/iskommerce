@@ -215,7 +215,6 @@ export const checkout = async (
           total: sellerOrder.total,
           paymentMethod: data.paymentMethod,
           fulfillmentType: sellerOrder.fulfillmentType,
-          pickupLocation: seller?.pickupLocation ?? null,
           meetupTime: sellerOrder.meetupTime
             ? new Date(sellerOrder.meetupTime)
             : null,
