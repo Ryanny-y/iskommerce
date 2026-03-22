@@ -276,6 +276,8 @@ model ChatConversation {
   createdAt DateTime @default(now())
 
   messages ChatMessage[]
+
+  @@unique([buyerId, sellerId])
 }
 
 model ChatMessage {
