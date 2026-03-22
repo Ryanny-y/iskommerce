@@ -39,6 +39,25 @@ export const getSellerOrders = async (
   }
 };
 
+export const getSellerOrder = async (
+  req: Request<OrderParams>,
+  res: Response<ApiResponse<OrderDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const { orderId } = req.params;
+    const order = await orderService.getSellerOrder(req.userId!, orderId);
+
+    res.json({
+      success: true,
+      message: "Seller order retrieved",
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateOrderStatus = async (
   req: Request<OrderParams, {}, UpdateOrderStatusDto>,
   res: Response<ApiResponse<OrderDto>>,

@@ -147,16 +147,6 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             </Button>
           )}
 
-          {order.status === "READY" && (
-            <Button
-              variant="outline"
-              className="flex-1 min-w-35 rounded-2xl border-2 border-purple-100 font-bold text-purple-600 hover:bg-purple-50 gap-2 py-5"
-            >
-              <MapPin className="h-4 w-4" />
-              View Pickup Details
-            </Button>
-          )}
-
           {order.status === "COMPLETED" && (
             <Button
               variant="outline"

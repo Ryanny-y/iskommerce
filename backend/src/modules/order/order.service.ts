@@ -52,6 +52,38 @@ export const getSellerOrders = async (
   return orders.map((order) => mapOrderToDto(order));
 };
 
+export const getSellerOrder = async (
+  sellerId: string,
+  orderId: string,
+): Promise<OrderDto> => {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      items: true,
+      seller: {
+        select: {
+          fullName: true,
+        },
+      },
+      buyer: {
+        select: {
+          fullName: true,
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new Error("Order not found");
+  }
+
+  if (order.sellerId !== sellerId) {
+    throw new Error("Unauthorized to view this order");
+  }
+
+  return mapOrderToDto(order);
+};
+
 export const updateOrderStatus = async (
   sellerId: string,
   orderId: string,

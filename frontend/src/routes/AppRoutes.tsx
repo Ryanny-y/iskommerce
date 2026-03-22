@@ -19,6 +19,7 @@ import PaymentPage from "@/pages/PaymentPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import MyOrdersPage from "@/pages/MyOrdersPage";
 import MySalesPage from "@/pages/seller/MySalesPage";
+import SellerOrderDetailsPage from "@/pages/seller/SellerOrderDetailsPage";
 
 export default function AppRoutes() {
   return (
@@ -48,7 +49,7 @@ export default function AppRoutes() {
               <Route path="/start-selling" element={<StartSellingPage />} />
               <Route path="/my-listings" element={<MyListingsPage />} />
               <Route path="/my-sales" element={<MySalesPage />} />
-              <Route path="/my-sales/:orderId" element={<MySalesPage />} />
+              <Route path="/my-sales/:orderId" element={<SellerOrderDetailsPage />} />
 
 
               {/* Buyer Routes */}

@@ -54,6 +54,7 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
   const [isAccepting, setIsAccepting] = useState(false);
   const { execute } = useMutation();
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const isPickup = order.fulfillmentType === "PICKUP";
   //   const isPending = order.status === "PENDING";
@@ -92,9 +93,26 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
     }
   };
 
-  const handleReject = () => {
-    onStatusChange(order.id, "CANCELLED");
+  const handleReject = async () => {
+    if (isCancelling) return;
+    setIsCancelling(true);
+    try {
+      const response: ApiResponse<Order> = await execute(
+        `orders/${order.id}/cancel`,
+        {
+          method: "POST",
+          body: JSON.stringify({ cancelReason: "Cancelled by Seller" }),
+        },
+      );
+
+      toast.success(response.message);
+      refetchOrders();
+    } catch (error) {
+    } finally {
+      setIsCancelling(false);
+    }
   };
+
   const getPaymentIcon = () => {
     switch (order.paymentMethod) {
       case "GCASH":

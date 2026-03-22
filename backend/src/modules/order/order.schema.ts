@@ -13,7 +13,7 @@ export const updateOrderStatusSchema = z.object({
 export const acceptOrderSchema = z.object({
   body: z.object({
     pickupLocation: z.string().optional(),
-    pickupTime: z.string().datetime().optional(),
+    pickupTime: z.string().nullable().optional(),
   }),
   params: z.object({
     orderId: z.uuid(),
@@ -30,6 +30,12 @@ export const cancelOrderSchema = z.object({
   body: z.object({
     cancelReason: z.string().min(1),
   }),
+  params: z.object({
+    orderId: z.uuid(),
+  }),
+});
+
+export const orderParamsSchema = z.object({
   params: z.object({
     orderId: z.uuid(),
   }),
