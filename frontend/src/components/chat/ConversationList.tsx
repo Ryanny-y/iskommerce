@@ -7,12 +7,37 @@ import { MessageSquare } from "lucide-react";
 interface ConversationListProps {
   conversations: ChatConversation[];
   currentUserId: string;
+  loadingConvo: boolean;
+  errorConvo: string | null;
 }
 
 export const ConversationList: React.FC<ConversationListProps> = ({
   conversations,
   currentUserId,
+  loadingConvo,
+  errorConvo,
 }) => {
+  if (loadingConvo) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-neutral-500 font-semibold">
+          Loading conversations...
+        </p>
+      </div>
+    );
+  }
+
+  if (errorConvo) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <h3 className="text-xl font-black text-red-600">
+          Failed to load conversations
+        </h3>
+        <p className="text-neutral-500">{errorConvo}</p>
+      </div>
+    );
+  }
+
   if (conversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-neutral-50/50 rounded-[40px] border-2 border-dashed border-neutral-200">

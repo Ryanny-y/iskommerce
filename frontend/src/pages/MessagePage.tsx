@@ -9,8 +9,11 @@ import type { ChatConversation } from "@/types/chat";
 const MessagesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { authResponse } = useAuth();
-  const { data: conversations } =
-    useFetchData<ChatConversation[]>("chat/conversations");
+  const {
+    data: conversations,
+    loading: loadingConvo,
+    error: errorConvo,
+  } = useFetchData<ChatConversation[]>("chat/conversations");
 
   // In a real app, this would come from an auth context
   const currentUserId = authResponse!.userData.id;
@@ -66,6 +69,8 @@ const MessagesPage: React.FC = () => {
               <ConversationList
                 conversations={filteredConversations}
                 currentUserId={currentUserId}
+                loadingConvo={loadingConvo}
+                errorConvo={errorConvo}
               />
             </div>
           </div>

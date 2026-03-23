@@ -64,11 +64,21 @@ const ChatPage: React.FC = () => {
     });
   };
 
-  if (!conversation) {
+  if (convoLoading || messagesLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-black text-neutral-900 mb-4">
-          Conversation not found
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold text-neutral-600">
+          Loading conversation...
+        </p>
+      </div>
+    );
+  }
+
+  if (convoError || messageError) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+        <h2 className="text-2xl font-black text-red-600 mb-4">
+          Something went wrong
         </h2>
         <button
           onClick={() => navigate("/messages")}
@@ -80,9 +90,9 @@ const ChatPage: React.FC = () => {
     );
   }
 
-  if (!messages) {
+  if (!conversation || !messages) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4">
         <h2 className="text-2xl font-black text-neutral-900 mb-4">
           Conversation not found
         </h2>

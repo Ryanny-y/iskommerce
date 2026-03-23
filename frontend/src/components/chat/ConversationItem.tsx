@@ -18,8 +18,8 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   // Determine other user info
   const otherUserName =
     currentUserId === conversation.seller.id
-      ? conversation.seller.name
-      : conversation.buyer.name;
+      ? conversation.buyer.name
+      : conversation.seller.name;
 
   const handleClick = () => {
     navigate(`/messages/${conversation.id}`);
