@@ -12,6 +12,10 @@ import {
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { useCart } from "@/contexts/CartContext";
+import type { ChatConversation } from "@/types/chat";
+import useAuth from "@/contexts/AuthContext";
+import useMutation from "@/hooks/useMutation";
+import { useNavigate } from "react-router-dom";
 
 interface ProductInfoProps {
   product: Product;
@@ -19,16 +23,34 @@ interface ProductInfoProps {
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
   const [isAddingToCart] = useState(false);
+  const { authResponse } = useAuth();
+  const navigate = useNavigate();
+  const { execute } = useMutation();
   const [isChatting, setIsChatting] = useState(false);
   const { addToCart } = useCart();
 
-  const handleChatSeller = () => {
+  const handleChatSeller = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isChatting) return;
     setIsChatting(true);
-    // Simulate API call
-    setTimeout(() => {
+    const currentUserId = authResponse!.userData.id;
+    e.stopPropagation();
+    e.preventDefault();
+
+    try {
+      const response: ChatConversation = await execute("chat/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          buyerId: currentUserId,
+          sellerId: product.sellerId,
+        }),
+      });
+
+      navigate(`/messages/${response.id}`);
+    } catch (error) {
+      console.log(error);
+    } finally {
       setIsChatting(false);
-      console.log("Opening chat with:", product.seller);
-    }, 1000);
+    }
   };
 
   const isOutOfStock = product.stock === 0;

@@ -1,6 +1,6 @@
 import { type Product } from '@/types/marketplace';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Info, Utensils, PackageSearch, Flame, AlertTriangle } from 'lucide-react';
+import { Info, Utensils, PackageSearch, Flame } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface ProductDetailsSectionProps {
@@ -44,7 +44,7 @@ export const ProductDetailsSection = ({ product }: ProductDetailsSectionProps) =
                 <p className="text-neutral-700 font-medium">{product.food_notes}</p>
               </div>
             )}
-            {product.allergen_info && (
+            {/* {product.allergen_info && (
               <div className="space-y-1">
                 <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-red-600">
                   <AlertTriangle className="h-3 w-3" />
@@ -52,7 +52,7 @@ export const ProductDetailsSection = ({ product }: ProductDetailsSectionProps) =
                 </div>
                 <p className="text-neutral-700 font-medium">{product.allergen_info}</p>
               </div>
-            )}
+            )} */}
             {product.spicy_level && (
               <div className="space-y-1">
                 <div className="flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-orange-600">

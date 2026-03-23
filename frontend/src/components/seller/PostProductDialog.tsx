@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ProductTypeSelector } from "./ProductTypeSelector";
-import {  CategorySelector} from "./CategorySelector";
+import { CategorySelector } from "./CategorySelector";
 import { FoodFields } from "./FoodFields";
 import { NonFoodFields } from "./NonFoodFields";
 import { ProductImageUpload } from "../product/ProductImageUpload";
@@ -26,6 +26,7 @@ import useMutation from "@/hooks/useMutation";
 import type { ApiResponse } from "@/types/common";
 import type { Product } from "@/types/marketplace";
 import useCategory from "@/contexts/CategoryContext";
+import { useProducts } from "@/contexts/ProductContext";
 
 const formSchema = z
   .object({
@@ -68,6 +69,7 @@ export const PostProductDialog = ({
 }: PostProductDialogProps) => {
   const { execute } = useMutation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { refetchProducts: refetchProductInMarketPlace } = useProducts(); 
 
   const { categories, refetchData: refetchCategories } = useCategory();
 
@@ -157,7 +159,8 @@ export const PostProductDialog = ({
       form.reset();
       onClose();
       await refetchProducts();
-      refetchCategories();
+      await refetchProductInMarketPlace();
+      await refetchCategories();
     } catch (error) {
       console.error(error);
       toast.error("Failed to post product. Please try again.");

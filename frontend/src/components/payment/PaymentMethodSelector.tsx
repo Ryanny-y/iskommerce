@@ -27,7 +27,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
       <RadioGroup
         value={selectedMethod}
         onValueChange={(value) => onMethodChange(value as PaymentMethod)}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         <Label
           htmlFor="cash"
@@ -73,7 +73,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           </div>
         </Label>
 
-        <Label
+        {/* <Label
           htmlFor="card"
           className={cn(
             "flex flex-col items-center gap-4 p-8 rounded-[40px] border-4 cursor-pointer transition-all duration-300 hover:bg-neutral-50",
@@ -93,7 +93,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             <span className="text-lg font-black tracking-tight text-neutral-900">Card</span>
             <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Credit / Debit</p>
           </div>
-        </Label>
+        </Label> */}
       </RadioGroup>
 
       <div className="p-8 rounded-[40px] bg-white border-none shadow-2xl shadow-neutral-200/50 space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">

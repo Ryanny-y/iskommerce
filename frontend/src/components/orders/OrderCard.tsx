@@ -12,13 +12,15 @@ import { OrderItem } from "./OrderItem";
 import { OrderTimeline } from "./OrderTimeline";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Eye, XCircle, Star, MapPin } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { OrderDetailsDialog } from "@/components/dialogs/OrderDetailsDialog";
 import dayjs from "dayjs";
 import { CancelOrderDialog } from "../dialogs/CancelOrderDialog";
 import { toast } from "sonner";
 import type { ApiResponse } from "@/types/common";
 import useMutation from "@/hooks/useMutation";
+import useAuth from "@/contexts/AuthContext";
+import type { ChatConversation } from "@/types/chat";
 
 interface OrderCardProps {
   order: Order;
@@ -33,6 +35,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const { execute } = useMutation();
+  const navigate = useNavigate();
+  const { authResponse } = useAuth()
 
   const handleCancelOrder = async (cancelReason: string) => {
     if (isCancelling) return;
@@ -52,6 +56,26 @@ export const OrderCard: React.FC<OrderCardProps> = ({
     } catch (error) {
     } finally {
       setIsCancelling(false);
+    }
+  };
+
+  const handleChatSeller = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const currentUserId = authResponse!.userData.id;
+    e.stopPropagation();
+    e.preventDefault();
+
+    try {
+      const response: ChatConversation = await execute("chat/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          buyerId: currentUserId,
+          sellerId: order.sellerId,
+        }),
+      });
+
+      navigate(`/messages/${response.id}`);
+    } catch (error) {
+      console.log(error);
     }
   };
 

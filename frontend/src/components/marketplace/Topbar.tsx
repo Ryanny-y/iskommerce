@@ -2,7 +2,6 @@ import {
   MessageSquare,
   User,
   LogOut,
-  Settings,
   List,
   Package,
   ShoppingCart,
@@ -24,7 +23,7 @@ import fatimaLogo from "@/assets/FatimaLogo.png";
 import { useCart } from "@/contexts/CartContext";
 import { useProducts } from "@/contexts/ProductContext";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Topbar = () => {
   const { authResponse, logout } = useAuth();
@@ -58,8 +57,11 @@ export const Topbar = () => {
             variant="ghost"
             size="icon"
             className="[&_svg:not([class*='size-'])]:size-5"
+            asChild
           >
-            <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+            <Link to="/messages">
+              <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+            </Link>
           </Button>
 
           <CartButton itemCount={totalItems} onClick={openCart} />

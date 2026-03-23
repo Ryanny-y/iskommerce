@@ -62,7 +62,7 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({ order }) => {
         </div>
 
         <div className="flex justify-between items-center px-6 py-4 rounded-2xl bg-emerald-50 border border-emerald-100">
-          <span className="text-sm font-bold text-emerald-600 uppercase tracking-widest">Amount Paid</span>
+          <span className="text-sm font-bold text-emerald-600 uppercase tracking-widest">Total Amount</span>
           <span className="text-2xl font-black text-emerald-600">₱{order.total}</span>
         </div>
       </div>

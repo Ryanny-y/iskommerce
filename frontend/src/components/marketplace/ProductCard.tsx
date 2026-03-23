@@ -3,7 +3,10 @@ import { type Product } from "@/types/marketplace";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useMutation from "@/hooks/useMutation";
+import useAuth from "@/contexts/AuthContext";
+import type { ChatConversation } from "@/types/chat";
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +14,30 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
+  const { execute } = useMutation();
+  const { authResponse } = useAuth();
+  const navigate = useNavigate();
+
+  const handleChatSeller = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const currentUserId = authResponse!.userData.id;
+    e.stopPropagation();
+    e.preventDefault();
+
+    try {
+      const response: ChatConversation = await execute("chat/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          buyerId: currentUserId,
+          sellerId: product.sellerId,
+        }),
+      });
+
+      navigate(`/messages/${response.id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Link to={`/product/${product.id}`}>
       <Card className="group overflow-hidden border-none shadow-sm hover:shadow-xl transition-all duration-300 bg-card pt-0 gap-3">
@@ -60,14 +87,18 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
             className="w-full rounded-lg gap-2 py-4"
             onClick={(e) => {
               e.stopPropagation();
-              e.preventDefault(); 
+              e.preventDefault();
               onAddToCart(product);
             }}
           >
             <ShoppingCart className="h-4 w-4" />
             Add
           </Button>
-          <Button variant="outline" className="w-full rounded-lg gap-2 py-4">
+          <Button
+            onClick={handleChatSeller}
+            variant="outline"
+            className="w-full rounded-lg gap-2 py-4"
+          >
             <MessageCircle className="h-4 w-4" />
             Chat
           </Button>

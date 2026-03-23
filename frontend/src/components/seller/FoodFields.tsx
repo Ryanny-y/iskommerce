@@ -53,7 +53,7 @@ export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
           </div>
 
           {/* Allergen Info */}
-          <div>
+          {/* <div>
             <label className="text-sm font-medium">Allergen Info</label>
             <Textarea
               placeholder="Contains nuts, dairy, etc."
@@ -65,7 +65,7 @@ export const FoodFields: React.FC<FoodFieldsProps> = ({ form }) => {
                 {errors.allergen_info.message as string}
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* Spicy Level */}
           <div>

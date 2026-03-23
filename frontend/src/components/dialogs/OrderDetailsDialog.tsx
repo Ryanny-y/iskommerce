@@ -7,7 +7,7 @@ import { OrderStatusBadge } from "@/components/orders/OrderStatusBadge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MessageSquare, ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,9 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import dayjs from "dayjs";
+import useAuth from "@/contexts/AuthContext";
+import type { ChatConversation } from "@/types/chat";
+import useMutation from "@/hooks/useMutation";
 
 interface OrderDetailsDialogProps {
   order: Order | null;
@@ -29,6 +32,30 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { authResponse } = useAuth();
+  const { execute } = useMutation();
+  const navigate = useNavigate();
+
+  const handleChatSeller = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const currentUserId = authResponse!.userData.id;
+    e.stopPropagation();
+    e.preventDefault();
+
+    try {
+      const response: ChatConversation = await execute("chat/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          buyerId: currentUserId,
+          sellerId: order?.sellerId,
+        }),
+      });
+
+      navigate(`/messages/${response.id}`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (!order) return null;
   return (
     <div className="">
@@ -46,7 +73,8 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                   </DialogTitle>
                 </div>
                 <DialogDescription className="text-neutral-500 font-medium">
-                  Placed on {dayjs(order.createdAt).format("YYYY-MM-DD, hh:ss A")}
+                  Placed on{" "}
+                  {dayjs(order.createdAt).format("YYYY-MM-DD, hh:ss A")}
                 </DialogDescription>
               </div>
               <OrderStatusBadge
@@ -73,14 +101,12 @@ export const OrderDetailsDialog: React.FC<OrderDetailsDialogProps> = ({
                   </div>
                 </div>
                 <Button
-                  asChild
                   variant="outline"
                   className="rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 gap-2 self-end"
+                  onClick={handleChatSeller}
                 >
-                  <Link to={`/messages?sellerId=${order.sellerId}`}>
-                    <MessageSquare className="h-4 w-4" />
-                    Chat Seller
-                  </Link>
+                  <MessageSquare className="h-4 w-4" />
+                  Chat Seller
                 </Button>
               </div>
 
