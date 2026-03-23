@@ -2,9 +2,11 @@ import { Server, Socket } from "socket.io";
 import prisma from "../config/client";
 
 export default function registerChatSocket(io: Server, socket: Socket) {
-
   // JOIN CONVERSATION
   socket.on("chat:join", async (conversationId: string) => {
+    console.log("JOIN EVENT RECEIVED:", conversationId);
+    console.log("User:", socket.data.userId);
+
     try {
       const userId = socket.data.userId; // from auth middleware
 
@@ -17,14 +19,12 @@ export default function registerChatSocket(io: Server, socket: Socket) {
       }
 
       // Ensure user is part of conversation
-      if (
-        conversation.buyerId !== userId &&
-        conversation.sellerId !== userId
-      ) {
+      if (conversation.buyerId !== userId && conversation.sellerId !== userId) {
         return socket.emit("error", "Unauthorized");
       }
 
       socket.join(`conversation:${conversationId}`);
+      console.log("Joined room:", `conversation:${conversationId}`);
     } catch (error) {
       console.error(error);
     }
@@ -63,8 +63,10 @@ export default function registerChatSocket(io: Server, socket: Socket) {
       });
 
       // Emit to both buyer & seller
-      io.to(`conversation:${conversationId}`).emit("chat:new_message", newMessage);
-
+      io.to(`conversation:${conversationId}`).emit(
+        "chat:new_message",
+        newMessage,
+      );
     } catch (error) {
       console.error(error);
     }

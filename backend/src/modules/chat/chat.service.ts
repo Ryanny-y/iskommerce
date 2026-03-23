@@ -60,6 +60,44 @@ export const getUserConversations = async (userId: string) => {
   });
 };
 
+// Get single conversation
+export const getSingleConversation = async (
+  conversationId: string,
+  userId: string,
+) => {
+  const conversation = await prisma.chatConversation.findUnique({
+    where: { id: conversationId },
+    include: {
+      buyer: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      messages: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!conversation) {
+    throw new Error("Conversation not found");
+  }
+
+  if (conversation.buyerId !== userId && conversation.sellerId !== userId) {
+    throw new Error("Unauthorized to view this conversation");
+  }
+
+  return conversation;
+};
+
 // Get messages in a conversation
 export const getMessages = async (conversationId: string, userId: string) => {
   const conversation = await prisma.chatConversation.findUnique({

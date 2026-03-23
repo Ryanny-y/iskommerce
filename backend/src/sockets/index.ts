@@ -1,12 +1,13 @@
 import { Server } from "socket.io";
 import registerChatSocket from "./chat.socket";
 import registerNotificationSocket from "./notification.socket";
+import { socketAuthMiddleware } from "./socketAuthMiddleware";
 
 export default function registerSocketHandlers(io: Server) {
 
-  io.on("connection", (socket) => {
-    console.log(`User connected: ${socket.id}`);
+  io.use(socketAuthMiddleware);
 
+  io.on("connection", (socket) => {
     registerChatSocket(io, socket);
     registerNotificationSocket(io, socket);
 

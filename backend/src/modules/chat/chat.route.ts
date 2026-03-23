@@ -7,6 +7,11 @@ const router = Router();
 // Conversations
 router.post("/conversations", verifyJwt, chatController.createConversation);
 router.get("/conversations", verifyJwt, chatController.getMyConversations);
+router.get(
+  "/conversations/:conversationId",
+  verifyJwt,
+  chatController.getSingleConversation,
+);
 
 // Messages
 router.get(

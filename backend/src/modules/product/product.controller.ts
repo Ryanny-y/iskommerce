@@ -32,7 +32,7 @@ export const getAllProducts = async (
   next: NextFunction,
 ) => {
   try {
-    const products = await productService.getAllProducts();
+    const products = await productService.getAllProducts(req.userId!);
 
     res.json({
       success: true,

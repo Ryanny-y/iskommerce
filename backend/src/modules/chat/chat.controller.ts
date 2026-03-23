@@ -5,8 +5,7 @@ import { mapConversation, mapMessage } from "./chat.mapper";
 // Create conversation
 export const createConversation = async (req: Request, res: Response) => {
   try {
-    const buyerId = req.userId!;
-    const { sellerId } = req.body;
+    const { buyerId, sellerId } = req.body;
 
     const conversation = await chatService.createOrGetConversation(
       buyerId,
@@ -27,6 +26,26 @@ export const getMyConversations = async (req: Request, res: Response) => {
     const conversations = await chatService.getUserConversations(userId);
 
     res.json(conversations.map(mapConversation));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Get single conversation
+export const getSingleConversation = async (
+  req: Request<{ conversationId: string }>,
+  res: Response,
+) => {
+  try {
+    const userId = req.userId!;
+    const { conversationId } = req.params;
+
+    const conversation = await chatService.getSingleConversation(
+      conversationId,
+      userId,
+    );
+
+    res.json(mapConversation(conversation));
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

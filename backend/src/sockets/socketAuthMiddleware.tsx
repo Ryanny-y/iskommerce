@@ -11,7 +11,7 @@ export const socketAuthMiddleware = (socket: Socket, next: any) => {
 
     const decoded: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
 
-    socket.data.userId = decoded.userId;
+    socket.data.userId = decoded.sub;
 
     next();
   } catch (err) {
