@@ -21,7 +21,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages, currentUserI
   }, [messages]);
 
   return (
-    <ScrollArea ref={scrollRef} className="flex-1 p-6 bg-neutral-50/30">
+    <ScrollArea ref={scrollRef} className="flex-1 p-6 bg-neutral-50/30 overflow-auto">
       <div className="space-y-8 pb-4">
         {messages.map((msg) => (
           <MessageBubble 

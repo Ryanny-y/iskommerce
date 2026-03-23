@@ -11,8 +11,8 @@ import { OrderStatusBadge } from "./OrderStatusBadge";
 import { OrderItem } from "./OrderItem";
 import { OrderTimeline } from "./OrderTimeline";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Eye, XCircle, Star, MapPin } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { MessageSquare, Eye, XCircle, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { OrderDetailsDialog } from "@/components/dialogs/OrderDetailsDialog";
 import dayjs from "dayjs";
 import { CancelOrderDialog } from "../dialogs/CancelOrderDialog";
@@ -142,14 +142,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
 
         <CardFooter className="p-8 pt-4 border-t border-neutral-50 bg-neutral-50/30 flex flex-wrap gap-4 items-stretch">
           <Button
-            asChild
             variant="outline"
+            onClick={handleChatSeller}
             className="flex-1 min-w-35 rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 gap-2 py-5"
           >
-            <Link to={`/messages?sellerId=${order.sellerId}`}>
               <MessageSquare className="h-4 w-4" />
               Chat Seller
-            </Link>
           </Button>
 
           <Button

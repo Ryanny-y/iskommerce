@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'motion/react';
 import useFetchData from '@/hooks/useFetchData';
 import type { ApiResponse } from '@/types/common';
+import { SellerCard } from '@/components/product/SellerCard';
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -80,18 +81,18 @@ const ProductDetailsPage = () => {
           {/* Left Column: Gallery */}
           <div className="flex flex-col gap-8">
             <ProductGallery images={productData.data.images} />
-            {/* <div className="hidden lg:block">
+            <div className="hidden lg:block">
               <SellerCard product={productData.data} />
-            </div> */}
+            </div>
           </div>
 
           {/* Right Column: Info & Details */}
           <div className="flex flex-col gap-10">
             <ProductInfo product={productData.data} />
             <ProductDetailsSection product={productData.data} />
-            {/* <div className="lg:hidden">
+            <div className="lg:hidden">
               <SellerCard product={productData.data} />
-            </div> */}
+            </div>
           </div>
         </motion.div>
       </main>
