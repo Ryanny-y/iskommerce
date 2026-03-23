@@ -9,7 +9,7 @@ export const socketAuthMiddleware = (socket: Socket, next: any) => {
       return next(new Error("Unauthorized"));
     }
 
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
 
     socket.data.userId = decoded.userId;
 

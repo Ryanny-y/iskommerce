@@ -95,8 +95,10 @@ model User {
   reviews       Review[]
   notifications Notification[]
 
-  cart         Cart?
-  sentMessages ChatMessage[] @relation("sender")
+  cart                Cart?
+  sentMessages        ChatMessage[]      @relation("sender")
+  buyerConversations  ChatConversation[] @relation("ChatBuyer")
+  sellerConversations ChatConversation[] @relation("ChatSeller")
 }
 
 model UserRole {
@@ -272,6 +274,9 @@ model ChatConversation {
 
   buyerId  String
   sellerId String
+
+  buyer  User @relation("ChatBuyer", fields: [buyerId], references: [id])
+  seller User @relation("ChatSeller", fields: [sellerId], references: [id])
 
   createdAt DateTime @default(now())
 

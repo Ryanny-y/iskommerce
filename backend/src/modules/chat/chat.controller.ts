@@ -2,69 +2,68 @@ import { Request, Response } from "express";
 import * as chatService from "./chat.service";
 import { mapConversation, mapMessage } from "./chat.mapper";
 
-class ChatController {
+// Create conversation
+export const createConversation = async (req: Request, res: Response) => {
+  try {
+    const buyerId = req.userId!;
+    const { sellerId } = req.body;
 
-  async createConversation(req: Request, res: Response) {
-    try {
-      const buyerId = req.userId!; 
-      const { sellerId } = req.body;
+    const conversation = await chatService.createOrGetConversation(
+      buyerId,
+      sellerId,
+    );
 
-      const conversation = await chatService.createOrGetConversation(
-        buyerId,
-        sellerId
-      );
-
-      res.json(mapConversation(conversation));
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
+    res.json(mapConversation(conversation));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
+};
 
-  async getMyConversations(req: Request, res: Response) {
-    try {
-      const userId = req.userId!;
+// Get all conversations
+export const getMyConversations = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId!;
 
-      const conversations = await chatService.getUserConversations(userId);
+    const conversations = await chatService.getUserConversations(userId);
 
-      res.json(conversations.map(mapConversation));
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
+    res.json(conversations.map(mapConversation));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
+};
 
-  async getMessages(req: Request<{ conversationId: string }>, res: Response) {
-    try {
-      const userId = req.userId!;
-      const { conversationId } = req.params;
+// Get messages
+export const getMessages = async (
+  req: Request<{ conversationId: string }>,
+  res: Response,
+) => {
+  try {
+    const userId = req.userId!;
+    const { conversationId } = req.params;
 
-      const messages = await chatService.getMessages(
-        conversationId,
-        userId
-      );
+    const messages = await chatService.getMessages(conversationId, userId);
 
-      res.json(messages.map(mapMessage));
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
+    res.json(messages.map(mapMessage));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
+};
 
-  async sendMessage(req: Request, res: Response) {
-    try {
-      const senderId = req.userId!;
-      const { conversationId, message, imageUrl } = req.body;
+// Send message
+export const sendMessage = async (req: Request, res: Response) => {
+  try {
+    const senderId = req.userId!;
+    const { conversationId, message, imageUrl } = req.body;
 
-      const newMessage = await chatService.sendMessage({
-        conversationId,
-        senderId,
-        message,
-        imageUrl,
-      });
+    const newMessage = await chatService.sendMessage({
+      conversationId,
+      senderId,
+      message,
+      imageUrl,
+    });
 
-      res.json(mapMessage(newMessage));
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
+    res.json(mapMessage(newMessage));
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
   }
-}
-
-export default new ChatController();
+};

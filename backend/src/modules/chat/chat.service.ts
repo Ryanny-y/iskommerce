@@ -3,7 +3,7 @@ import prisma from "../../config/client";
 // Create or get conversation
 export const createOrGetConversation = async (
   buyerId: string,
-  sellerId: string
+  sellerId: string,
 ) => {
   return prisma.chatConversation.upsert({
     where: {
@@ -17,6 +17,18 @@ export const createOrGetConversation = async (
       buyerId,
       sellerId,
     },
+    include: {
+      buyer: {
+        select: { id: true, fullName: true },
+      },
+      seller: {
+        select: { id: true, fullName: true },
+      },
+      messages: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+      },
+    },
   });
 };
 
@@ -27,6 +39,18 @@ export const getUserConversations = async (userId: string) => {
       OR: [{ buyerId: userId }, { sellerId: userId }],
     },
     include: {
+      buyer: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
       messages: {
         take: 1,
         orderBy: { createdAt: "desc" },
@@ -37,20 +61,14 @@ export const getUserConversations = async (userId: string) => {
 };
 
 // Get messages in a conversation
-export const getMessages = async (
-  conversationId: string,
-  userId: string
-) => {
+export const getMessages = async (conversationId: string, userId: string) => {
   const conversation = await prisma.chatConversation.findUnique({
     where: { id: conversationId },
   });
 
   if (!conversation) throw new Error("Conversation not found");
 
-  if (
-    conversation.buyerId !== userId &&
-    conversation.sellerId !== userId
-  ) {
+  if (conversation.buyerId !== userId && conversation.sellerId !== userId) {
     throw new Error("Unauthorized");
   }
 
@@ -76,10 +94,7 @@ export const sendMessage = async (data: {
 
   if (!conversation) throw new Error("Conversation not found");
 
-  if (
-    conversation.buyerId !== senderId &&
-    conversation.sellerId !== senderId
-  ) {
+  if (conversation.buyerId !== senderId && conversation.sellerId !== senderId) {
     throw new Error("Unauthorized");
   }
 
