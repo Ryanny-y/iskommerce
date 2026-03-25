@@ -88,18 +88,18 @@ export const UserApprovalTable: React.FC<UserApprovalTableProps> = ({ users, onA
                   {user.createdAt}
                 </TableCell>
                 <TableCell className="px-8">
-                  {user.status === 'PENDING' && (
+                  {user.userStatus === 'PENDING' && (
                     <Badge variant="secondary" className="bg-neutral-100 text-neutral-600 font-bold gap-1"><Clock className="h-3 w-3" /> PENDING</Badge>
                   )}
-                  {user.status === 'APPROVED' && (
+                  {user.userStatus === 'APPROVED' && (
                     <Badge variant="secondary" className="bg-emerald-100 text-emerald-600 font-bold gap-1"><CheckCircle2 className="h-3 w-3" /> APPROVED</Badge>
                   )}
-                  {user.status === 'REJECTED' && (
+                  {user.userStatus === 'REJECTED' && (
                     <Badge variant="secondary" className="bg-rose-100 text-rose-600 font-bold gap-1"><XCircle className="h-3 w-3" /> REJECTED</Badge>
                   )}
                 </TableCell>
                 <TableCell className="p-8 text-right">
-                  {user.status === 'PENDING' ? (
+                  {user.userStatus === 'PENDING' ? (
                     <div className="flex items-center justify-end gap-2">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

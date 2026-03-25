@@ -47,7 +47,7 @@ export const UserApprovalCard: React.FC<UserApprovalCardProps> = ({ user, onAppr
               <p className="text-sm font-medium text-neutral-500">{user.email}</p>
             </div>
           </div>
-          {getStatusBadge(user.status)}
+    {getStatusBadge(user.userStatus)}
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
@@ -68,7 +68,7 @@ export const UserApprovalCard: React.FC<UserApprovalCardProps> = ({ user, onAppr
         </div>
 
         <div className="mt-6 flex gap-3">
-          {user.status === 'PENDING' ? (
+          {user.userStatus === 'PENDING' ? (
             <>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -122,7 +122,7 @@ export const UserApprovalCard: React.FC<UserApprovalCardProps> = ({ user, onAppr
                 </AlertDialogContent>
               </AlertDialog>
             </>
-          ) : user.status === 'APPROVED' ? (
+          ) : user.userStatus === 'APPROVED' ? (
             <div className="flex-1 flex items-center justify-center gap-2 py-2 rounded-2xl bg-emerald-50 text-emerald-600 font-bold text-sm">
               <CheckCircle2 className="h-4 w-4" />
               Approved

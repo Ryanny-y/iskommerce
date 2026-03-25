@@ -5,6 +5,7 @@ export type AdminUser = {
   fullName: string;
   email: string;
   roles: string[];
+  userStatus: UserStatus;
+  isVerified: boolean;
   createdAt: string;
-  status: UserStatus;
 };
