@@ -5,6 +5,7 @@ import {
   List,
   Package,
   ShoppingCart,
+  Bell,
 } from "lucide-react";
 import { SearchBar } from "./Searchbar";
 import { CartButton } from "./CartButton";
@@ -25,6 +26,7 @@ import { useProducts } from "@/contexts/ProductContext";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useChat } from "@/contexts/ChatContext";
+import { useNotification } from "@/contexts/NotificationContext";
 
 export const Topbar = () => {
   const { authResponse, logout } = useAuth();
@@ -32,8 +34,11 @@ export const Topbar = () => {
   const { totalItems, openCart } = useCart();
   const { setSearchQuery } = useProducts();
   const { unreadMap } = useChat();
+  const { notifications, unreadCount, markAsRead } = useNotification();
 
-  const conversationsWithUnread = Object.values(unreadMap).filter(count => count > 0).length;
+  const conversationsWithUnread = Object.values(unreadMap).filter(
+    (count) => count > 0,
+  ).length;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 py-2">
@@ -74,6 +79,48 @@ export const Topbar = () => {
           </Button>
 
           <CartButton itemCount={totalItems} onClick={openCart} />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative [&_svg:not([class*='size-'])]:size-5"
+              >
+                <Bell />
+
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-80" align="end">
+              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+
+              {notifications.length === 0 ? (
+                <DropdownMenuItem>No notifications yet</DropdownMenuItem>
+              ) : (
+                notifications.map((notif) => (
+                  <DropdownMenuItem
+                    key={notif.id}
+                    onClick={() => markAsRead(notif.id)}
+                    className={`flex flex-col items-start gap-1 ${
+                      !notif.isRead ? "bg-muted" : ""
+                    }`}
+                  >
+                    <span className="text-sm font-medium">{notif.message}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(notif.createdAt).toLocaleString()}
+                    </span>
+                  </DropdownMenuItem>
+                ))
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Avatar Dropdown */}
           <DropdownMenu>

@@ -7,6 +7,8 @@ import {
   CheckoutResultDto,
   UpdateCartItemDto,
 } from "./cart.types";
+import { io } from "../../server";
+import { sendNotification } from "../notification/notification.service";
 
 export const getCart = async (userId: string): Promise<CartDto> => {
   let cart = await prisma.cart.findUnique({
@@ -274,6 +276,21 @@ export const checkout = async (
 
     return createdOrders;
   });
+
+  for (const order of orders) {
+    if (!order) throw new Error("Order not found.");
+    await sendNotification({
+      userId: order.sellerId,
+      type: "NEW_ORDER",
+      message: "You have a new order",
+    });
+
+    await sendNotification({
+      userId: order.sellerId,
+      type: "ORDER_UPDATE",
+      message: "Your order has been placed successfully",
+    });
+  }
 
   return {
     orders: orders.map((order) => {

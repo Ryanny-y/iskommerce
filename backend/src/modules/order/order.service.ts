@@ -1,6 +1,14 @@
 import prisma from "../../config/client";
 import { mapOrderToDto } from "./order.mapper";
-import { AcceptOrderDto, CancelOrderDto, OrderDto, OrderStats, UpdateOrderStatusDto } from "./order.types";
+import {
+  AcceptOrderDto,
+  CancelOrderDto,
+  OrderDto,
+  OrderStats,
+  UpdateOrderStatusDto,
+} from "./order.types";
+import { io } from "./../../server";
+import { sendNotification } from "../notification/notification.service";
 
 export const getBuyerOrders = async (buyerId: string): Promise<OrderDto[]> => {
   const orders = await prisma.order.findMany({
@@ -121,6 +129,12 @@ export const updateOrderStatus = async (
     },
   });
 
+  await sendNotification({
+    userId: order.buyerId,
+    type: "ORDER_UPDATE",
+    message: `Your order status has been updated to ${data.status}`,
+  });
+
   return mapOrderToDto(updatedOrder);
 };
 
@@ -151,11 +165,19 @@ export const acceptOrder = async (
       status: "ACCEPTED",
       acceptedAt: new Date(),
       pickupLocation: data.pickupLocation ?? order.pickupLocation,
-      pickupTime: data.pickupTime ? new Date(data.pickupTime) : order.pickupTime,
+      pickupTime: data.pickupTime
+        ? new Date(data.pickupTime)
+        : order.pickupTime,
     },
     include: {
       items: true,
     },
+  });
+
+  await sendNotification({
+    userId: order.buyerId,
+    type: "ORDER_UPDATE",
+    message: "Your order has been accepted by the seller",
   });
 
   return mapOrderToDto(updatedOrder);
@@ -189,6 +211,12 @@ export const completeOrder = async (
     },
   });
 
+  await sendNotification({
+    userId: order.buyerId,
+    type: "ORDER_UPDATE",
+    message: "Your order has been completed",
+  });
+
   return mapOrderToDto(updatedOrder);
 };
 
@@ -209,12 +237,20 @@ export const cancelOrder = async (
     throw new Error("Unauthorized to cancel this order");
   }
 
-  if (order.status === "ACCEPTED" || order.status === "PREPARING" || order.status === "READY") {
-    throw new Error("Cannot cancel order that has been accepted or is in progress");
+  if (
+    order.status === "ACCEPTED" ||
+    order.status === "PREPARING" ||
+    order.status === "READY"
+  ) {
+    throw new Error(
+      "Cannot cancel order that has been accepted or is in progress",
+    );
   }
 
   if (order.status === "COMPLETED" || order.status === "CANCELLED") {
-    throw new Error("Cannot cancel order that is already completed or cancelled");
+    throw new Error(
+      "Cannot cancel order that is already completed or cancelled",
+    );
   }
 
   const updatedOrder = await prisma.order.update({
@@ -227,6 +263,12 @@ export const cancelOrder = async (
     include: {
       items: true,
     },
+  });
+
+  await sendNotification({
+    userId: order.sellerId,
+    type: "ORDER_UPDATE",
+    message: "An order has been cancelled",
   });
 
   return mapOrderToDto(updatedOrder);
