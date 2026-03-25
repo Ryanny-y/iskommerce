@@ -20,7 +20,7 @@ const ProtectedLayout = () => {
 
   return (
     <>
-      <Topbar onSearch={() => {}} />
+      <Topbar />
       <Outlet />
       <CartDrawer
         isOpen={isCartOpen}

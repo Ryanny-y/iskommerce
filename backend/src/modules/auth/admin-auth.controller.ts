@@ -5,10 +5,30 @@ import {
   AdminLoginResponse,
   AdminLogoutResponse,
   AdminRefreshTokenResponse,
+  CreateAdminDto,
+  CreateAdminResponse,
 } from "./admin-auth.types";
 import { adminRefreshTokenCookieSchema } from "./admin-auth.schema";
 import { ZodError } from "zod";
 import { CustomError } from "../../utils/Errors";
+
+export const createAdmin = async (
+  req: Request<{}, {}, CreateAdminDto>,
+  res: Response<CreateAdminResponse>,
+  next: NextFunction,
+) => {
+  try {
+    const createdAdmin = await adminAuthService.createAdmin(req.body);
+
+    return res.status(201).json({
+      success: true,
+      message: "Admin created successfully",
+      data: createdAdmin,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const adminLogin = async (
   req: Request<{}, {}, AdminLoginDto>,

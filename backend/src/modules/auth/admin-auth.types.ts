@@ -4,6 +4,7 @@ import {
   adminDtoSchema,
   adminLoginSchema,
   adminRefreshTokenCookieSchema,
+  createAdminSchema,
 } from "./admin-auth.schema";
 import { ApiResponse } from "../../types/api";
 
@@ -13,7 +14,9 @@ export type AdminRefreshTokenCookies = z.infer<
   typeof adminRefreshTokenCookieSchema
 >;
 export type AdminLoginDto = z.infer<typeof adminLoginSchema>["body"];
+export type CreateAdminDto = z.infer<typeof createAdminSchema>["body"];
 
+export type CreateAdminResponse = ApiResponse<AdminDto>;
 export type AdminLoginResponse = ApiResponse<AdminAuthResponseDto>;
 export type AdminRefreshTokenResponse = ApiResponse<AdminAuthResponseDto>;
 export type AdminLogoutResponse = ApiResponse<void>;

@@ -1,9 +1,41 @@
 import prismaClient from "../../config/client";
 import bcrypt from "bcrypt";
-import { AdminAuthResponseDto, AdminDto, AdminLoginDto } from "./admin-auth.types";
+import { AdminAuthResponseDto, AdminDto, AdminLoginDto, CreateAdminDto } from "./admin-auth.types";
 import { CustomError } from "../../utils/Errors";
 import jwt from "jsonwebtoken";
 import { addDays } from "date-fns";
+
+export const createAdmin = async (data: CreateAdminDto): Promise<AdminDto> => {
+  const { email, password, confirmPassword } = data;
+
+  const normalizedEmail = email.toLowerCase();
+
+  const existingAdmin = await prismaClient.admin.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (existingAdmin) {
+    throw new CustomError(409, "Admin already exists");
+  }
+
+  if (password !== confirmPassword) {
+    throw new CustomError(400, "Passwords do not match.");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const createdAdmin = await prismaClient.admin.create({
+    data: {
+      email: normalizedEmail,
+      password: hashedPassword,
+    },
+  });
+
+  return {
+    id: createdAdmin.id,
+    email: createdAdmin.email,
+  };
+};
 
 export const adminLogin = async (data: AdminLoginDto) => {
   const { email, password } = data;
