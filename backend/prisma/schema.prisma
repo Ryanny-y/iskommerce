@@ -69,6 +69,12 @@ enum FulfillmentType {
   MEETUP
 }
 
+enum UserStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 // SCHEMA
 
 model User {
@@ -87,6 +93,9 @@ model User {
   isVerified              Boolean   @default(false)
   verificationCodeHash    String?
   verificationCodeExpires DateTime?
+
+  // User Status
+  userStatus UserStatus @default(PENDING)
 
   buyerOrders  Order[] @relation("BuyerOrders")
   sellerOrders Order[] @relation("SellerOrders")
