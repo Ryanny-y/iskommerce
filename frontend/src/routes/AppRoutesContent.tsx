@@ -22,6 +22,7 @@ import CheckoutPage from "@/pages/CheckoutPage";
 import PaymentPage from "@/pages/PaymentPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import MyOrdersPage from "@/pages/MyOrdersPage";
+import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
 
 export default function AppRoutesContent() {
   return (
@@ -34,6 +35,7 @@ export default function AppRoutesContent() {
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify" element={<VerificationPage />} />
       </Route>
+      <Route path="/pending-approval" element={<PendingApprovalPage />} />
 
       {/* PROTECTED USER APP */}
       <Route element={<ProtectedLayout />}>
@@ -46,10 +48,7 @@ export default function AppRoutesContent() {
         <Route path="/start-selling" element={<StartSellingPage />} />
         <Route path="/my-listings" element={<MyListingsPage />} />
         <Route path="/my-sales" element={<MySalesPage />} />
-        <Route
-          path="/my-sales/:orderId"
-          element={<SellerOrderDetailsPage />}
-        />
+        <Route path="/my-sales/:orderId" element={<SellerOrderDetailsPage />} />
 
         {/* Buyer */}
         <Route path="/product/:id" element={<ProductDetailsPage />} />

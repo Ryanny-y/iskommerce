@@ -36,9 +36,23 @@ export default function LoginForm() {
       toast.success("Successfully logged in!");
       navigate("/dashboard");
     } catch (error: any) {
+      console.log(error.message);
+
       toast.error(getErrorMessage(error) || "Login failed");
+      if (
+        error.status === 403 &&
+        error.message.includes("User is not yet approved by the admin.")
+      ) {
+        navigate("/pending-approval", { state: { email: data.email } });
+        return;
+      }
+      if (error.status === 403 && error.message.includes("User creation was rejected by the admin. Please contac the admin to clarify the issue.")) {
+        // navigate("/verify", { state: { email: data.email } });
+        return;
+      }
       if (error.status === 403) {
         navigate("/verify", { state: { email: data.email } });
+        return;
       }
     } finally {
       setIsLoading(false);

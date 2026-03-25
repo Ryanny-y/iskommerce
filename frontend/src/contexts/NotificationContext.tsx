@@ -1,7 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSocket } from "./SocketContext";
 import useFetchData from "@/hooks/useFetchData";
 import type { ApiResponse } from "@/types/common";
+import useAuth from "./AuthContext";
 
 export interface Notification {
   id: string;
@@ -36,17 +43,26 @@ const NotificationContext = createContext<NotificationContextType>({
 export const NotificationProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
+  const { authResponse } = useAuth();
   const { socket } = useSocket();
-
+  const options = useMemo(
+    () => ({
+      enabled: !!authResponse?.userData,
+    }),
+    [authResponse?.userData],
+  );
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const { data, loading, error } = useFetchData<ApiResponse<Notification[]>>('notifications'); 
+  const { data, loading, error } = useFetchData<ApiResponse<Notification[]>>(
+    "notifications",
+    options,
+  );
 
   useEffect(() => {
-    if(data && !loading && !error) {
+    if (data && !loading && !error) {
       setNotifications(data.data || []);
     }
-  }, [data, loading, error])
+  }, [data, loading, error]);
 
   useEffect(() => {
     if (!socket) return;

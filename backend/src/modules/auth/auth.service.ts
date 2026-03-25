@@ -88,6 +88,17 @@ export const login = async (data: LoginUserDto) => {
       "User is not yet verified. Please verify your account first.",
     );
 
+  if (foundUser.userStatus === "PENDING") {
+    throw new CustomError(403, "User is not yet approved by the admin.");
+  }
+
+  if (foundUser.userStatus === "REJECTED") {
+    throw new CustomError(
+      403,
+      "User creation was rejected by the admin. Please contact the admin to clarify the issue.",
+    );
+  }
+
   const userRoles = convertUserRoleToRoleEnum(foundUser.roles);
 
   // CREATE JWTS
@@ -130,7 +141,7 @@ export const login = async (data: LoginUserDto) => {
       roles: userRoles,
     },
     accessToken,
-    refreshToken
+    refreshToken,
   };
 };
 

@@ -126,7 +126,7 @@ export default function VerificationPage() {
             ) : null}
             {countdown > 0
               ? `Resend in ${formatTime(countdown)}`
-              : "Resend email"}
+              : "Resend Verification Code"}
           </button>
         </p>
       </CardFooter>
