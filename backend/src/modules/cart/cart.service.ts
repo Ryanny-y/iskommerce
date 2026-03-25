@@ -286,9 +286,9 @@ export const checkout = async (
     });
 
     await sendNotification({
-      userId: order.sellerId,
+      userId: order.buyerId,
       type: "ORDER_UPDATE",
-      message: "Your order has been placed successfully",
+      message: `Your order has been placed successfully`,
     });
   }
 
