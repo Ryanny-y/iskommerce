@@ -1,34 +1,40 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { ConversationList } from "@/components/chat/ConversationList";
-// import { ChatSearch } from '@/components/chat/ChatSearch';
 import { MessageSquare, Search } from "lucide-react";
 import useAuth from "@/contexts/AuthContext";
 import useFetchData from "@/hooks/useFetchData";
 import type { ChatConversation } from "@/types/chat";
+import { useChat } from "@/contexts/ChatContext";
 
 const MessagesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { authResponse } = useAuth();
+  const { conversations, setConversations } = useChat();
   const {
-    data: conversations,
+    data: initialConversations,
     loading: loadingConvo,
     error: errorConvo,
   } = useFetchData<ChatConversation[]>("chat/conversations");
 
-  // In a real app, this would come from an auth context
+  // Initialize from fetch
+  useEffect(() => {
+    if (initialConversations) {
+      setConversations(initialConversations);
+    }
+  }, [initialConversations]);
+
   const currentUserId = authResponse!.userData.id;
 
   const filteredConversations = useMemo(() => {
-    return (conversations || []).filter((conv) => {
+    return conversations.filter((conv) => {
       const otherUserName =
-        currentUserId === conv.seller.id ? conv.seller.name : conv.buyer.name;
+        currentUserId === conv.seller.id ? conv.buyer.name : conv.seller.name;
       return (
         otherUserName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         conv.lastMessage?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     });
   }, [conversations, searchQuery, currentUserId]);
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <main className="flex-1 container mx-auto px-4 md:px-8 py-10 space-y-10">

@@ -33,9 +33,6 @@ export const Topbar = () => {
   const { setSearchQuery } = useProducts();
   const { unreadMap } = useChat();
 
-  console.log(unreadMap);
-  
-
   const conversationsWithUnread = Object.values(unreadMap).filter(count => count > 0).length;
 
   return (
