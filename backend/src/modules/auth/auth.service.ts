@@ -16,6 +16,10 @@ import { sendVerificationEmail } from "../../services/email.service";
 export const createUser = async (data: CreateUserDto): Promise<UserDto> => {
   const { fullName, email, password, confirmPassword, roles } = data;
 
+  if(!email.includes('qc@student.fatima.edu.ph')) {
+    throw new CustomError(403, "User is not eligible to create account in this website.");
+  }
+
   const normalizedEmail = email.toLowerCase();
 
   // Check if user exists

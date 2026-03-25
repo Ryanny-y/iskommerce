@@ -100,6 +100,7 @@ model User {
   buyerOrders  Order[] @relation("BuyerOrders")
   sellerOrders Order[] @relation("SellerOrders")
 
+  // TODO: Add relations for Review and Rating Field, add field for seller created date
   products      Product[]
   reviews       Review[]
   notifications Notification[]
@@ -153,6 +154,7 @@ model Product {
   sellerId String
   seller   User   @relation(fields: [sellerId], references: [id])
 
+// TODO: Add Rating (0-5)
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 

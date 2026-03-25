@@ -1,0 +1,8 @@
+make predefined chats for chat
+
+review and rating for product + leave review and rating for the seller
+
+Profile page
+Ratings, Reviews, Picture, Bio, createdAt seller date
+
+User: Follow count field
