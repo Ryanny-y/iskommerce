@@ -1,18 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SellerOrdersTabs } from "@/components/seller/orders/SellerOrdersTab";
 import { SellerOrdersList } from "@/components/seller/orders/SellerOrdersList";
 import type { Order, OrderStatus } from "@/types/orders";
-import { ShoppingBag, Filter, Search } from "lucide-react";
+import { ShoppingBag, Filter } from "lucide-react";
 import type { ApiResponse } from "@/types/common";
 import useFetchData from "@/hooks/useFetchData";
 import useMutation from "@/hooks/useMutation";
 import { getErrorMessage } from "@/utils/errorHandlers";
 import { toast } from "sonner";
+import useAuth from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const MySalesPage = () => {
   const [activeTab, setActiveTab] = useState("ALL");
   const [isUpdating, setIsUpdating] = useState(false);
   const { execute } = useMutation();
+  const { authResponse } = useAuth();
+  const navigate = useNavigate();
 
   // TODO: Handle Loading and Error
   const {
@@ -21,6 +25,15 @@ const MySalesPage = () => {
     error: ordersError,
     refetchData: refetchOrders,
   } = useFetchData<ApiResponse<Order[]>>(`orders/seller`);
+
+  useEffect(() => {
+    // Check if user is a seller (mocked with localStorage)
+    const isSeller = authResponse?.userData.roles.includes("SELLER");
+    if (!isSeller) {
+      navigate("/start-selling", { replace: true });
+      return;
+    }
+  }, [navigate]);
 
   const handleStatusChange = async (
     orderId: string,

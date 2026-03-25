@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useSocket } from "./SocketContext";
+import useFetchData from "@/hooks/useFetchData";
+import type { ApiResponse } from "@/types/common";
 
 export interface Notification {
   id: string;
@@ -38,6 +40,13 @@ export const NotificationProvider: React.FC<{
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const { data, loading, error } = useFetchData<ApiResponse<Notification[]>>('notifications'); 
+
+  useEffect(() => {
+    if(data && !loading && !error) {
+      setNotifications(data.data || []);
+    }
+  }, [data, loading, error])
 
   useEffect(() => {
     if (!socket) return;
