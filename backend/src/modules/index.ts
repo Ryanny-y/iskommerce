@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import authRoute from "./auth/auth.route";
+import adminAuthRoute from "./auth/admin-auth.route";
 import productRoute from './product/product.route'
 import categoryRoute from './category/category.route'
 import cartRoute from './cart/cart.route'
@@ -11,6 +12,7 @@ const router = Router();
 
 // AUTH
 router.use("/auth", authRoute);
+router.use("/admin-auth", adminAuthRoute);
 
 // PUBLIC
 router.get('/health', (req: Request, res: Response) => {
