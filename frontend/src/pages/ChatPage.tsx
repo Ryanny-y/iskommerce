@@ -41,6 +41,8 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     if (!socket || !conversationId) return;
+    socket.emit("chat:mark_read", conversationId);
+
     socket.emit("chat:join", conversationId);
 
     socket.on("chat:new_message", (msg: ChatMessage) => {

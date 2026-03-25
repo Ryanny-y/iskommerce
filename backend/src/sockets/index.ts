@@ -8,6 +8,10 @@ export default function registerSocketHandlers(io: Server) {
   io.use(socketAuthMiddleware);
 
   io.on("connection", (socket) => {
+     const userId = socket.data.userId;
+
+    socket.join(`user:${userId}`);
+
     registerChatSocket(io, socket);
     registerNotificationSocket(io, socket);
 

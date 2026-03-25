@@ -23,54 +23,66 @@ import SellerOrderDetailsPage from "@/pages/seller/SellerOrderDetailsPage";
 import MessagesPage from "@/pages/MessagePage";
 import ChatPage from "@/pages/ChatPage";
 import { SocketProvider } from "@/contexts/SocketContext";
+import { ChatProvider } from "@/contexts/ChatContext";
 
 export default function AppRoutes() {
   return (
     <AuthProvider>
       <SocketProvider>
-        <CategoryProvider>
-          <CartProvider>
-            <ProductProvider>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
+        <ChatProvider>
+          <CategoryProvider>
+            <CartProvider>
+              <ProductProvider>
+                <Routes>
+                  <Route path="/" element={<LandingPage />} />
 
-                <Route element={<AuthLayout />}>
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/signup" element={<SignupPage />} />
-                  <Route path="/verify" element={<VerificationPage />} />
-                </Route>
+                  <Route element={<AuthLayout />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/verify" element={<VerificationPage />} />
+                  </Route>
 
-                {/* Marketplace Dashboard */}
-                <Route element={<ProtectedLayout />}>
-                  <Route path="/dashboard" element={<MarketplacePage />} />
-                  <Route path="/messages" element={<MessagesPage />} />
-                  <Route
-                    path="/messages/:conversationId"
-                    element={<ChatPage />}
-                  />
+                  {/* Marketplace Dashboard */}
+                  <Route element={<ProtectedLayout />}>
+                    <Route path="/dashboard" element={<MarketplacePage />} />
+                    <Route path="/messages" element={<MessagesPage />} />
+                    <Route
+                      path="/messages/:conversationId"
+                      element={<ChatPage />}
+                    />
 
-                  {/* Seller Routes */}
-                  <Route path="/start-selling" element={<StartSellingPage />} />
-                  <Route path="/my-listings" element={<MyListingsPage />} />
-                  <Route path="/my-sales" element={<MySalesPage />} />
-                  <Route
-                    path="/my-sales/:orderId"
-                    element={<SellerOrderDetailsPage />}
-                  />
+                    {/* Seller Routes */}
+                    <Route
+                      path="/start-selling"
+                      element={<StartSellingPage />}
+                    />
+                    <Route path="/my-listings" element={<MyListingsPage />} />
+                    <Route path="/my-sales" element={<MySalesPage />} />
+                    <Route
+                      path="/my-sales/:orderId"
+                      element={<SellerOrderDetailsPage />}
+                    />
 
-                  {/* Buyer Routes */}
-                  <Route path="/product/:id" element={<ProductDetailsPage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route path="/payment" element={<PaymentPage />} />
-                  <Route path="/order-success" element={<OrderSuccessPage />} />
-                  <Route path="/my-orders" element={<MyOrdersPage />} />
-                </Route>
+                    {/* Buyer Routes */}
+                    <Route
+                      path="/product/:id"
+                      element={<ProductDetailsPage />}
+                    />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/payment" element={<PaymentPage />} />
+                    <Route
+                      path="/order-success"
+                      element={<OrderSuccessPage />}
+                    />
+                    <Route path="/my-orders" element={<MyOrdersPage />} />
+                  </Route>
 
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </ProductProvider>
-          </CartProvider>
-        </CategoryProvider>
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </ProductProvider>
+            </CartProvider>
+          </CategoryProvider>
+        </ChatProvider>
       </SocketProvider>
     </AuthProvider>
   );

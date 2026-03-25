@@ -24,12 +24,19 @@ import { useCart } from "@/contexts/CartContext";
 import { useProducts } from "@/contexts/ProductContext";
 
 import { Link, useNavigate } from "react-router-dom";
+import { useChat } from "@/contexts/ChatContext";
 
 export const Topbar = () => {
   const { authResponse, logout } = useAuth();
   const navigate = useNavigate();
   const { totalItems, openCart } = useCart();
   const { setSearchQuery } = useProducts();
+  const { unreadMap } = useChat();
+
+  console.log(unreadMap);
+  
+
+  const conversationsWithUnread = Object.values(unreadMap).filter(count => count > 0).length;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 py-2">
@@ -56,11 +63,16 @@ export const Topbar = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="[&_svg:not([class*='size-'])]:size-5"
+            className="relative [&_svg:not([class*='size-'])]:size-5"
             asChild
           >
             <Link to="/messages">
               <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
+              {conversationsWithUnread > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                  {conversationsWithUnread}
+                </span>
+              )}
             </Link>
           </Button>
 

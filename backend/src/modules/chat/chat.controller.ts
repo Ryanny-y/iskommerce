@@ -51,6 +51,19 @@ export const getSingleConversation = async (
   }
 };
 
+// Get unread count
+export const getUnreadCount = async (req: Request, res: Response) => {
+  try {
+    const userId = req.userId!;
+
+    const count = await chatService.getUnreadCount(userId);
+
+    res.json({ unreadCount: count });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 // Get messages
 export const getMessages = async (
   req: Request<{ conversationId: string }>,

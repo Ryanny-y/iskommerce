@@ -14,6 +14,7 @@ export const mapConversation = (conversation: any) => {
     },
     lastMessage: conversation.messages?.[0]?.message || null,
     lastMessageAt: conversation.messages?.[0]?.createdAt || null,
+    unreadCount: conversation._count.messages,
     createdAt: conversation.createdAt,
   };
 };

@@ -13,6 +13,9 @@ router.get(
   chatController.getSingleConversation,
 );
 
+// Unread count
+router.get("/unread-count", verifyJwt, chatController.getUnreadCount);
+
 // Messages
 router.get(
   "/conversations/:conversationId/messages",

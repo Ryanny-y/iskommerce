@@ -28,6 +28,7 @@ export const createOrGetConversation = async (
         take: 1,
         orderBy: { createdAt: "desc" },
       },
+      _count: { select: { messages: true } },
     },
   });
 };
@@ -54,6 +55,18 @@ export const getUserConversations = async (userId: string) => {
       messages: {
         take: 1,
         orderBy: { createdAt: "desc" },
+      },
+      _count: {
+        select: {
+          messages: {
+            where: {
+              isRead: false,
+              senderId: {
+                not: userId,
+              },
+            },
+          },
+        },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -83,6 +96,16 @@ export const getSingleConversation = async (
       messages: {
         take: 1,
         orderBy: { createdAt: "desc" },
+      },
+      _count: {
+        select: {
+          messages: {
+            where: {
+              isRead: false,
+              senderId: { not: userId },
+            },
+          },
+        },
       },
     },
   });
@@ -142,6 +165,18 @@ export const sendMessage = async (data: {
       senderId,
       message,
       imageUrl: imageUrl ?? null,
+    },
+  });
+};
+
+export const getUnreadCount = async (userId: string) => {
+  return prisma.chatMessage.count({
+    where: {
+      senderId: { not: userId },
+      isRead: false,
+      conversation: {
+        OR: [{ buyerId: userId }, { sellerId: userId }],
+      },
     },
   });
 };
