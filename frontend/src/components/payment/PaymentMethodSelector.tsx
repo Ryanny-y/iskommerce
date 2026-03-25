@@ -51,7 +51,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
           </div>
         </Label>
 
-        <Label
+        {/* <Label
           htmlFor="gcash"
           className={cn(
             "flex flex-col items-center gap-4 p-8 rounded-[40px] border-4 cursor-pointer transition-all duration-300 hover:bg-neutral-50",
@@ -71,7 +71,7 @@ export const PaymentMethodSelector: React.FC<PaymentMethodSelectorProps> = ({
             <span className="text-lg font-black tracking-tight text-neutral-900">GCash</span>
             <p className="text-xs text-neutral-500 font-bold uppercase tracking-widest">Digital Wallet</p>
           </div>
-        </Label>
+        </Label> */}
 
         {/* <Label
           htmlFor="card"

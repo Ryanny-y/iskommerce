@@ -12,10 +12,10 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({ order }) => {
     switch (order.paymentMethod) {
       case 'CASH':
         return <Banknote className="h-5 w-5" />;
-      case 'GCASH':
-        return <Wallet className="h-5 w-5" />;
-      case 'CARD':
-        return <CreditCard className="h-5 w-5" />;
+      // case 'GCASH':
+      //   return <Wallet className="h-5 w-5" />;
+      // case 'CARD':
+      //   return <CreditCard className="h-5 w-5" />;
       default:
         return <CreditCard className="h-5 w-5" />;
     }

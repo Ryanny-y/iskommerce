@@ -7,7 +7,6 @@ import {
   OrderStats,
   UpdateOrderStatusDto,
 } from "./order.types";
-import { io } from "./../../server";
 import { sendNotification } from "../notification/notification.service";
 
 export const getBuyerOrders = async (buyerId: string): Promise<OrderDto[]> => {

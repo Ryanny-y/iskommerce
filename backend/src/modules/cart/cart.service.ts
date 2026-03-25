@@ -7,7 +7,6 @@ import {
   CheckoutResultDto,
   UpdateCartItemDto,
 } from "./cart.types";
-import { io } from "../../server";
 import { sendNotification } from "../notification/notification.service";
 
 export const getCart = async (userId: string): Promise<CartDto> => {

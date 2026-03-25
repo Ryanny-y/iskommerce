@@ -14,8 +14,8 @@ export const PaymentDetails: React.FC<PaymentDetailsProps> = ({ order }) => {
 
   const getPaymentIcon = () => {
     switch (order.paymentMethod) {
-      case 'GCASH': return Wallet;
-      case 'CARD': return CreditCard;
+      // case 'GCASH': return Wallet;
+      // case 'CARD': return CreditCard;
       case 'CASH': return Banknote;
       default: return CreditCard;
     }

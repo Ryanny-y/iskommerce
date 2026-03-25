@@ -115,8 +115,8 @@ export const SellerOrderCard: React.FC<SellerOrderCardProps> = ({
 
   const getPaymentIcon = () => {
     switch (order.paymentMethod) {
-      case "GCASH":
-        return <Wallet className="h-4 w-4" />;
+      // case "GCASH":
+      //   return <Wallet className="h-4 w-4" />;
       case "CARD":
         return <CreditCard className="h-4 w-4" />;
       case "CASH":
