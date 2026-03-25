@@ -27,6 +27,7 @@ import { useProducts } from "@/contexts/ProductContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useChat } from "@/contexts/ChatContext";
 import { useNotification } from "@/contexts/NotificationContext";
+import { ScrollArea } from "../ui/scroll-area";
 
 export const Topbar = () => {
   const { authResponse, logout } = useAuth();
@@ -34,7 +35,7 @@ export const Topbar = () => {
   const { totalItems, openCart } = useCart();
   const { setSearchQuery } = useProducts();
   const { unreadMap } = useChat();
-  const { notifications, unreadCount, markAsRead } = useNotification();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotification();
 
   const conversationsWithUnread = Object.values(unreadMap).filter(
     (count) => count > 0,
@@ -98,27 +99,40 @@ export const Topbar = () => {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-80" align="end">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <div className="flex items-center justify-between py-3">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <Button variant={"ghost"} size={"xs"} onClick={markAllAsRead}>
+                  Mark all as read
+                </Button>
+              </div>
               <DropdownMenuSeparator />
 
-              {notifications.length === 0 ? (
-                <DropdownMenuItem>No notifications yet</DropdownMenuItem>
-              ) : (
-                notifications.map((notif) => (
-                  <DropdownMenuItem
-                    key={notif.id}
-                    onClick={() => markAsRead(notif.id)}
-                    className={`flex flex-col items-start gap-1 ${
-                      !notif.isRead ? "bg-muted" : ""
-                    }`}
-                  >
-                    <span className="text-sm font-medium">{notif.message}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(notif.createdAt).toLocaleString()}
-                    </span>
-                  </DropdownMenuItem>
-                ))
-              )}
+              <ScrollArea className="h-64">
+                {" "}
+                {/* Fixed height for scroll */}
+                <div className="flex flex-col">
+                  {notifications.length === 0 ? (
+                    <DropdownMenuItem>No notifications yet</DropdownMenuItem>
+                  ) : (
+                    notifications.map((notif) => (
+                      <DropdownMenuItem
+                        key={notif.id}
+                        onClick={() => markAsRead(notif.id)}
+                        className={`flex flex-col items-start gap-1 ${
+                          !notif.isRead ? "bg-muted" : ""
+                        }`}
+                      >
+                        <span className="text-sm font-medium">
+                          {notif.message}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(notif.createdAt).toLocaleString()}
+                        </span>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
             </DropdownMenuContent>
           </DropdownMenu>
 
