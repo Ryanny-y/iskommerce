@@ -21,6 +21,7 @@ import type { ApiResponse } from "@/types/common";
 import useMutation from "@/hooks/useMutation";
 import useAuth from "@/contexts/AuthContext";
 import type { ChatConversation } from "@/types/chat";
+import { LeaveReviewDialog } from "../dialogs/LeaveReviewDialog";
 
 interface OrderCardProps {
   order: Order;
@@ -31,12 +32,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({
   order,
   refetchOrder,
 }) => {
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const { execute } = useMutation();
   const navigate = useNavigate();
-  const { authResponse } = useAuth()
+  const { authResponse } = useAuth();
 
   const handleCancelOrder = async (cancelReason: string) => {
     if (isCancelling) return;
@@ -146,8 +148,8 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             onClick={handleChatSeller}
             className="flex-1 min-w-35 rounded-2xl border-2 border-neutral-100 font-bold text-neutral-600 hover:bg-neutral-50 gap-2 py-5"
           >
-              <MessageSquare className="h-4 w-4" />
-              Chat Seller
+            <MessageSquare className="h-4 w-4" />
+            Chat Seller
           </Button>
 
           <Button
@@ -173,6 +175,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({
             <Button
               variant="outline"
               className="flex-1 min-w-35 rounded-2xl border-2 border-emerald-100 font-bold text-emerald-600 hover:bg-emerald-50 gap-2"
+              onClick={() => setIsReviewDialogOpen(true)}
             >
               <Star className="h-4 w-4" />
               Leave Review
@@ -192,6 +195,12 @@ export const OrderCard: React.FC<OrderCardProps> = ({
         isOpen={isCancelOpen}
         onClose={() => setIsCancelOpen(false)}
         onConfirm={(reason) => handleCancelOrder(reason)}
+      />
+
+      <LeaveReviewDialog
+        isOpen={isReviewDialogOpen}
+        onClose={() => setIsReviewDialogOpen(false)}
+        order={order}
       />
     </>
   );

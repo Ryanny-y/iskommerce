@@ -8,6 +8,7 @@ import orderRoute from './order/order.route'
 import notificationRoute from './notification/notification.route'
 import chatRoute from './chat/chat.route'
 import userRoute from './user/user.route'
+import reviewRoute from './review/review.route'
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.use("/cart", cartRoute);
 router.use("/orders", orderRoute);
 router.use("/notifications", notificationRoute);
 router.use("/users", userRoute);
+router.use("/reviews", reviewRoute);
 
 router.use("/chat", chatRoute)
 
