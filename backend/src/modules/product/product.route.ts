@@ -7,6 +7,7 @@ import {
   createProductBodySchema,
   productParamsSchema,
   updateProductSchema,
+  sellerProductsParamsSchema,
 } from "./product.schema";
 
 const router = Router();
@@ -22,6 +23,13 @@ router.post(
 router.get("/", verifyJwt, productController.getAllProducts);
   
 router.get("/my-listings", verifyJwt, productController.getSellerProducts);
+
+router.get(
+  "/seller/:sellerId",
+  verifyJwt,
+  validate(sellerProductsParamsSchema),
+  productController.getProductsBySellerId,
+);
 
 router.get("/:productId", verifyJwt, productController.getProductById);
 

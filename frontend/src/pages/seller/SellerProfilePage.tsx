@@ -18,11 +18,18 @@ const SellerProfilePage: React.FC = () => {
   const { data: sellerData, loading } = useFetchData<ApiResponse<Seller>>(`users/${sellerId}`);
 
   const { data: sellerReviews, loading: loadingReviews } = useFetchData<ApiResponse<PaginatedSellerReviews>>(`reviews/seller/${sellerId}`);
+  const { data: productsData, loading: loadingProducts } = useFetchData<ApiResponse<Product[]>>(`products/seller/${sellerId}`);
 
   const seller = sellerData?.data ?? null;
   useEffect(() => {
     if(sellerReviews && !loadingReviews) {
       setReviews(sellerReviews.data?.reviews ?? []);
+    }
+  }, [sellerReviews, loadingReviews])
+
+   useEffect(() => {
+    if(productsData && productsData.data && !loadingProducts) {
+      setProducts(productsData.data);
     }
   }, [sellerReviews, loadingReviews])
 

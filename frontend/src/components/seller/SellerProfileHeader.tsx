@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, MessageCircle, MapPin, Calendar } from "lucide-react";
+import { Star, MessageCircle, Calendar } from "lucide-react";
 import type { Seller } from "@/types/seller";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -30,23 +30,22 @@ export function SellerProfileHeader({
     .toUpperCase();
   const isSeller = authResponse?.userData.id === seller.id;
 
-  const handleChatSeller = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleChatSeller = async () => {
     if (isSeller) return;
-    // const currentUserId = authResponse!.userData.id;
-    // e.stopPropagation();
-    // e.preventDefault();
-    // try {
-    //   const response: ChatConversation = await execute("chat/conversations", {
-    //     method: "POST",
-    //     body: JSON.stringify({
-    //       buyerId: currentUserId,
-    //       sellerId: sellerId,
-    //     }),
-    //   });
-    //   navigate(`/messages/${response.id}`);
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    const currentUserId = authResponse!.userData.id;
+
+    try {
+      const response: ChatConversation = await execute("chat/conversations", {
+        method: "POST",
+        body: JSON.stringify({
+          buyerId: currentUserId,
+          sellerId: seller.id,
+        }),
+      });
+      navigate(`/messages/${response.id}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

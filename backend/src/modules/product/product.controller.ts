@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as productService from "./product.service";
-import { CreateProductDto, ProductDto, ProductParams } from "./product.types";
+import { CreateProductDto, ProductDto, ProductParams, SellerProductsParams } from "./product.types";
 import { ApiResponse } from "../../types/api";
 
 export const createProduct = async (
@@ -69,6 +69,25 @@ export const getSellerProducts = async (
 ) => {
   try {
     const products = await productService.getSellerProducts(req.userId!);
+
+    res.json({
+      success: true,
+      message: "Products Retrieved",
+      data: products,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductsBySellerId = async (
+  req: Request<SellerProductsParams>,
+  res: Response<ApiResponse<ProductDto[]>>,
+  next: NextFunction,
+) => {
+  try {
+    const { sellerId } = req.params;
+    const products = await productService.getProductsBySellerId(sellerId);
 
     res.json({
       success: true,

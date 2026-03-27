@@ -127,6 +127,33 @@ export const getSellerProducts = async (
   return products.map((product) => mapProductToDto(product));
 };
 
+export const getProductsBySellerId = async (
+  sellerId: string,
+): Promise<ProductDto[]> => {
+  const products = await prisma.product.findMany({
+    where: {
+      sellerId,
+    },
+    include: {
+      images: true,
+      seller: {
+        select: {
+          id: true,
+          fullName: true,
+        },
+      },
+      category: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  return products.map((product) => mapProductToDto(product));
+};
+
 export const updateProduct = async (
   productId: string,
   data: UpdateProductDto,
