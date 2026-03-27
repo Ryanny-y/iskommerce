@@ -1,37 +1,46 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { SellerProfileHeader } from '@/components/seller/SellerProfileHeader';
-import { SellerTabs } from '@/components/seller/SellerTabs';
-import { Skeleton } from '@/components/ui/skeleton';
-import { motion } from 'motion/react';
-import type { Seller } from '@/types/seller';
-import type { PaginatedSellerReviews, SellerReviewItem } from '@/types/review';
-import type { Product } from '@/types/marketplace';
-import useFetchData from '@/hooks/useFetchData';
-import type { ApiResponse } from '@/types/common';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { SellerProfileHeader } from "@/components/seller/SellerProfileHeader";
+import { SellerTabs } from "@/components/seller/SellerTabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "motion/react";
+import type { Seller } from "@/types/seller";
+import type { PaginatedSellerReviews, SellerReviewItem } from "@/types/review";
+import type { Product } from "@/types/marketplace";
+import useFetchData from "@/hooks/useFetchData";
+import type { ApiResponse } from "@/types/common";
 
 const SellerProfilePage: React.FC = () => {
   const { sellerId } = useParams<{ sellerId: string }>();
   const [products, setProducts] = useState<Product[]>([]);
-  const [reviews, setReviews ] = useState<SellerReviewItem[]>([]);
+  const [reviews, setReviews] = useState<SellerReviewItem[]>([]);
 
-  const { data: sellerData, loading } = useFetchData<ApiResponse<Seller>>(`users/${sellerId}`);
+  const { data: sellerData, loading, refetchData: refetchSeller } = useFetchData<ApiResponse<Seller>>(
+    `users/${sellerId}`,
+  );
 
-  const { data: sellerReviews, loading: loadingReviews } = useFetchData<ApiResponse<PaginatedSellerReviews>>(`reviews/seller/${sellerId}`);
-  const { data: productsData, loading: loadingProducts } = useFetchData<ApiResponse<Product[]>>(`products/seller/${sellerId}`);
+  const isSeller = sellerData?.data?.roles.includes("SELLER");
+
+  const { data: sellerReviews, loading: loadingReviews } = useFetchData<
+    ApiResponse<PaginatedSellerReviews>
+  >(`reviews/seller/${sellerId}`, { enabled: !!sellerData && isSeller });
+
+  const { data: productsData, loading: loadingProducts } = useFetchData<
+    ApiResponse<Product[]>
+  >(`products/seller/${sellerId}`, { enabled: !!sellerData && isSeller });
 
   const seller = sellerData?.data ?? null;
   useEffect(() => {
-    if(sellerReviews && !loadingReviews) {
-      setReviews(sellerReviews.data?.reviews ?? []);
-    }
-  }, [sellerReviews, loadingReviews])
-
-   useEffect(() => {
-    if(productsData && productsData.data && !loadingProducts) {
+    if (productsData && productsData.data && !loadingProducts) {
       setProducts(productsData.data);
     }
-  }, [sellerReviews, loadingReviews])
+  }, [productsData, loadingProducts]);
+
+  useEffect(() => {
+    if (productsData && productsData.data && !loadingProducts) {
+      setReviews(sellerReviews?.data?.reviews ?? []);
+    }
+  }, [sellerReviews, loadingReviews]);
 
   if (loading) {
     return (
@@ -50,7 +59,10 @@ const SellerProfilePage: React.FC = () => {
             <Skeleton className="h-12 w-full rounded-lg" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
-                <Skeleton key={i} className="aspect-square w-full rounded-2xl" />
+                <Skeleton
+                  key={i}
+                  className="aspect-square w-full rounded-2xl"
+                />
               ))}
             </div>
           </div>
@@ -62,13 +74,17 @@ const SellerProfilePage: React.FC = () => {
   if (!sellerData) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
-        <h2 className="text-2xl font-black text-neutral-900 mb-2">Seller Not Found</h2>
-        <p className="text-neutral-500 mb-6">The seller you're looking for doesn't exist or has been removed.</p>
+        <h2 className="text-2xl font-black text-neutral-900 mb-2">
+          Seller Not Found
+        </h2>
+        <p className="text-neutral-500 mb-6">
+          The seller you're looking for doesn't exist or has been removed.
+        </p>
       </div>
     );
   }
 
-  if(!sellerData || !seller) return;
+  if (!sellerData || !seller) return;
 
   return (
     <div className="min-h-screen bg-white">
@@ -78,19 +94,22 @@ const SellerProfilePage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <SellerProfileHeader 
-            seller={seller} 
-            averageRating={seller.rating ?? 0}
-            totalReviews={reviews.length}
-          />
-          
-          <SellerTabs 
+          <SellerProfileHeader
             seller={seller}
-            products={products}
-            reviews={reviews}
             averageRating={seller.rating ?? 0}
             totalReviews={reviews.length}
+            refetchSeller={refetchSeller}
           />
+
+          {seller.roles.includes("SELLER") && (
+            <SellerTabs
+              seller={seller}
+              products={products}
+              reviews={reviews}
+              averageRating={seller.rating ?? 0}
+              totalReviews={reviews.length}
+            />
+          )}
         </motion.div>
       </main>
 

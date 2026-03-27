@@ -41,6 +41,10 @@ export const SellerCard = ({ product }: SellerCardProps) => {
     <Card className="rounded-[40px] border-none bg-white p-8 shadow-xl shadow-neutral-200/50 transition-all hover:shadow-2xl hover:shadow-neutral-200/60">
       <CardHeader className="flex flex-row items-center gap-4 p-0 pb-6">
         <Avatar className="h-20 w-20 border-4 border-emerald-50 shadow-inner">
+          {/* <AvatarImage
+            src={product.seller}
+            alt={product.seller}
+          /> */}
           <AvatarFallback className="bg-emerald-100 text-emerald-700 font-bold text-2xl">
             {product.seller[0].toUpperCase()}
           </AvatarFallback>

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { UserStatus } from "@prisma/client";
+import { uploadedFileSchema } from "../../types/files";
 
 export const updateUserStatusSchema = z.object({
   body: z.object({
@@ -36,4 +37,12 @@ export const singleUserDtoSchema = z.object({
   roles: z.array(z.string()),
   createdAt: z.string(),
   isVerified: z.boolean(),
+});
+
+export const updateUserProfileSchema = z.object({
+  body: z.object({
+    bio: z.string().optional(),
+    fullName: z.string().optional(),
+  }),
+  file: uploadedFileSchema.optional(),
 });

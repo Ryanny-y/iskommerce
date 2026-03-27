@@ -8,96 +8,186 @@ import dayjs from "dayjs";
 import useAuth from "@/contexts/AuthContext";
 import type { ChatConversation } from "@/types/chat";
 import useMutation from "@/hooks/useMutation";
+import { useRef, useState } from "react";
 
 interface SellerProfileHeaderProps {
   seller: Seller;
   averageRating: number;
   totalReviews: number;
+  refetchSeller: () => void
 }
 
 export function SellerProfileHeader({
   seller,
   averageRating,
   totalReviews,
+  refetchSeller
 }: SellerProfileHeaderProps) {
+  const isSeller = seller.roles.includes("SELLER");
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const [form, setForm] = useState({
+    fullName: seller.fullName,
+    bio: seller.bio || "",
+    avatar: seller.avatar || "",
+  });
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const navigate = useNavigate();
   const { execute } = useMutation();
   const { authResponse } = useAuth();
+
+  const isCurrentUser = authResponse?.userData.id === seller.id;
+
   const initials = seller.fullName
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase();
-  const isSeller = authResponse?.userData.id === seller.id;
 
+  // ================= CHAT =================
   const handleChatSeller = async () => {
-    if (isSeller) return;
-    const currentUserId = authResponse!.userData.id;
+    if (isCurrentUser) return;
 
     try {
       const response: ChatConversation = await execute("chat/conversations", {
         method: "POST",
         body: JSON.stringify({
-          buyerId: currentUserId,
+          buyerId: authResponse!.userData.id,
           sellerId: seller.id,
         }),
       });
+
       navigate(`/messages/${response.id}`);
     } catch (error) {
       console.log(error);
     }
   };
 
+  // ================= AVATAR CHANGE =================
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) return;
+
+    const previewUrl = URL.createObjectURL(file);
+
+    setSelectedFile(file);
+    setForm((prev) => ({
+      ...prev,
+      avatar: previewUrl,
+    }));
+  };
+
+  // ================= SAVE =================
+  const handleSave = async () => {
+    try {
+      const formData = new FormData();
+
+      formData.append("fullName", form.fullName);
+      formData.append("bio", form.bio);
+
+      if (selectedFile) {
+        formData.append("avatar", selectedFile);
+      }
+
+      await execute(`users`, {
+        method: "PATCH",
+        body: formData,
+      });
+
+      setIsEditing(false);
+      refetchSeller();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ================= CANCEL =================
+  const handleCancel = () => {
+    setForm({
+      fullName: seller.fullName,
+      bio: seller.bio || "",
+      avatar: seller.avatar || "",
+    });
+    setSelectedFile(null);
+    setIsEditing(false);
+  };
+
   return (
-    <div className="bg-white border-b" id="seller-profile-header">
+    <div className="bg-white border-b">
       <div className="container mx-auto max-w-7xl px-4 py-8 md:px-8">
         <div className="flex flex-col md:flex-row gap-8 items-start md:items-center">
-          {/* Avatar Section */}
-          <div className="relative" id="seller-avatar-container">
-            <Avatar
-              className="w-24 h-24 md:w-32 md:h-32 border-4 border-emerald-50 shadow-sm"
-              id="seller-avatar"
-            >
+          {/* ================= AVATAR ================= */}
+          <div
+            className="relative group cursor-pointer"
+            onClick={() => isEditing && fileInputRef.current?.click()}
+          >
+            <Avatar className="w-24 h-24 md:w-32 md:h-32 border-4 border-emerald-50 shadow-sm">
               <AvatarImage
-                src={seller.avatar || undefined}
+                src={isEditing ? form.avatar : seller.avatar}
                 alt={seller.fullName}
               />
               <AvatarFallback className="text-2xl font-bold bg-emerald-100 text-emerald-700">
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <Badge
-              className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 border-white shadow-sm"
-              id="seller-badge"
-            >
-              Verified Seller
+
+            {/* Hover Overlay */}
+            {isEditing && (
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center rounded-full">
+                <span className="text-white text-xs font-semibold">
+                  Change Photo
+                </span>
+              </div>
+            )}
+
+            <Badge className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-emerald-600 border-white shadow-sm">
+              {isSeller ? "Verified Seller" : "Verified User"}
             </Badge>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
           </div>
 
-          {/* Info Section */}
-          <div className="flex-1 space-y-4" id="seller-info">
+          {/* ================= INFO ================= */}
+          <div className="flex-1 space-y-4">
             <div className="space-y-1">
-              <h1
-                className="text-3xl font-black tracking-tight text-neutral-900"
-                id="seller-name"
-              >
-                {seller.fullName}
-              </h1>
-              <div
-                className="flex flex-wrap items-center gap-4 text-sm text-neutral-500"
-                id="seller-meta"
-              >
-                <div className="flex items-center gap-1.5" id="seller-rating">
-                  <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-bold text-neutral-900">
-                    {averageRating.toFixed(1)}
-                  </span>
-                  <span>({totalReviews} reviews)</span>
-                </div>
-                <div
-                  className="flex items-center gap-1.5"
-                  id="seller-member-since"
-                >
+              {isEditing ? (
+                <input
+                  value={form.fullName}
+                  onChange={(e) =>
+                    setForm((prev) => ({
+                      ...prev,
+                      fullName: e.target.value,
+                    }))
+                  }
+                  className="text-3xl font-black border rounded-lg px-3 py-2 w-full"
+                />
+              ) : (
+                <h1 className="text-3xl font-black">{seller.fullName}</h1>
+              )}
+
+              <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-500">
+                {isSeller && (
+                  <div className="flex items-center gap-1.5">
+                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    <span className="font-bold text-neutral-900">
+                      {averageRating.toFixed(1)}
+                    </span>
+                    <span>({totalReviews} reviews)</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-1.5">
                   <Calendar className="w-4 h-4" />
                   <span>
                     Member since {dayjs(seller.createdAt).format("MMM YYYY")}
@@ -106,33 +196,66 @@ export function SellerProfileHeader({
               </div>
             </div>
 
-            <p
-              className="text-neutral-600 max-w-2xl leading-relaxed"
-              id="seller-bio"
-            >
-              {seller.bio || "No Bio Provided"}
-            </p>
+            {isEditing ? (
+              <textarea
+                value={form.bio}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    bio: e.target.value,
+                  }))
+                }
+                className="w-full border rounded-lg px-3 py-2 min-h-25"
+              />
+            ) : (
+              <p className="text-neutral-600">
+                {seller.bio || "No Bio Provided"}
+              </p>
+            )}
           </div>
 
-          {/* Action Section */}
-          <div
-            className="w-full md:w-auto flex flex-col gap-3"
-            id="seller-actions"
-          >
-            {!isSeller && (
+          {/* ================= ACTIONS ================= */}
+          <div className="w-full md:w-auto flex flex-col gap-3">
+            {isCurrentUser && !isEditing && (
+              <Button
+                onClick={() => setIsEditing(true)}
+                className="rounded-2xl font-bold h-12 px-8"
+              >
+                Edit Profile
+              </Button>
+            )}
+
+            {isCurrentUser && isEditing && (
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSave}
+                  className="bg-emerald-600 text-white rounded-2xl px-6"
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="rounded-2xl px-6"
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
+
+            {!isCurrentUser && (
               <Button
                 onClick={handleChatSeller}
                 className="w-full md:w-auto rounded-2xl bg-emerald-600 font-bold h-12 px-8 gap-2 hover:bg-emerald-700"
-                id="chat-seller-button"
               >
                 <MessageCircle className="w-5 h-5" />
                 Chat Seller
               </Button>
             )}
+
             <Button
               variant="outline"
               className="w-full md:w-auto rounded-2xl border-neutral-200 font-bold h-12 px-8"
-              id="share-profile-button"
             >
               Share Profile
             </Button>
