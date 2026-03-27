@@ -1,5 +1,5 @@
 import prisma from "../../config/client";
-import { CreateReviewDto, PaginatedProductReviews, ReviewDto } from "./review.types";
+import { CreateReviewDto, PaginatedProductReviews, PaginatedSellerReviews, ReviewDto } from "./review.types";
 
 export const createReview = async (
   userId: string,
@@ -185,6 +185,77 @@ export const getProductReviews = async (
       user: {
         id: review.user.id,
         fullName: review.user.fullName,
+      },
+    })),
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+  };
+};
+
+export const getSellerReviews = async (
+  sellerId: string,
+  page: number,
+  limit: number,
+): Promise<PaginatedSellerReviews> => {
+  const seller = await prisma.user.findUnique({
+    where: { id: sellerId },
+    include: {
+      roles: true,
+    },
+  });
+
+  if (!seller) {
+    throw new Error("User not found");
+  }
+
+  const isSeller = seller.roles.some((role) => role.role === "SELLER");
+  if (!isSeller) {
+    throw new Error("User is not a seller");
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [reviews, total] = await Promise.all([
+    prisma.userReview.findMany({
+      where: { reviewedId: sellerId },
+      include: {
+        reviewer: {
+          select: {
+            id: true,
+            fullName: true,
+            avatar: true,
+            isVerified: true
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+    }),
+    prisma.userReview.count({
+      where: { reviewedId: sellerId },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    reviews: reviews.map((review) => ({
+      id: review.id,
+      rating: review.rating,
+      comment: review.comment,
+      createdAt: review.createdAt.toISOString(),
+      reviewer: {
+        id: review.reviewer.id,
+        fullName: review.reviewer.fullName,
+        avatar: review.reviewer.avatar ?? undefined,
+        isVerified:  review.reviewer.isVerified,
       },
     })),
     pagination: {

@@ -79,9 +79,12 @@ enum UserStatus {
 
 model User {
   id        String     @id @default(uuid())
+  bio       String?
+  avatar    String?
   fullName  String
   email     String     @unique
   password  String
+  rating Decimal?
   roles     UserRole[]
   createdAt DateTime   @default(now())
 
@@ -100,8 +103,6 @@ model User {
   buyerOrders  Order[] @relation("BuyerOrders")
   sellerOrders Order[] @relation("SellerOrders")
 
-  // TODO: Add relations for Review and Rating Field, add field for seller created date
-  rating Decimal?
 
   products        Product[]
   productReviews  ProductReview[]

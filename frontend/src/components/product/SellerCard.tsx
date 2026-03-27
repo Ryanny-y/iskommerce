@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, ExternalLink, ShieldCheck } from "lucide-react";
 import useMutation from "@/hooks/useMutation";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "@/contexts/AuthContext";
 import type { ChatConversation } from "@/types/chat";
 
@@ -60,16 +60,19 @@ export const SellerCard = ({ product }: SellerCardProps) => {
       </CardHeader>
       <CardContent className="flex flex-col gap-4 p-0">
         <div className="flex flex-col gap-3 sm:flex-row">
-          {/* <Button
+          <Button
             variant="outline"
             className="h-12 flex-1 rounded-2xl border-2 border-neutral-100 font-bold hover:bg-neutral-50 transition-all"
             onClick={() =>
               console.log("Viewing seller profile:", product.sellerId)
             }
+            asChild
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            View Seller Profile
-          </Button> */}
+            <Link to={`/seller/${product.sellerId}`}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              View Seller Profile
+            </Link>
+          </Button>
           <Button
             className="h-12 flex-1 rounded-2xl bg-neutral-900 font-bold text-white hover:bg-neutral-800 transition-all"
             onClick={handleChatSeller}

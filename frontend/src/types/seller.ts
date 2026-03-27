@@ -1,3 +1,5 @@
+import type { User } from "./User";
+
 export type ProductStatus = 'active' | 'sold' | 'out_of_stock';
 export type ProductCondition = 'new' | 'used';
 
@@ -20,3 +22,5 @@ export interface SellerStats {
   soldItems: number;
   totalRevenue: number;
 }
+
+export type Seller = User;

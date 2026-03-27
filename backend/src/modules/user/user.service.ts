@@ -1,6 +1,6 @@
 import prisma from "../../config/client";
-import { mapUserToDto } from "./user.mapper";
-import { UpdateUserStatusDto, UserDto } from "./user.types";
+import { mapUserToDto, mapSingleUserToDto } from "./user.mapper";
+import { UpdateUserStatusDto, UserDto, SingleUserDto } from "./user.types";
 
 export const getAllUsers = async (): Promise<UserDto[]> => {
   const users = await prisma.user.findMany({
@@ -38,4 +38,19 @@ export const updateUserStatus = async (
   });
 
   return mapUserToDto(updatedUser);
+};
+
+export const getSingleUser = async (userId: string): Promise<SingleUserDto> => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      roles: true,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return mapSingleUserToDto(user);
 };

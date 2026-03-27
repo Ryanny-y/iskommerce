@@ -6,13 +6,14 @@ import { MessageSquareOff } from "lucide-react";
 interface Review {
   id: string;
   user: {
+    id: string,
+    avatar?: string,
+    isVerified?: boolean,
     fullName: string,
   }
-  userAvatar?: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: string;
-  isVerified?: boolean;
 }
 
 interface ReviewListProps {
@@ -53,11 +54,11 @@ export function ReviewList({ reviews, initialCount = 5 }: ReviewListProps) {
           <ReviewCard 
             key={review.id} 
             userName={review.user.fullName}
-            userAvatar={review.userAvatar}
+            userAvatar={review.user.avatar}
             rating={review.rating}
             comment={review.comment}
             date={review.date}
-            isVerified={review.isVerified}
+            isVerified={review.user.isVerified}
           />
         ))}
       </div>

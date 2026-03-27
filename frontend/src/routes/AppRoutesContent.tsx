@@ -23,6 +23,7 @@ import PaymentPage from "@/pages/PaymentPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import MyOrdersPage from "@/pages/MyOrdersPage";
 import PendingApprovalPage from "@/pages/auth/PendingApprovalPage";
+import SellerProfilePage from "@/pages/seller/SellerProfilePage";
 
 export default function AppRoutesContent() {
   return (
@@ -43,6 +44,7 @@ export default function AppRoutesContent() {
 
         <Route path="/messages" element={<MessagesPage />} />
         <Route path="/messages/:conversationId" element={<ChatPage />} />
+        <Route path="/seller/:sellerId" element={<SellerProfilePage />} />
 
         {/* Seller */}
         <Route path="/start-selling" element={<StartSellingPage />} />

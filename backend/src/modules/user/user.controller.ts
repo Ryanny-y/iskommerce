@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as userService from "./user.service";
-import { UpdateUserStatusDto, UserDto, UserParams } from "./user.types";
+import { UpdateUserStatusDto, UserDto, UserParams, SingleUserDto } from "./user.types";
 import { ApiResponse } from "../../types/api";
 
 export const getAllUsers = async (
@@ -33,6 +33,25 @@ export const updateUserStatus = async (
     res.json({
       success: true,
       message: "User status updated",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getSingleUser = async (
+  req: Request<UserParams>,
+  res: Response<ApiResponse<SingleUserDto>>,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params;
+    const user = await userService.getSingleUser(userId);
+
+    res.json({
+      success: true,
+      message: "User retrieved",
       data: user,
     });
   } catch (error) {

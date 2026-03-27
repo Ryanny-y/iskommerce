@@ -8,7 +8,7 @@ interface ReviewCardProps {
   userName: string;
   userAvatar?: string;
   rating: number;
-  comment: string;
+  comment?: string;
   date: string;
   isVerified?: boolean;
   className?: string;

@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as reviewController from "./review.controller";
 import verifyJwt from "../../middlewares/verifyJwt";
 import { validate } from "../../middlewares/validate";
-import { createReviewSchema, getProductReviewsSchema } from "./review.schema";
+import { createReviewSchema, getProductReviewsSchema, getSellerReviewsSchema } from "./review.schema";
 
 const router = Router();
 
@@ -18,6 +18,13 @@ router.get(
   verifyJwt,
   validate(getProductReviewsSchema),
   reviewController.getProductReviews,
+);
+
+router.get(
+  "/seller/:sellerId",
+  verifyJwt,
+  validate(getSellerReviewsSchema),
+  reviewController.getSellerReviews,
 );
 
 export default router;

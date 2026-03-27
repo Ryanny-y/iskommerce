@@ -19,3 +19,21 @@ export const userDtoSchema = z.object({
   isVerified: z.boolean(),
   createdAt: z.string(),
 });
+
+export const userParamsSchema = z.object({
+  params: z.object({
+    userId: z.uuid(),
+  }),
+});
+
+export const singleUserDtoSchema = z.object({
+  id: z.string(),
+  bio: z.string().nullable(),
+  avatar: z.string().nullable(),
+  fullName: z.string(),
+  email: z.string(),
+  rating: z.number().nullable(),
+  roles: z.array(z.string()),
+  createdAt: z.string(),
+  isVerified: z.boolean(),
+});
