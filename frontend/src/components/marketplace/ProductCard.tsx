@@ -77,7 +77,7 @@ export const ProductCard = ({ product, onAddToCart }: ProductCardProps) => {
           </div>
           <div className="flex items-center gap-1 text-yellow-500">
             <Star className="h-4 w-4 fill-current" />
-            <span className="text-sm font-bold">{product.rating}</span>
+            <span className="text-sm font-bold">{(product.rating).toFixed(2)}</span>
           </div>
         </CardContent>
 

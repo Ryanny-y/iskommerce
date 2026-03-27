@@ -69,7 +69,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           <div className="flex items-center gap-1">
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
             <span className="font-medium text-neutral-900">
-              {product.rating}
+              {product.rating.toFixed(2)}
             </span>
           </div>
         </div>

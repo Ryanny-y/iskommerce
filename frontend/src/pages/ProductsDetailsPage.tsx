@@ -1,22 +1,38 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { type Product } from '@/types/marketplace';
-import { ProductGallery } from '@/components/product/ProductGallery';
-import { ProductInfo } from '@/components/product/ProductInfo';
-import { ProductDetailsSection } from '@/components/product/ProductDetailsSection';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ChevronLeft, ShoppingBag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { motion } from 'motion/react';
-import useFetchData from '@/hooks/useFetchData';
-import type { ApiResponse } from '@/types/common';
-import { SellerCard } from '@/components/product/SellerCard';
+import { useParams, useNavigate } from "react-router-dom";
+import { type Product } from "@/types/marketplace";
+import { ProductGallery } from "@/components/product/ProductGallery";
+import { ProductInfo } from "@/components/product/ProductInfo";
+import { ProductDetailsSection } from "@/components/product/ProductDetailsSection";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronLeft, ShoppingBag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { motion } from "motion/react";
+import useFetchData from "@/hooks/useFetchData";
+import type { ApiResponse } from "@/types/common";
+import { SellerCard } from "@/components/product/SellerCard";
+import { ReviewSection } from "@/components/reviews/ReviewSection";
 
 const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-//   TODO: HANDLE ERROR
-  const { data: productData, loading, error } = useFetchData<ApiResponse<Product>>(`products/${id}`)
+  //   TODO: HANDLE ERROR
+  const {
+    data: productData,
+    loading,
+    error,
+  } = useFetchData<ApiResponse<Product>>(`products/${id}`);
+
+  const { data: reviewsData } = useFetchData<ApiResponse<any>>(
+    `reviews/product/${id}`,
+  );
+
+  const reviews = reviewsData?.data.reviews || [];
+
+  const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => {
+    const count = reviews.filter((r: any) => r.rating === stars).length;
+    return { stars, count };
+  });
 
   if (loading) {
     return (
@@ -51,9 +67,16 @@ const ProductDetailsPage = () => {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
         <ShoppingBag className="h-16 w-16 text-neutral-200 mb-4" />
-        <h2 className="text-2xl font-black text-neutral-900 mb-2">Product Not Found</h2>
-        <p className="text-neutral-500 mb-6">The product you're looking for doesn't exist or has been removed.</p>
-        <Button onClick={() => navigate('/dashboard')} className="rounded-2xl bg-emerald-600 font-bold">
+        <h2 className="text-2xl font-black text-neutral-900 mb-2">
+          Product Not Found
+        </h2>
+        <p className="text-neutral-500 mb-6">
+          The product you're looking for doesn't exist or has been removed.
+        </p>
+        <Button
+          onClick={() => navigate("/dashboard")}
+          className="rounded-2xl bg-emerald-600 font-bold"
+        >
           Back to Marketplace
         </Button>
       </div>
@@ -95,6 +118,13 @@ const ProductDetailsPage = () => {
             </div>
           </div>
         </motion.div>
+
+        <ReviewSection
+          averageRating={productData.data.rating}
+          totalReviews={reviewsData?.data.pagination.total}
+          distribution={ratingDistribution}
+          reviews={reviews}
+        />
       </main>
 
       {/* Footer Space */}

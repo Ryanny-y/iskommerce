@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as reviewService from "./review.service";
-import { CreateReviewDto, ReviewDto } from "./review.types";
+import { CreateReviewDto, GetProductReviewsParams, GetProductReviewsQuery, PaginatedProductReviews, ReviewDto } from "./review.types";
 import { ApiResponse } from "../../types/api";
 
 export const createReview = async (
@@ -15,6 +15,32 @@ export const createReview = async (
       success: true,
       message: "Review created successfully",
       data: review,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProductReviews = async (
+  req: Request<GetProductReviewsParams, {}, {}, GetProductReviewsQuery>,
+  res: Response<ApiResponse<PaginatedProductReviews>>,
+  next: NextFunction,
+) => {
+  try {
+    const { productId } = req.params;
+    const page = parseInt(req.query.page || "1");
+    const limit = parseInt(req.query.limit || "10");
+
+    const reviews = await reviewService.getProductReviews(
+      productId,
+      page,
+      limit,
+    );
+
+    res.json({
+      success: true,
+      message: "Product reviews retrieved",
+      data: reviews,
     });
   } catch (error) {
     next(error);

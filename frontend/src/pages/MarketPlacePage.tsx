@@ -1,4 +1,3 @@
-
 import { motion, AnimatePresence } from "framer-motion";
 import { CategoryTabs } from "@/components/marketplace/CategoryTabs";
 import type { Product } from "@/types/marketplace";
@@ -8,6 +7,7 @@ import fatimaLogo from "@/assets/FatimaLogo.png";
 import useIsLoggedIn from "@/hooks/useIsLoggedIn";
 import { useCart } from "@/contexts/CartContext";
 import { useProducts } from "@/contexts/ProductContext";
+import { useEffect } from "react";
 
 const MarketplacePage = () => {
   const { addToCart } = useCart();
@@ -19,11 +19,16 @@ const MarketplacePage = () => {
     searchQuery,
     activeCategory,
     setActiveCategory,
+    refetchProducts,
   } = useProducts();
 
   useIsLoggedIn();
 
   const handleAddToCart = async (product: Product) => addToCart(product);
+
+  useEffect(() => {
+    refetchProducts();
+  }, []);
 
   if (!products.length && productsLoading) return <div>Loading...</div>;
   if (!products.length && productsError) return <div>Error...</div>;

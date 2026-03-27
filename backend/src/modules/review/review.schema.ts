@@ -21,6 +21,16 @@ export const createReviewSchema = z.object({
   }),
 });
 
+export const getProductReviewsSchema = z.object({
+  params: z.object({
+    productId: z.string().uuid(),
+  }),
+  query: z.object({
+    page: z.string().optional().default("1"),
+    limit: z.string().optional().default("10"),
+  }),
+});
+
 export const reviewDtoSchema = z.object({
   productReviews: z.array(
     z.object({
@@ -42,4 +52,25 @@ export const reviewDtoSchema = z.object({
       createdAt: z.string(),
     })
     .nullable(),
+});
+
+export const productReviewItemSchema = z.object({
+  id: z.string(),
+  rating: z.number(),
+  comment: z.string().nullable(),
+  createdAt: z.string(),
+  user: z.object({
+    id: z.string(),
+    fullName: z.string(),
+  }),
+});
+
+export const paginatedProductReviewsSchema = z.object({
+  reviews: z.array(productReviewItemSchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    totalPages: z.number(),
+  }),
 });

@@ -1,5 +1,5 @@
 import prisma from "../../config/client";
-import { CreateReviewDto, ReviewDto } from "./review.types";
+import { CreateReviewDto, PaginatedProductReviews, ReviewDto } from "./review.types";
 
 export const createReview = async (
   userId: string,
@@ -17,12 +17,6 @@ export const createReview = async (
     },
   });
 
-  console.log("Fetched order:", order);
-  console.log(
-    "Order item product IDs:",
-    order?.items.map((i) => i.productId),
-  );
-
   if (!order) {
     throw new Error("Order not found");
   }
@@ -35,14 +29,12 @@ export const createReview = async (
     throw new Error("Can only review completed orders");
   }
 
-  console.log("Incoming productReviews payload:", data.productReviews);
   const result = await prisma.$transaction(async (tx) => {
     const createdProductReviews = [];
     let createdSellerReview = null;
 
     if (data.productReviews && data.productReviews.length > 0) {
       for (const productReview of data.productReviews) {
-        console.log("Creating review for productId:", productReview.productId);
         const existingReview = await tx.productReview.findUnique({
           where: {
             userId_productId_orderId: {
@@ -150,5 +142,56 @@ export const createReview = async (
           createdAt: result.createdSellerReview.createdAt.toISOString(),
         }
       : null,
+  };
+};
+
+export const getProductReviews = async (
+  productId: string,
+  page: number,
+  limit: number,
+): Promise<PaginatedProductReviews> => {
+  const skip = (page - 1) * limit;
+
+  const [reviews, total] = await Promise.all([
+    prisma.productReview.findMany({
+      where: { productId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip,
+      take: limit,
+    }),
+    prisma.productReview.count({
+      where: { productId },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    reviews: reviews.map((review) => ({
+      id: review.id,
+      rating: review.rating,
+      comment: review.comment,
+      createdAt: review.createdAt.toISOString(),
+      user: {
+        id: review.user.id,
+        fullName: review.user.fullName,
+      },
+    })),
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
   };
 };
