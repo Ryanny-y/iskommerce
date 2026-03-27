@@ -19,10 +19,10 @@ export const createOrGetConversation = async (
     },
     include: {
       buyer: {
-        select: { id: true, fullName: true },
+        select: { id: true, fullName: true, avatar: true },
       },
       seller: {
-        select: { id: true, fullName: true },
+        select: { id: true, fullName: true, avatar: true },
       },
       messages: {
         take: 1,
@@ -44,12 +44,14 @@ export const getUserConversations = async (userId: string) => {
         select: {
           id: true,
           fullName: true,
+          avatar: true,
         },
       },
       seller: {
         select: {
           id: true,
           fullName: true,
+          avatar: true,
         },
       },
       messages: {
@@ -85,12 +87,14 @@ export const getSingleConversation = async (
         select: {
           id: true,
           fullName: true,
+          avatar: true,
         },
       },
       seller: {
         select: {
           id: true,
           fullName: true,
+          avatar: true,
         },
       },
       messages: {

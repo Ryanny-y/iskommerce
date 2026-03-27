@@ -2,7 +2,7 @@ import React from "react";
 import type { ChatConversation } from "@/types/chat";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useChat } from "@/contexts/ChatContext";
 
 interface ConversationItemProps {
@@ -17,10 +17,10 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   const { unreadMap, resetUnread } = useChat();
   const navigate = useNavigate();
 
-  const otherUserName =
+  const otherUser=
     currentUserId === conversation.seller.id
-      ? conversation.buyer.name
-      : conversation.seller.name;
+      ? conversation.buyer
+      : conversation.seller;
 
   const unreadCount = unreadMap[conversation.id] || 0;
   const hasUnread = unreadCount > 0;
@@ -40,8 +40,12 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     >
       <div className="relative">
         <Avatar className="h-14 w-14 rounded-2xl border-2 border-white shadow-sm transition-transform group-hover:scale-105">
+          <AvatarImage
+            src={otherUser.avatar|| undefined}
+            alt={otherUser.name}
+          />
           <AvatarFallback className="bg-emerald-100 text-emerald-600 font-black text-xl">
-            {otherUserName?.charAt(0) || "?"}
+            {otherUser.name?.charAt(0) || "?"}
           </AvatarFallback>
         </Avatar>
         {hasUnread && (
@@ -54,7 +58,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center justify-between">
           <h4 className="text-base font-black text-neutral-900 truncate tracking-tight">
-            {otherUserName}
+            {otherUser.name}
           </h4>
           <span className="hidden sm:block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
             {formatDate(conversation.lastMessageAt)}

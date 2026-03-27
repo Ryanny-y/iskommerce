@@ -141,6 +141,7 @@ export const login = async (data: LoginUserDto) => {
     userData: {
       id: foundUser.id,
       fullName: foundUser.fullName,
+      avatar: foundUser.avatar,
       email: foundUser.email,
       roles: userRoles,
     },
@@ -199,6 +200,7 @@ export const refreshToken = async (
     userData: {
       id: foundUser.id,
       fullName: foundUser.fullName,
+      avatar: foundUser.avatar,
       email: foundUser.email,
       roles: userRoles,
     },

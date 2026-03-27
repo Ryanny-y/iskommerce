@@ -30,6 +30,7 @@ export interface Product {
 
   sellerId: string;
   seller: string;
+  sellerAvatar?: string;
 
   categoryId: string;
   category: string;
@@ -38,7 +39,10 @@ export interface Product {
   createdAt: string;
 }
 
-type CartProduct = Pick<Product, "id" | "name" | "price" | "stock" | "sellerId" | "seller"> & {
+type CartProduct = Pick<
+  Product,
+  "id" | "name" | "price" | "stock" | "sellerId" | "seller"
+> & {
   images: { url: string }[];
 };
 

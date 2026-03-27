@@ -9,6 +9,7 @@ type PrismaProductWithImages = Product & {
   seller: {
     id: string;
     fullName: string;
+    avatar?: string | null;
   };
   category: {
     id: string;
@@ -39,6 +40,7 @@ export const mapProductToDto = (product: PrismaProductWithImages | null): Produc
 
     sellerId: product.sellerId,
     seller: product.seller.fullName,
+    sellerAvatar: product.seller.avatar ?? undefined,
 
     categoryId: product.category.id,
     category: product.category.name,

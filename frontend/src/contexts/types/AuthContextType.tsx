@@ -6,6 +6,7 @@ export type AuthResponseType = {
   userData: {
     id: string;
     email: string;
+    avatar: string | null,
     roles: Role[];
     fullName: string;
   };

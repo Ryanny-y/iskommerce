@@ -13,11 +13,13 @@ export type ChatConversation = {
   buyer: {
     id: string;
     name: string;
+    avatar?: string;
   };
 
   seller: {
     id: string;
     name: string;
+    avatar?: string;
   };
 
   lastMessage: any;

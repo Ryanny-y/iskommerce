@@ -85,6 +85,7 @@ export const createProduct = async (
           select: {
             id: true,
             fullName: true,
+            avatar: true
           },
         },
         category: {
@@ -113,6 +114,7 @@ export const getSellerProducts = async (
         select: {
           id: true,
           fullName: true,
+          avatar: true
         },
       },
       category: {
@@ -140,6 +142,7 @@ export const getProductsBySellerId = async (
         select: {
           id: true,
           fullName: true,
+          avatar: true
         },
       },
       category: {
@@ -241,6 +244,7 @@ export const getAllProducts = async (
         select: {
           id: true,
           fullName: true,
+          avatar: true
         },
       },
       category: {
@@ -264,6 +268,7 @@ export const getProductById = async (id: string): Promise<ProductDto> => {
         select: {
           id: true,
           fullName: true,
+          avatar: true
         },
       },
       category: {
@@ -274,6 +279,9 @@ export const getProductById = async (id: string): Promise<ProductDto> => {
       },
     },
   });
+
+  console.log(product);
+  
 
   return mapProductToDto(product);
 };

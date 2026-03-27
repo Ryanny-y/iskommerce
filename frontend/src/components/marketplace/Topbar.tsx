@@ -145,8 +145,8 @@ export const Topbar = () => {
               >
                 <Avatar className="h-9 w-9 sm:h-10 sm:w-10">
                   <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
+                    src={authResponse?.userData.avatar || undefined}
+                    alt={authResponse?.userData.fullName}
                   />
                   <AvatarFallback>SC</AvatarFallback>
                 </Avatar>

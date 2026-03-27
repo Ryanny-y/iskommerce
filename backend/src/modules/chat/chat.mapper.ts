@@ -6,11 +6,13 @@ export const mapConversation = (conversation: any) => {
     buyer: {
       id: conversation.buyer.id,
       name: conversation.buyer.fullName,
+      avatar: conversation.buyer.avatar,
     },
 
     seller: {
       id: conversation.seller.id,
       name: conversation.seller.fullName,
+      avatar: conversation.seller.avatar,
     },
     lastMessage: conversation.messages?.[0]?.message || null,
     lastMessageAt: conversation.messages?.[0]?.createdAt || null,

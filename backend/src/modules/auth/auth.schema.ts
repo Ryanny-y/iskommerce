@@ -51,6 +51,7 @@ export const refreshTokenCookieSchema = z.object({
 export const userDtoSchema = z.object({
   id: z.string(),
   fullName: z.string().optional(),
+  avatar: z.string().nullable().optional(),
   email: z.email(),
   roles: z.array(z.enum(Role)),
 });
